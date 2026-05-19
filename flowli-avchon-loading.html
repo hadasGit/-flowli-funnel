@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flowli — מנתחת את הנתונים שלך</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&family=Rubik:ital,wght@0,300..900;1,300..900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F6F1E6; --bg-light: #FBF7EE; --cream: #FFFFFF;
+      --grey: #2A2A2A; --ink: #1A1A1A; --text: #2A2A2A;
+      --orange: #F26B1F; --orange-deep: #D45A12;
+      --orange-pale: #FEF0E7;
+      --border: #D8D0BE;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Assistant', system-ui, sans-serif;
+      background: var(--bg); color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh; position: relative; overflow-x: hidden;
+    }
+
+    /* ── Waves (זהה לשאר הדפים) ── */
+    .wave-svg { position: absolute; pointer-events: none; z-index: 0; }
+    .wave-svg-top    { top: 80px; right: 0; width: 100%; max-width: 1400px; height: 900px; }
+    .wave-svg-bottom { bottom: 0; left: 0; width: 70%; max-width: 750px; height: auto; }
+
+    /* ── Nav ── */
+    .top-nav {
+      position: relative; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 32px 16px; max-width: 1400px; margin: 0 auto;
+    }
+    .flowli-logo { display: inline-flex; align-items: center; gap: 0.3em; font-size: 24px; text-decoration: none; direction: ltr; }
+    .flowli-logo svg { width: 1.1em; height: 1.1em; }
+    .flowli-logo .logo-text { font-family: 'Inter', sans-serif; font-weight: 800; letter-spacing: -0.035em; }
+    .flowli-logo .logo-flow { color: #2A2A2A; }
+    .flowli-logo .logo-li   { color: var(--orange); }
+    .nav-step-label { font-family: 'Assistant', sans-serif; font-size: 14px; font-weight: 600; color: #777; }
+    .nav-step-label span { color: var(--orange); }
+
+    /* ── Page wrap ── */
+    .page-wrap {
+      position: relative; z-index: 5;
+      max-width: 640px; margin: 0 auto;
+      padding: 20px 24px 80px;
+    }
+
+    /* ══════════════════════════════
+       SECTION 1 — loading / ניתוח
+    ══════════════════════════════ */
+    .loading-section {
+      min-height: calc(100svh - 80px);
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      text-align: center; gap: 28px;
+      padding: 30px 0;
+    }
+
+    /* Badge תודה */
+    .thank-you-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(to left, rgba(253,221,189,.70), rgba(254,240,231,.65));
+      border: 1.5px solid var(--orange);
+      border-radius: 100px;
+      padding: 8px 20px;
+      font-size: 14px; font-weight: 700; color: var(--orange-deep);
+      box-shadow: 0 4px 14px rgba(242,107,31,.18);
+    }
+
+    .loading-headline {
+      font-family: 'Rubik', sans-serif;
+      font-size: clamp(28px, 6vw, 42px);
+      font-weight: 800; line-height: 1.18;
+      color: var(--ink); letter-spacing: -0.025em;
+    }
+    .loading-headline .accent { color: var(--orange); }
+
+    .loading-sub {
+      font-size: 16px; color: #777; line-height: 1.7;
+      max-width: 400px; margin: -10px auto 0;
+    }
+
+    /* ── שלבי ניתוח ── */
+    .analysis-steps {
+      display: flex; flex-direction: column; gap: 10px;
+      width: 100%; max-width: 400px;
+      text-align: right;
+    }
+
+    .step-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: linear-gradient(to left,
+        rgba(221,229,247,.55) 0%,
+        rgba(218,236,239,.50) 35%,
+        rgba(234,236,229,.48) 68%,
+        rgba(246,231,214,.52) 100%);
+      backdrop-filter: blur(20px) saturate(1.5);
+      -webkit-backdrop-filter: blur(20px) saturate(1.5);
+      border: 1px solid rgba(255,255,255,.88);
+      box-shadow: 0 1px 1px rgba(255,255,255,.9) inset, 0 4px 14px -4px rgba(180,110,60,.12), 0 2px 6px rgba(0,0,0,.04);
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .step-row.visible  { opacity: 1; transform: translateY(0); }
+    .step-row.done .step-icon-wrap { background: #e6f4ea; color: #2d7a3a; }
+
+    .step-icon-wrap {
+      width: 40px; height: 40px; min-width: 40px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      background: #ffe9e1; color: var(--orange-deep);
+      flex-shrink: 0; transition: background .3s, color .3s;
+    }
+    .step-icon-wrap svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+    .step-text { flex: 1; }
+    .step-label { font-size: 14px; font-weight: 700; color: var(--ink); }
+    .step-value { font-size: 12px; color: #999; margin-top: 2px; }
+    .step-row.done .step-label { color: #2d7a3a; }
+
+    .step-status { flex-shrink: 0; }
+    .step-check {
+      display: none; width: 22px; height: 22px; border-radius: 50%;
+      background: #2d7a3a; align-items: center; justify-content: center;
+    }
+    .step-check svg { width: 11px; height: 11px; stroke: white; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .step-row.done .step-check { display: flex; }
+
+    .step-spinner {
+      display: none; width: 22px; height: 22px; border-radius: 50%;
+      border: 2.5px solid rgba(242,107,31,.2);
+      border-top-color: var(--orange);
+      animation: spin 0.8s linear infinite;
+    }
+    .step-row.active .step-spinner { display: block; }
+    .step-row.active .step-check   { display: none; }
+    .step-row.done  .step-spinner  { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Progress bar (זהה לעמוד 2) ── */
+    .progress-wrap { width: 100%; max-width: 400px; }
+    .progress-meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; }
+    .progress-block-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+    .progress-counter { font-size: 12px; font-weight: 500; color: #999; direction: ltr; }
+    .progress-track { width: 100%; height: 5px; background: rgba(0,0,0,.09); border-radius: 10px; overflow: hidden; direction: rtl; }
+    .progress-fill  { height: 100%; border-radius: 10px; background: var(--orange); width: 0%; transition: width 0.5s cubic-bezier(.4,0,.2,1); }
+
+    /* ══════════════════════════════
+       SECTION 2 — קצת עלי
+    ══════════════════════════════ */
+    .about-section {
+      padding: 40px 0 0;
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .about-section.visible { opacity: 1; transform: translateY(0); }
+
+    .block-eyebrow {
+      font-size: 12px; font-weight: 700; color: var(--orange);
+      letter-spacing: .08em; text-transform: uppercase; margin-bottom: 12px;
+    }
+
+    /* כרטיס — זהה ל-form-card של עמוד 1 */
+    .about-card {
+      background: linear-gradient(to left,
+        rgba(221,229,247,.78) 0%,
+        rgba(218,236,239,.72) 35%,
+        rgba(234,236,229,.70) 68%,
+        rgba(246,231,214,.75) 100%);
+      backdrop-filter: blur(28px) saturate(1.6);
+      -webkit-backdrop-filter: blur(28px) saturate(1.6);
+      border: 1px solid rgba(255,255,255,.9);
+      border-radius: 26px; padding: 26px 24px;
+      box-shadow:
+        0 1px 1px rgba(255,255,255,1) inset,
+        0 -1px 1px rgba(200,150,100,.18) inset,
+        0 30px 50px -18px rgba(180,110,60,.30),
+        0 12px 24px -8px rgba(120,80,140,.12),
+        0 4px 12px rgba(0,0,0,.05);
+    }
+
+    .hadas-row {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 18px;
+    }
+    .hadas-avatar {
+      width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 800; color: white;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 4px 14px rgba(242,107,31,.35);
+    }
+    .hadas-name  { font-size: 17px; font-weight: 800; color: var(--ink); letter-spacing: -0.01em; }
+    .hadas-title { font-size: 13px; color: #888; margin-top: 2px; }
+
+    .about-text { font-size: 15px; line-height: 1.78; color: var(--text); }
+    .about-text p + p { margin-top: 13px; }
+
+    /* scarcity — chip בסגנון opt-card */
+    .scarcity-chip {
+      margin-top: 18px;
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 14px 16px; border-radius: 16px;
+      background: linear-gradient(to left, rgba(253,221,189,.50), rgba(254,240,231,.45));
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid rgba(242,107,31,.3);
+      box-shadow: 0 1px 1px rgba(255,255,255,.9) inset, 0 4px 14px rgba(242,107,31,.10);
+      font-size: 14px; font-weight: 600; color: var(--orange-deep); line-height: 1.55;
+    }
+    .scarcity-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ══════════════════════════════
+       SECTION 3 — CTA
+    ══════════════════════════════ */
+    .cta-section {
+      padding: 36px 0 20px; text-align: center;
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 0.55s ease 0.15s, transform 0.55s ease 0.15s;
+    }
+    .cta-section.visible { opacity: 1; transform: translateY(0); }
+
+    .results-hint { font-size: 14px; color: #999; margin-bottom: 16px; font-weight: 500; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--orange); color: #fff;
+      border: none; border-radius: 14px;
+      padding: 17px 36px;
+      font-family: 'Rubik', sans-serif;
+      font-size: 17px; font-weight: 700; cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 10px 28px rgba(242,107,31,.40);
+      transition: all .2s;
+    }
+    .btn-primary:hover { background: var(--orange-deep); transform: translateY(-1px); box-shadow: 0 12px 32px rgba(242,107,31,.50); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-arrow { font-size: 19px; direction: ltr; font-weight: 400; }
+
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 rgba(242,107,31,.4), 0 10px 28px rgba(242,107,31,.4); }
+      70%  { box-shadow: 0 0 0 12px rgba(242,107,31,0), 0 10px 28px rgba(242,107,31,.4); }
+      100% { box-shadow: 0 0 0 0 rgba(242,107,31,0), 0 10px 28px rgba(242,107,31,.4); }
+    }
+    .btn-primary.pulse { animation: pulse-ring 1.8s ease infinite; }
+
+    /* ── Mobile ── */
+    @media (max-width: 600px) {
+      body { max-width: 430px; margin: 0 auto; padding-bottom: 90px; }
+      .wave-svg-top { width: 110%; max-width: none; }
+      .wave-svg-bottom { width: 110%; max-width: none; bottom: 90px; }
+      .top-nav { padding: 16px 20px; }
+      .flowli-logo { font-size: 22px; }
+      .page-wrap { padding: 14px 22px 30px; }
+      .loading-headline { font-size: 30px; }
+      .analysis-steps, .progress-wrap { max-width: 100%; }
+      .about-card { padding: 22px 20px; border-radius: 22px; }
+      .btn-primary { width: 100%; justify-content: center; padding: 16px 24px; font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- גל עליון — זהה לעמוד 1 ו-2 -->
+  <svg class="wave-svg wave-svg-top" viewBox="0 0 1400 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="waveTopFill" cx="85%" cy="35%" r="75%">
+        <stop offset="0%"   stop-color="#FBBA76" stop-opacity="0.85"/>
+        <stop offset="25%"  stop-color="#FDC481" stop-opacity="0.70"/>
+        <stop offset="50%"  stop-color="#FDC481" stop-opacity="0.45"/>
+        <stop offset="75%"  stop-color="#FDC481" stop-opacity="0.22"/>
+        <stop offset="100%" stop-color="#FDC481" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <path fill="url(#waveTopFill)" d="M 450,0 C 580,70 750,150 900,210 C 1010,260 1110,330 1200,400 C 1280,460 1350,510 1400,540 L 1400,0 Z"/>
+  </svg>
+
+  <!-- גל תחתון -->
+  <svg class="wave-svg wave-svg-bottom" viewBox="0 0 800 800" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="waveBottomFill" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%"   stop-color="#FBBA76" stop-opacity="0.75"/>
+        <stop offset="25%"  stop-color="#FDC481" stop-opacity="0.55"/>
+        <stop offset="55%"  stop-color="#FDC481" stop-opacity="0.30"/>
+        <stop offset="80%"  stop-color="#FDC481" stop-opacity="0.12"/>
+        <stop offset="100%" stop-color="#FDC481" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path fill="url(#waveBottomFill)" d="M 0,800 L 0,200 C 70,210 150,260 220,330 C 300,410 360,360 440,420 C 530,490 510,580 600,640 C 680,690 740,720 800,750 L 800,800 Z"/>
+  </svg>
+
+  <!-- Nav -->
+  <nav class="top-nav">
+    <a href="#" class="flowli-logo">
+      <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 30 Q25 15 40 30 Q55 45 70 30" stroke="#2A2A2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <path d="M10 45 Q25 30 40 45 Q55 60 70 45" stroke="#2A2A2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <path d="M10 60 Q25 45 40 60 Q55 75 70 60" stroke="#F26B1F" stroke-width="6" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span class="logo-text">
+        <span class="logo-flow">flow</span><span class="logo-li">li</span>
+      </span>
+    </a>
+    <span class="nav-step-label">שלב <span>3</span> מתוך 4</span>
+  </nav>
+
+  <main class="page-wrap">
+
+    <!-- ── Section 1: ניתוח ── -->
+    <section class="loading-section" id="loadingSection">
+
+      <div class="thank-you-badge">✨ &nbsp;תודה שמילאת את השאלון</div>
+
+      <div>
+        <h1 class="loading-headline">
+          מנתחת את הנתונים שלך,<br>
+          <span class="accent" id="leadName">רגע אחד</span>
+        </h1>
+        <p class="loading-sub">
+          אני בונה לך תמונה מדויקת של המצב — ומה אפשר לשפר כבר עכשיו
+        </p>
+      </div>
+
+      <!-- שלבי ניתוח -->
+      <div class="analysis-steps">
+
+        <div class="step-row" id="step1">
+          <div class="step-icon-wrap">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="step-text">
+            <div class="step-label">מנתחת פרופיל עסקי</div>
+            <div class="step-value">תחום, גודל, מצב נוכחי</div>
+          </div>
+          <div class="step-status">
+            <div class="step-spinner" id="spinner1"></div>
+            <div class="step-check" id="check1"><svg viewBox="0 0 12 12"><polyline points="1,6 4.5,9.5 11,2.5"/></svg></div>
+          </div>
+        </div>
+
+        <div class="step-row" id="step2">
+          <div class="step-icon-wrap">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="step-text">
+            <div class="step-label">מחשבת פוטנציאל הכנסה</div>
+            <div class="step-value">ROI צפוי לפי מחיר עסקה</div>
+          </div>
+          <div class="step-status">
+            <div class="step-spinner" id="spinner2"></div>
+            <div class="step-check" id="check2"><svg viewBox="0 0 12 12"><polyline points="1,6 4.5,9.5 11,2.5"/></svg></div>
+          </div>
+        </div>
+
+        <div class="step-row" id="step3">
+          <div class="step-icon-wrap">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="step-text">
+            <div class="step-label">מזהה אזורי כאב</div>
+            <div class="step-value">תחומים שמאטים אותך הכי הרבה</div>
+          </div>
+          <div class="step-status">
+            <div class="step-spinner" id="spinner3"></div>
+            <div class="step-check" id="check3"><svg viewBox="0 0 12 12"><polyline points="1,6 4.5,9.5 11,2.5"/></svg></div>
+          </div>
+        </div>
+
+        <div class="step-row" id="step4">
+          <div class="step-icon-wrap">
+            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="step-text">
+            <div class="step-label">בונה המלצות אישיות</div>
+            <div class="step-value">מפת פעולה מותאמת בשבילך</div>
+          </div>
+          <div class="step-status">
+            <div class="step-spinner" id="spinner4"></div>
+            <div class="step-check" id="check4"><svg viewBox="0 0 12 12"><polyline points="1,6 4.5,9.5 11,2.5"/></svg></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Progress bar -->
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span class="progress-block-name" id="progressLabel">מתחילה ניתוח...</span>
+          <span class="progress-counter" id="progressPct">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressBar"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ── Section 2: קצת עלי ── -->
+    <section class="about-section" id="aboutSection">
+      <div class="block-eyebrow">קצת עלי</div>
+      <div class="about-card">
+
+        <div class="hadas-row">
+          <div class="hadas-avatar">ה</div>
+          <div>
+            <div class="hadas-name">הדס</div>
+            <div class="hadas-title">אוטומציה ו-AI לעסקים</div>
+          </div>
+        </div>
+
+        <div class="about-text">
+          <p>נעים להכיר, אני הדס. אחרי שנים בעולם מערכות המידע של הארגונים הגדולים, הבנתי דבר פשוט: עסקים קטנים ובינוניים מתמודדים עם אותן הבעיות בדיוק – אבל חייבים פתרונות אחרים לגמרי.</p>
+          <p>אני כאן כדי להביא לעסק שלכם את עולמות האוטומציה וה-AI בצורה חכמה, מהירה ובגובה העיניים. בלי פרויקטים מסורבלים, פשוט תהליכים שעובדים בשבילכם.</p>
+          <p>אשמח להכיר ולראות איך אני יכולה לעזור גם לכם »</p>
+        </div>
+
+        <div class="scarcity-chip">
+          <span class="scarcity-icon">💛</span>
+          <span>אני עובדת עם מספר מצומצם של עסקים בכל חודש — כדי שאוכל להיות נוכחת באמת.</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Section 3: CTA ── -->
+    <section class="cta-section" id="ctaSection">
+      <p class="results-hint">הניתוח שלך מוכן 🎉</p>
+      <a href="flowli-avchon-results-v11.html" class="btn-primary pulse" id="resultsBtn">
+        לתוצאות שלי
+        <span class="btn-arrow">←</span>
+      </a>
+    </section>
+
+  </main>
+
+  <script>
+    // ── שם מ-localStorage (תואם גם לפורמט הישן וגם לחדש) ──
+    let firstName = '';
+    try {
+      const saved = localStorage.getItem('flowli_lead');
+      if (saved) {
+        const d = JSON.parse(saved);
+        if (d.name) firstName = d.name.split(' ')[0];
+      }
+      if (!firstName) firstName = localStorage.getItem('flowliName') || '';
+    } catch(e) {}
+    const nameEl = document.getElementById('leadName');
+    if (firstName) nameEl.innerHTML = firstName + ' <span style="font-weight:400;color:#777">👋</span>';
+
+    // ── רצף ניתוח ──
+    const steps = [
+      { id:'step1', spinner:'spinner1', check:'check1', start:300,  end:1700  },
+      { id:'step2', spinner:'spinner2', check:'check2', start:1700, end:3300  },
+      { id:'step3', spinner:'spinner3', check:'check3', start:3300, end:4700  },
+      { id:'step4', spinner:'spinner4', check:'check4', start:4700, end:6200  },
+    ];
+    const TOTAL = 6500;
+
+    steps.forEach(({ id, spinner, check, start, end }) => {
+      const row = document.getElementById(id);
+      const sp  = document.getElementById(spinner);
+      const ck  = document.getElementById(check);
+
+      setTimeout(() => { row.classList.add('visible', 'active'); sp.style.display = 'block'; ck.style.display = 'none'; }, start);
+      setTimeout(() => { row.classList.remove('active'); row.classList.add('done'); sp.style.display = 'none'; ck.style.display = 'flex'; }, end);
+    });
+
+    // ── Progress bar ──
+    const bar    = document.getElementById('progressBar');
+    const label  = document.getElementById('progressLabel');
+    const pctEl  = document.getElementById('progressPct');
+    const labels = ['מנתחת פרופיל...', 'מחשבת הכנסה פוטנציאלית...', 'מזהה אזורי כאב...', 'בונה המלצות...', 'הניתוח מוכן!'];
+
+    let t0 = null;
+    function tick(ts) {
+      if (!t0) t0 = ts;
+      const pct = Math.min(((ts - t0) / TOTAL) * 100, 100);
+      bar.style.width = pct + '%';
+      pctEl.textContent = Math.round(pct) + '%';
+      label.textContent = labels[Math.min(Math.floor(pct / 22), labels.length - 1)];
+
+      if (pct < 100) {
+        requestAnimationFrame(tick);
+      } else {
+        label.textContent = labels[labels.length - 1];
+        pctEl.textContent = '100%';
+        setTimeout(() => {
+          document.getElementById('aboutSection').classList.add('visible');
+          document.getElementById('ctaSection').classList.add('visible');
+          setTimeout(() => {
+            document.getElementById('aboutSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 350);
+        }, 300);
+      }
+    }
+    requestAnimationFrame(tick);
+  </script>
+
+<script src="flowli-legal.js"></script>
+</body>
+</html>

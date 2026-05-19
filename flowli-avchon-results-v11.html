@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowli — תוצאות האבחון שלך</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&family=Rubik:ital,wght@0,300..900;1,300..900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:          #F6F1E6;
+  --card-bg:     #F9EDDE;
+  --ink:         #1A1A1A;
+  --text:        #2A2A2A;
+  --muted:       #8A8378;
+  --orange:      #F26B1F;
+  --orange-deep: #D45A12;
+  --orange-pale: #FEF0E7;
+  --orange-mid:  #FDDDBD;
+  --orange-soft: #F8B98C;
+  --green:       #2D7A3A;
+  --green-pale:  #E6F4EA;
+  --border:      #D8D0BE;
+  --q1: #F7D387;
+  --q2: #D9C5AA;
+  --q3: #E18E62;
+  --q4: #EDDFC4;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Assistant', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ══ גלים — זהים לדף 1 ══ */
+.wave-svg { position: fixed; pointer-events: none; z-index: 0; }
+.wave-svg-top    { top: 80px; right: 0; width: 100%; max-width: 1400px; height: 900px; }
+.wave-svg-bottom { bottom: 0; left: 0; width: 70%; max-width: 750px; height: auto; }
+
+/* ── Nav ── */
+.top-nav {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 32px 16px; max-width: 1400px; margin: 0 auto;
+}
+.flowli-logo { display: inline-flex; align-items: center; gap: 0.3em; font-size: 24px; text-decoration: none; direction: ltr; }
+.flowli-logo svg { width: 1.1em; height: 1.1em; }
+.flowli-logo .logo-text { font-family: 'Inter', sans-serif; font-weight: 800; letter-spacing: -0.035em; }
+.flowli-logo .logo-flow { color: #2A2A2A; }
+.flowli-logo .logo-li   { color: var(--orange); }
+.nav-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+  color: var(--orange-deep); background: var(--orange-pale);
+  border: 1px solid var(--orange-mid); border-radius: 20px; padding: 5px 14px; letter-spacing: .04em;
+}
+
+/* ── Page wrap ── */
+.page-wrap {
+  position: relative; z-index: 5;
+  max-width: 840px; margin: 0 auto;
+  padding: 8px 28px 100px;
+}
+
+/* ── Card gradient mixin ── */
+.card-grad {
+  background: linear-gradient(145deg, #FEF5E7 0%, #F9EDDE 40%, #F5E4CC 100%);
+  border: 1px solid rgba(255,255,255,.92);
+  border-radius: 20px;
+  box-shadow: 0 2px 16px rgba(180,110,60,.08), 0 1px 2px rgba(255,255,255,.9) inset;
+}
+
+/* ── Hero ── */
+.hero-strip {
+  background: linear-gradient(to left,
+    rgba(221,229,247,.72) 0%,
+    rgba(218,236,239,.65) 35%,
+    rgba(246,231,214,.70) 100%);
+  backdrop-filter: blur(28px) saturate(1.5);
+  border: 1px solid rgba(255,255,255,.9);
+  border-radius: 22px; padding: 24px 28px; margin-bottom: 18px;
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  box-shadow: 0 1px 1px rgba(255,255,255,1) inset, 0 30px 50px -18px rgba(180,110,60,.22), 0 4px 12px rgba(0,0,0,.04);
+}
+.hero-name {
+  font-family: 'Rubik', sans-serif; font-size: 22px; font-weight: 700;
+  color: var(--ink); letter-spacing: -0.03em; margin-bottom: 5px;
+}
+.hero-sub { font-size: 15px; color: var(--muted); font-weight: 500; }
+
+.loss-bubble {
+  text-align: center;
+  background: linear-gradient(135deg, #FFF4E6, #FFDDB8);
+  border: 1.5px solid #F0D4A8; border-radius: 16px;
+  padding: 16px 24px; flex-shrink: 0;
+  animation: float 5s ease-in-out infinite; min-width: 165px;
+}
+.loss-amount {
+  font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 900;
+  color: var(--orange); letter-spacing: -0.04em; line-height: 1;
+}
+.loss-label { font-size: 11px; font-weight: 700; color: var(--ink); margin-top: 5px; }
+.loss-sub   { font-size: 10px; color: var(--muted); margin-top: 2px; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+
+/* ── Section title ── */
+.section-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+  color: var(--orange); letter-spacing: .1em; text-transform: uppercase;
+  margin: 26px 0 12px; display: flex; align-items: center; gap: 8px;
+}
+.section-title::before { content: ''; width: 3px; height: 13px; background: var(--orange); border-radius: 2px; }
+
+/* ── Two-col ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+@media (max-width: 620px) { .two-col { grid-template-columns: 1fr; } }
+
+/* ── Priority card ── */
+.priority-card {
+  background: linear-gradient(145deg, #FEF5E7 0%, #F9EDDE 40%, #F5E4CC 100%);
+  border: 1px solid rgba(255,255,255,.92);
+  border-radius: 20px; padding: 22px 24px; margin-bottom: 18px;
+  box-shadow: 0 2px 16px rgba(180,110,60,.08), 0 1px 2px rgba(255,255,255,.9) inset;
+}
+.priority-tag   { font-size: 11px; font-weight: 700; color: var(--orange-deep); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 7px; }
+.priority-title { font-family: 'Rubik', sans-serif; font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 10px; line-height: 1.35; letter-spacing: -0.02em; }
+.priority-body  { font-size: 15px; color: #444; line-height: 1.75; }
+.priority-body em { font-style: normal; font-weight: 700; color: var(--ink); background: rgba(242,107,31,.12); padding: 1px 5px; border-radius: 4px; }
+.priority-action {
+  margin-top: 14px; padding: 11px 16px;
+  background: rgba(255,255,255,.65); border: 1px solid rgba(242,107,31,.18);
+  border-radius: 12px; font-size: 14px; font-weight: 600; color: var(--ink);
+  display: flex; align-items: center; gap: 8px;
+}
+.priority-action .action-icon { font-size: 17px; flex-shrink: 0; }
+
+/* ── Gauge card ── */
+.gauge-card {
+  background: linear-gradient(145deg, #FEF5E7 0%, #F9EDDE 40%, #F5E4CC 100%);
+  border: 1px solid rgba(255,255,255,.92);
+  border-radius: 20px; padding: 22px;
+  box-shadow: 0 2px 16px rgba(180,110,60,.08), 0 1px 2px rgba(255,255,255,.9) inset;
+  transition: transform .25s, box-shadow .25s;
+}
+.gauge-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(180,110,60,.14); }
+.gauge-center { display: flex; flex-direction: column; align-items: center; margin-bottom: 14px; }
+.gauge-wrap { position: relative; width: 148px; height: 148px; }
+.gauge-svg { width: 148px; height: 148px; transform: rotate(-90deg); }
+.gauge-bg  { fill: none; stroke: #EDD8BE; stroke-width: 11; }
+.gauge-fg  {
+  fill: none; stroke: url(#gauge-grad);
+  stroke-width: 11; stroke-linecap: round;
+  stroke-dasharray: 339.3; stroke-dashoffset: 339.3;
+  transition: stroke-dashoffset 1.5s cubic-bezier(.5,0,.2,1);
+}
+.gauge-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.gauge-num  { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 34px; color: var(--ink); line-height: 1; }
+.gauge-num .total { color: var(--muted); font-size: 17px; font-weight: 600; }
+.gauge-sub  { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.gauge-insight {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(242,107,31,.1); border: 1px solid rgba(242,107,31,.2);
+  border-radius: 10px; padding: 7px 12px; margin-bottom: 14px;
+}
+.gauge-insight svg { flex-shrink: 0; }
+.gauge-insight span { font-size: 12px; font-weight: 600; color: var(--orange-deep); }
+
+/* ── Metrics ── */
+.metrics { display: flex; flex-direction: column; gap: 11px; }
+.metric   { display: grid; grid-template-columns: 96px 1fr 44px; align-items: center; gap: 8px; }
+.metric-label { font-size: 13px; color: var(--text); font-weight: 600; text-align: right; }
+.metric-bar   { background: #EDD8BE; height: 7px; border-radius: 4px; overflow: hidden; }
+.metric-fill  { height: 100%; border-radius: 4px; transition: width 1.2s cubic-bezier(.5,0,.2,1); width: 0%; }
+.metric-fill.bad  { background: linear-gradient(90deg,#E8956B,#D45A12); }
+.metric-fill.mid  { background: linear-gradient(90deg,#F7D387,#E8A030); }
+.metric-fill.good { background: linear-gradient(90deg,#7EC89A,#2D7A3A); }
+.metric-val   { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); direction: ltr; text-align: left; }
+
+/* ── Matrix card ── */
+.matrix-card {
+  background: linear-gradient(145deg, #FEF5E7 0%, #F9EDDE 40%, #F5E4CC 100%);
+  border: 1px solid rgba(255,255,255,.92);
+  border-radius: 20px; padding: 22px;
+  box-shadow: 0 2px 16px rgba(180,110,60,.08), 0 1px 2px rgba(255,255,255,.9) inset;
+  transition: transform .25s, box-shadow .25s;
+  display: flex; flex-direction: column;
+}
+.matrix-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(180,110,60,.14); }
+.matrix-label { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 12px; }
+.matrix-card .matrix-wrap { flex: 1; }
+.matrix-wrap {
+  display: grid; grid-template-columns: 16px 1fr 1fr;
+  grid-template-rows: 1fr 1fr 18px; gap: 10px;
+  flex: 1;
+}
+.axis-y {
+  grid-column: 1; grid-row: 1/3; writing-mode: vertical-rl; transform: rotate(180deg);
+  font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted);
+  display: flex; justify-content: space-between; align-items: center; padding: 4px 0;
+}
+.axis-x {
+  grid-column: 2/4; grid-row: 3; display: flex; justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); padding: 0 4px;
+}
+.quad {
+  border-radius: 12px; padding: 14px; min-height: 110px; font-size: 12px; line-height: 1.5; font-weight: 500;
+  cursor: pointer; transition: transform .2s, box-shadow .2s; position: relative; overflow: hidden;
+}
+.quad:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.14); }
+.quad strong { display: block; font-weight: 800; margin-bottom: 4px; font-size: 12px; }
+.quad.q1 { background: var(--q1); color: #5A3E00; }
+.quad.q2 { background: var(--q2); color: #3A2E24; }
+.quad.q3 { background: var(--q3); color: #fff; }
+.quad.q4 { background: var(--q4); color: #4A3A28; }
+.quad.q1::after { content: '★'; position: absolute; bottom: 8px; left: 10px; font-size: 14px; opacity: .35; }
+
+/* ── Reco card ── */
+.reco-card {
+  background: linear-gradient(145deg, #FEF5E7 0%, #F9EDDE 40%, #F5E4CC 100%);
+  border: 1px solid rgba(255,255,255,.92);
+  border-radius: 20px; padding: 22px; margin-bottom: 18px;
+  box-shadow: 0 2px 16px rgba(180,110,60,.08), 0 1px 2px rgba(255,255,255,.9) inset;
+}
+.reco-tool {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--ink); color: #fff;
+  border-radius: 8px; padding: 5px 12px;
+  font-size: 12px; font-weight: 700; margin-bottom: 12px; letter-spacing: .02em;
+}
+.reco-body {
+  font-size: 15px; line-height: 1.8; color: var(--text); font-weight: 400;
+  padding-right: 20px; position: relative;
+}
+.reco-body::before { content: '"'; position: absolute; right: 0; top: -6px; color: var(--orange); font-size: 32px; font-weight: 800; line-height: 1; }
+.reco-body em { font-style: normal; font-weight: 700; color: var(--ink); background: rgba(242,107,31,.1); padding: 1px 5px; border-radius: 4px; }
+.reco-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; flex-wrap: wrap; gap: 8px; }
+.reco-impact { font-size: 13px; font-weight: 700; color: var(--green); background: var(--green-pale); border-radius: 8px; padding: 6px 14px; }
+.reco-conf   { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--orange-deep); background: var(--orange-pale); border-radius: 8px; padding: 5px 10px; font-weight: 600; letter-spacing: .04em; }
+
+/* ══════════════════════════════════
+   CTA — תוכנית פעולה + קביעת שיחה
+   כרטיסים ברוחב מלא, CTA צף מעליהם
+══════════════════════════════════ */
+.plan-section {
+  position: relative;
+  margin-bottom: 40px;
+  /* גובה קבוע כדי שהCTA יוצב בצורה נכונה */
+}
+
+/* הכרטיסים הנעולים — כל אחד בקוביה משלו, ברוחב מלא */
+.locked-cards {
+  display: flex; flex-direction: column; gap: 9px;
+  filter: blur(4px); opacity: .38;
+  user-select: none; pointer-events: none;
+  /* padding בתחתית כדי שהכרטיסים האחרונים יהיו גלויים מתחת לCTA */
+  padding-bottom: 12px;
+}
+.locked-card {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: linear-gradient(145deg, #FEF5E7 0%, #F9EDDE 100%);
+  border: 1px solid rgba(255,255,255,.8);
+  border-radius: 14px; padding: 14px 18px;
+}
+.locked-num   { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Assistant',sans-serif; font-size: 13px; font-weight: 800; background: var(--orange-pale); color: var(--orange-deep); flex-shrink: 0; }
+.locked-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+.locked-desc  { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+/* CTA — absolute, יושב במרכז מעל הכרטיסים */
+/* הכרטיסים נראים: למעלה (מעל הCTA), משמאל ומימין, ומלמטה */
+.cta-overlay {
+  position: absolute;
+  /* ממוקם בחלק העליון-אמצעי, לא מכסה הכל */
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  /* עיטור fade עגול מאחורי הCTA */
+  filter: drop-shadow(0 0 40px rgba(246,241,230,.95));
+}
+.cta-overlay > * { pointer-events: auto; }
+
+.cta-box {
+  background: linear-gradient(145deg, #FEF5E7 0%, #F9EDDE 50%, #F5E4CC 100%);
+  border: 1.5px solid rgba(242,107,31,.25);
+  border-radius: 22px; padding: 26px 24px 22px;
+  text-align: center;
+  width: 380px; max-width: 85%;
+  box-shadow:
+    0 0 0 20px rgba(246,241,230,.7),   /* halo שמסתיר מעט את הרקע מסביב */
+    0 12px 40px rgba(180,110,60,.18),
+    0 1px 2px rgba(255,255,255,.9) inset;
+}
+.cta-lock-icon { width: 48px; height: 48px; background: #B8966A; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+.cta-lock-icon svg { width: 22px; height: 22px; stroke: #FFF5E8; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.cta-title { font-family: 'Rubik', sans-serif; font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 8px; letter-spacing: -0.02em; }
+.cta-body  { font-size: 14px; color: #555; line-height: 1.65; margin-bottom: 10px; }
+.cta-scarcity {
+  display: inline-block; margin-bottom: 18px;
+  background: rgba(242,107,31,.08); border: 1px solid rgba(242,107,31,.2);
+  border-radius: 10px; padding: 7px 14px;
+  font-size: 13px; font-weight: 600; color: var(--orange-deep); line-height: 1.5;
+}
+.btn-cta {
+  display: block; width: 100%;
+  background: linear-gradient(135deg, var(--orange), var(--orange-deep));
+  color: #fff; border: none; border-radius: 14px;
+  padding: 16px; font-family: 'Assistant', sans-serif;
+  font-weight: 800; font-size: 16px; cursor: pointer;
+  box-shadow: 0 10px 28px rgba(242,107,31,.42);
+  transition: transform .15s, box-shadow .2s; letter-spacing: .01em;
+}
+.btn-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(242,107,31,.52); }
+
+/* ── Footer ── */
+.footer-note { text-align: center; font-size: 13px; color: var(--muted); padding-bottom: 40px; }
+</style>
+</head>
+<body>
+
+<!-- גל עליון — זהה לדף 1 -->
+<svg class="wave-svg wave-svg-top" viewBox="0 0 1400 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="waveTopFill" cx="85%" cy="35%" r="75%">
+      <stop offset="0%"   stop-color="#FBBA76" stop-opacity="0.85"/>
+      <stop offset="25%"  stop-color="#FDC481" stop-opacity="0.70"/>
+      <stop offset="50%"  stop-color="#FDC481" stop-opacity="0.45"/>
+      <stop offset="75%"  stop-color="#FDC481" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#FDC481" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <path fill="url(#waveTopFill)" d="M 450,0 C 580,70 750,150 900,210 C 1010,260 1110,330 1200,400 C 1280,460 1350,510 1400,540 L 1400,0 Z"/>
+</svg>
+
+<!-- גל תחתון — זהה לדף 1 -->
+<svg class="wave-svg wave-svg-bottom" viewBox="0 0 800 800" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="waveBottomFill" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#FBBA76" stop-opacity="0.75"/>
+      <stop offset="25%"  stop-color="#FDC481" stop-opacity="0.55"/>
+      <stop offset="55%"  stop-color="#FDC481" stop-opacity="0.30"/>
+      <stop offset="80%"  stop-color="#FDC481" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#FDC481" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#waveBottomFill)" d="M 0,800 L 0,200 C 70,210 150,260 220,330 C 300,410 360,360 440,420 C 530,490 510,580 600,640 C 680,690 740,720 800,750 L 800,800 Z"/>
+</svg>
+
+<!-- Nav -->
+<nav class="top-nav">
+  <a class="flowli-logo" href="flowli-avchon-page.html">
+    <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 30 Q25 15 40 30 Q55 45 70 30" stroke="#2A2A2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M10 45 Q25 30 40 45 Q55 60 70 45" stroke="#2A2A2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M10 60 Q25 45 40 60 Q55 75 70 60" stroke="#F26B1F" stroke-width="6" fill="none" stroke-linecap="round"/>
+    </svg>
+    <span class="logo-text"><span class="logo-flow">flow</span><span class="logo-li">li</span></span>
+  </a>
+  <div class="nav-badge">תוצאות האבחון</div>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- Hero -->
+  <div class="hero-strip">
+    <div>
+      <div class="hero-name" id="heroName">האבחון שלך מוכן 🎉</div>
+      <div class="hero-sub">תוצאות אישיות — מבוסס על תשובותיך.</div>
+    </div>
+    <div class="loss-bubble">
+      <div class="loss-amount" id="lossAmount">₪0</div>
+      <div class="loss-label">פוטנציאל אובדן חודשי</div>
+      <div class="loss-sub">מבוסס על הנתונים שלך</div>
+    </div>
+  </div>
+
+  <!-- עדיפות ראשונה -->
+  <div class="section-title">עדיפות ראשונה — בשבילך</div>
+  <div class="priority-card">
+    <div class="priority-tag">🔥 האבחון מגלה</div>
+    <div class="priority-title" id="priorityTitle">טוען...</div>
+    <div class="priority-body" id="priorityBody"></div>
+    <div class="priority-action">
+      <span class="action-icon">⚡</span>
+      <span id="priorityStep">טוען...</span>
+    </div>
+  </div>
+
+  <!-- ציון בריאות + מפת עדיפויות -->
+  <div class="section-title">ציון בריאות תפעולית</div>
+  <div class="two-col">
+
+    <div class="gauge-card">
+      <div class="gauge-center">
+        <div class="gauge-wrap">
+          <svg class="gauge-svg" viewBox="0 0 130 130">
+            <defs>
+              <linearGradient id="gauge-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stop-color="#F8B98C"/>
+                <stop offset="100%" stop-color="#F26B1F"/>
+              </linearGradient>
+            </defs>
+            <circle class="gauge-bg" cx="65" cy="65" r="54"/>
+            <circle class="gauge-fg" id="gaugeFg" cx="65" cy="65" r="54"/>
+          </svg>
+          <div class="gauge-text">
+            <div class="gauge-num" id="gaugeNum">0<span class="total">/100</span></div>
+            <div class="gauge-sub">ציון כולל</div>
+          </div>
+        </div>
+      </div>
+      <div class="gauge-insight">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#D45A12" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="gaugeHint">מחשב...</span>
+      </div>
+      <div class="metrics" id="metricsEl"></div>
+    </div>
+
+    <div class="matrix-card">
+      <div class="matrix-label">לאן קודם? מפת עדיפויות</div>
+      <div class="matrix-wrap">
+        <div class="axis-y"><span>השפעה גבוהה</span><span>השפעה נמוכה</span></div>
+        <div class="quad q1" id="quadQ1"><strong>התחל כאן</strong><span id="q1items"></span></div>
+        <div class="quad q2" id="quadQ2"><strong>תכנן קדימה</strong><span id="q2items"></span></div>
+        <div class="quad q3" id="quadQ3"><strong>ניצחונות מהירים</strong><span id="q3items"></span></div>
+        <div class="quad q4" id="quadQ4"><strong>בינתיים לא</strong><span id="q4items"></span></div>
+        <div></div>
+        <div class="axis-x"><span>מאמץ נמוך</span><span>מאמץ גבוה</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- המלצה אישית -->
+  <div class="section-title">ההמלצה שלי — הכלי המדויק לך</div>
+  <div class="reco-card">
+    <div class="reco-tool" id="recoTool">טוען...</div>
+    <div class="reco-body" id="recoBody">טוען...</div>
+    <div class="reco-foot">
+      <div class="reco-impact" id="recoImpact">טוען...</div>
+      <div class="reco-conf">ניתוח AI · Flowli</div>
+    </div>
+  </div>
+
+  <!-- תוכנית פעולה נעולה + CTA מעליה -->
+  <div class="section-title">תוכנית פעולה מלאה</div>
+  <div class="plan-section" style="min-height:500px;">
+    <div class="locked-cards">
+      <div class="locked-card"><div class="locked-num">2</div><div><div class="locked-title">מערכת פולואפ אוטומטית</div><div class="locked-desc">לידים שלא ענו מקבלים תזכורת חכמה</div></div></div>
+      <div class="locked-card"><div class="locked-num">3</div><div><div class="locked-title">CRM מרכזי לכל הלקוחות</div><div class="locked-desc">היסטוריה, סטטוס, ביאורים — במקום אחד</div></div></div>
+      <div class="locked-card"><div class="locked-num">4</div><div><div class="locked-title">דשבורד ניהול לידים</div><div class="locked-desc">תרא.י בזמן אמת מה קורה בעסק שלך</div></div></div>
+      <div class="locked-card"><div class="locked-num">5</div><div><div class="locked-title">אוטומציית הצעות מחיר</div><div class="locked-desc">PDF מוכן תוך 3 דקות, ישירות ללקוח</div></div></div>
+    </div>
+
+    <div class="cta-overlay">
+      <div class="cta-box">
+        <div class="cta-lock-icon"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
+        <div class="cta-title">רוצ.ה את תוכנית הפעולה המלאה?</div>
+        <div class="cta-body">בשיחה של 30 דקות — נבנה יחד את המפה המדויקת לעסק שלך.</div>
+        <div class="cta-scarcity">💛 אני עובדת עם מספר מצומצם של עסקים בכל חודש —<br>כדי שאוכל להיות נוכחת באמת.</div>
+        <button class="btn-cta" onclick="openContact()">קבע.י שיחה חינמית ←</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">© 2026 Flowli · כל הזכויות שמורות</div>
+
+</div>
+
+<script>
+const demo={mood:2,industry:0,dealsize:2,monthlyLeads:1,closeRate:2,leadSources:[0,2,4],leads:2,responseTime:2,followup:1,quotes:1,info:1,questions:2,painPoint:'אני מקבל המון פניות בוואטסאפ ולא מצליחה לחזור לכולן'};
+const answers=(()=>{try{const r=localStorage.getItem('flowliAnswers');return r?JSON.parse(r):demo;}catch(e){return demo;}})();
+const firstName=(()=>{try{let n=localStorage.getItem('flowliName');if(!n){const ld=localStorage.getItem('flowli_lead');if(ld)n=JSON.parse(ld).name;}return(n||'דנה').split(' ')[0];}catch(e){return'דנה';}})();
+
+const leadsPerMonth=[7,20,50,100][answers.monthlyLeads??1];
+const closeRates=[0.75,0.50,0.25,0.12][answers.closeRate??2];
+const dealValues=[250,1200,5500,15000][answers.dealsize??2];
+const improvedClose=Math.min(closeRates*1.35,0.85);
+const leadsLost=Math.round(leadsPerMonth*(1-closeRates));
+const moneyLost=Math.round(leadsLost*dealValues*improvedClose);
+
+function score(keys){const v=keys.map(k=>answers[k]).filter(x=>x!==undefined&&typeof x==='number');return v.length?Math.round(100-(v.reduce((a,b)=>a+b,0)/v.length/3)*100):50;}
+
+const areas=[
+  {name:'ניהול לידים', score:score(['leads','followup'])},
+  {name:'זמן תגובה',   score:score(['responseTime'])},
+  {name:'תפעול משרד',  score:score(['quotes','info','questions'])},
+  {name:'עומס יומי',   score:score(['mood'])},
+];
+const totalScore=Math.round(areas.reduce((a,b)=>a+b.score,0)/areas.length);
+const worstArea=[...areas].sort((a,b)=>a.score-b.score)[0];
+
+const autos=[
+  {name:'בוט וואטסאפ',impact:3,effort:1,on:answers.responseTime>=1||answers.leads>=1},
+  {name:'פולואפ אוטו', impact:3,effort:1,on:answers.followup>=1},
+  {name:'הצעות מחיר', impact:2,effort:1,on:answers.quotes>=1},
+  {name:'CRM מרכזי',  impact:2,effort:2,on:answers.info>=1},
+  {name:'FAQ Bot',     impact:2,effort:1,on:answers.questions>=1},
+  {name:'דשבורד',     impact:1,effort:2,on:true},
+  {name:'אינטגרציות', impact:2,effort:3,on:(answers.leadSources||[]).length>=3},
+];
+const qMap={q1:[],q2:[],q3:[],q4:[]};
+autos.filter(a=>a.on).forEach(a=>{
+  const q=a.impact>=2&&a.effort<=2?'q1':a.impact>=2&&a.effort>2?'q2':a.impact<2&&a.effort<=2?'q3':'q4';
+  qMap[q].push(a.name);
+});
+
+const priorityMap={
+  'זמן תגובה':{
+    title:firstName+', הלקוח לא ממתין — הוא כבר אצל המתחרה',
+    body:`כשעוברות יותר מ-2 שעות עד לתגובה הראשונה — <em>שיעור הסגירה יורד ב-70%</em>. לא כי המוצר שלך פחות טוב, אלא כי מי שענה ראשון כבר יצר קשר ואמון.`,
+    step:`שלב 1: תגובה אוטומטית שמאשרת קבלת פנייה תוך 30 שניות`
+  },
+  'ניהול לידים':{
+    title:leadsLost+' פניות יוצאות מהמשפך שלך כל חודש',
+    body:`לא בגלל שהן לא מתאימות — אלא כי <em>אין מעקב מסודר</em>. כל ליד שנופל בין הכסאות שווה ${dealValues.toLocaleString()}₪ שנשאר על השולחן.`,
+    step:`שלב 1: רשימה חיה של כל הפניות הפתוחות עם סטטוס ותאריך`
+  },
+  'תפעול משרד':{
+    title:'שעה על הצעת מחיר = לקוח שנסגר אצל המתחרה',
+    body:`כל עיכוב בהצעה הוא הזדמנות למתחרה. <em>3 דקות במקום שעה</em> — זה אפשרי עם תבנית שמייצרת הצעות מחיר אוטומטיות.`,
+    step:`שלב 1: תבנית הצעת מחיר שמתמלאת אוטומטית בנתוני הלקוח`
+  },
+  'עומס יומי':{
+    title:'כל האנרגיה שלך הולכת לכיבוי שריפות',
+    body:`כשאת.ה מנהל.ת עסק ועוסק.ת בשאלות חוזרות ומשימות ידניות — <em>אין זמן לצמיחה אמיתית</em>. 2–3 אוטומציות פותחות 8 שעות שבועיות.`,
+    step:`שלב 1: לזהות את 3 המשימות החוזרות ביותר ולהפוך אותן לאוטומטיות`
+  },
+};
+const pri=priorityMap[worstArea.name]||{title:'יש פוטנציאל משמעותי לשיפור',body:`<em>2–3 אוטומציות</em> יכולות לשחרר שעות ולשפר הכנסה.`,step:`שלב 1: למפות נקודות כאב — קבע.י שיחה ייעודית`};
+
+function buildRec(){
+  const pain=(answers.painPoint||'').trim();
+  const painHtml=pain.length>10?`כתבת: <em>"${pain.length>60?pain.slice(0,58)+'...':pain}"</em> — זה בדיוק הנקודה. `:'';
+  const highDeal=(answers.dealsize||0)>=2;
+  if(worstArea.name.includes('תגובה')||answers.responseTime>=2)
+    return{tool:'🤖 בוט תגובה אוטומטי',body:`${painHtml}הכלי שמתאים לך: <em>בוט WhatsApp שעונה תוך שניות</em> — מאשר קבלת פנייה, מקבל פרטים, ומעביר לך רק לידים מסוננים.`,impact:`מונע ~${Math.round(moneyLost*0.35).toLocaleString()}₪ אובדן חודשי`};
+  if(worstArea.name.includes('לידים')||answers.leads>=2){
+    if(highDeal) return{tool:'📋 מערכת מעקב לידים',body:`${painHtml}הכלי שמתאים לך: <em>CRM קל ואוטומטי</em> שרושם כל פנייה ושולח תזכורת כשליד לא קיבל מענה תוך 24 שעות.`,impact:`שחזור עד ${moneyLost.toLocaleString()}₪ בחודש`};
+    return{tool:'📋 מעקב פניות אוטומטי',body:`${painHtml}הכלי שמתאים לך: <em>רשימת לידים חיה</em> שמתעדכנת אוטומטית ושולחת תזכורת כשפנייה נשכחת.`,impact:`שחזור ${moneyLost.toLocaleString()}₪ בחודש`};
+  }
+  if(worstArea.name.includes('תפעול')||answers.quotes>=2)
+    return{tool:'📄 הצעות מחיר אוטומטיות',body:`${painHtml}הכלי שמתאים לך: <em>תבנית הצעת מחיר חכמה</em> — מזין שם לקוח, מקבל PDF מוכן תוך 3 דקות. הלקוח מקבל לפני שסיים לחפש מתחרים.`,impact:'חוסך 5–8 שעות שבועיות'};
+  return{tool:'⚡ חבילת אוטומציה בסיסית',body:`${painHtml}הכלי שמתאים לך: <em>3 אוטומציות ליבה</em> — תגובה ראשונה, מעקב לידים, ועדכון סטטוס ללקוחות.`,impact:'8–10 שעות פנויות בשבוע'};
+}
+const rec=buildRec();
+
+// RENDER
+document.getElementById('heroName').textContent=firstName+', האבחון שלך מוכן 🎉';
+
+const lossEl=document.getElementById('lossAmount');
+let cur=0; const step=Math.ceil(moneyLost/50);
+setTimeout(()=>{const iv=setInterval(()=>{cur=Math.min(cur+step,moneyLost);lossEl.textContent='₪'+cur.toLocaleString();if(cur>=moneyLost)clearInterval(iv);},20);},300);
+
+document.getElementById('priorityTitle').textContent=pri.title;
+document.getElementById('priorityBody').innerHTML=pri.body;
+document.getElementById('priorityStep').textContent=pri.step;
+
+setTimeout(()=>{
+  const fg=document.getElementById('gaugeFg');
+  fg.style.strokeDashoffset=339.3-(totalScore/100)*339.3;
+  let c=0; const ne=document.getElementById('gaugeNum');
+  const iv=setInterval(()=>{c=Math.min(c+Math.ceil(totalScore/35),totalScore);ne.innerHTML=c+'<span class="total">/100</span>';if(c>=totalScore)clearInterval(iv);},25);
+  const hints={low:'יש מקום לשיפור משמעותי',mid:'יש פוטנציאל טוב לשיפור',high:'את.ה מנהל.ת עסק טוב'};
+  document.getElementById('gaugeHint').textContent=totalScore<40?hints.low:totalScore<65?hints.mid:hints.high;
+},500);
+
+document.getElementById('metricsEl').innerHTML=areas.map(a=>{
+  const cls=a.score<40?'bad':a.score<65?'mid':'good';
+  return`<div class="metric"><span class="metric-label">${a.name}</span><div class="metric-bar"><div class="metric-fill ${cls}" style="width:0%" data-w="${a.score}"></div></div><span class="metric-val">${a.score}/100</span></div>`;
+}).join('');
+setTimeout(()=>{ document.querySelectorAll('.metric-fill').forEach(b=>{ b.style.width=b.dataset.w+'%'; }); },600);
+
+document.getElementById('q1items').textContent=(qMap.q1||[]).join(' · ')||'—';
+document.getElementById('q2items').textContent=(qMap.q2||[]).join(' · ')||'—';
+document.getElementById('q3items').textContent=(qMap.q3||[]).join(' · ')||'—';
+document.getElementById('q4items').textContent=(qMap.q4||[]).join(' · ')||'—';
+
+document.getElementById('recoTool').textContent=rec.tool;
+document.getElementById('recoBody').innerHTML=rec.body;
+document.getElementById('recoImpact').textContent=rec.impact;
+
+function openContact(){ window.open('mailto:hadasbarnes76@gmail.com?subject=קביעת שיחת אסטרטגיה Flowli&body=שלום הדס, אשמח לקבוע שיחה.','_blank'); }
+</script>
+
+<script>
+// ══ Supabase — שמירת ליד (scr

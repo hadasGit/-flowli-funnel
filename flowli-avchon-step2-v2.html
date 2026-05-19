@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flowli — אבחון</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&family=Rubik:ital,wght@0,300..900;1,300..900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F6F1E6; --bg-light: #FBF7EE; --cream: #FFFFFF;
+      --grey: #2A2A2A; --ink: #1A1A1A; --text: #2A2A2A;
+      --orange: #F26B1F; --orange-deep: #D45A12;
+      --border: #D8D0BE;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Assistant', system-ui, sans-serif;
+      background: var(--bg); color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh; position: relative; overflow-x: hidden;
+    }
+    .wave-svg { position: absolute; pointer-events: none; z-index: 0; }
+    .wave-svg-top  { top: 80px; right: 0; width: 100%; max-width: 1400px; height: 900px; }
+    .wave-svg-bottom { bottom: 0; left: 0; width: 70%; max-width: 750px; height: auto; }
+    .top-nav {
+      position: relative; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 32px 16px; max-width: 1400px; margin: 0 auto;
+    }
+    .flowli-logo { display: inline-flex; align-items: center; gap: 0.3em; font-size: 24px; text-decoration: none; direction: ltr; }
+    .flowli-logo svg { width: 1.1em; height: 1.1em; }
+    .flowli-logo .logo-text { font-family: 'Inter', sans-serif; font-weight: 800; letter-spacing: -0.035em; }
+    .flowli-logo .logo-flow { color: #2A2A2A; }
+    .flowli-logo .logo-li   { color: var(--orange); }
+    .nav-step-label { font-family: 'Assistant', sans-serif; font-size: 14px; font-weight: 600; color: #777; }
+    .nav-step-label span { color: var(--orange); }
+    .page-wrap { position: relative; z-index: 5; max-width: 640px; margin: 0 auto; padding: 20px 24px 80px; }
+
+    /* PROGRESS */
+    .progress-wrap { margin-bottom: 28px; }
+    .progress-meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; }
+    .progress-block-name { font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
+    .progress-counter { font-size: 12px; font-weight: 500; color: #999; direction: ltr; }
+    .progress-track { width: 100%; height: 5px; background: rgba(0,0,0,.09); border-radius: 10px; overflow: hidden; direction: rtl; }
+    .progress-fill { height: 100%; border-radius: 10px; background: var(--orange); transition: width 0.5s cubic-bezier(.4,0,.2,1); }
+
+    /* BLOCK HEADER */
+    .block-header { margin-bottom: 22px; }
+    .block-eyebrow { font-size: 12px; font-weight: 700; color: var(--orange); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 5px; }
+    .block-title { font-family: 'Rubik',sans-serif; font-size: 26px; font-weight: 700; color: var(--ink); line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 4px; }
+    .block-sub { font-size: 14px; color: #777; line-height: 1.5; }
+
+    /* QUESTION */
+    .question-wrap { margin-bottom: 26px; }
+    .question-wrap:last-child { margin-bottom: 0; }
+    .q-label { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 11px; line-height: 1.4; letter-spacing: -0.01em; }
+
+    /* OPTION CARDS */
+    .options-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: stretch; }
+    .opt-card {
+      position: relative; display: flex; align-items: flex-start; gap: 12px;
+      padding: 13px 15px; border-radius: 16px;
+      background: linear-gradient(to left, rgba(221,229,247,.55) 0%, rgba(218,236,239,.50) 35%, rgba(234,236,229,.48) 68%, rgba(246,231,214,.52) 100%);
+      backdrop-filter: blur(20px) saturate(1.5); -webkit-backdrop-filter: blur(20px) saturate(1.5);
+      border: 1px solid rgba(255,255,255,.88);
+      box-shadow: 0 1px 1px rgba(255,255,255,.9) inset, 0 4px 14px -4px rgba(180,110,60,.12), 0 2px 6px rgba(0,0,0,.04);
+      cursor: pointer; transition: all .18s ease; user-select: none;
+    }
+    .opt-card:hover { border-color: rgba(242,107,31,.4); box-shadow: 0 1px 1px rgba(255,255,255,.9) inset, 0 6px 20px -4px rgba(242,107,31,.18), 0 2px 8px rgba(0,0,0,.06); transform: translateY(-1px); }
+    .opt-card.selected { border: 1.5px solid var(--orange); background: linear-gradient(to left, rgba(253,221,189,.60) 0%, rgba(254,240,231,.55) 50%, rgba(253,221,189,.50) 100%); box-shadow: 0 1px 1px rgba(255,255,255,.9) inset, 0 6px 22px -4px rgba(242,107,31,.22), 0 2px 8px rgba(242,107,31,.10); }
+    .opt-radio { width: 20px; height: 20px; min-width: 20px; border-radius: 50%; border: 2px solid rgba(0,0,0,.18); background: rgba(255,255,255,.7); margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all .15s; flex-shrink: 0; }
+    .opt-card.selected .opt-radio { border-color: var(--orange); background: var(--orange); }
+    .opt-radio-dot { width: 7px; height: 7px; border-radius: 50%; background: #fff; opacity: 0; transition: opacity .15s; }
+    .opt-card.selected .opt-radio-dot { opacity: 1; }
+    .opt-icon { width: 40px; height: 40px; min-width: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: #ffe9e1; flex-shrink: 0; }
+    .opt-icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .opt-text { flex: 1; min-width: 0; }
+    .opt-title { font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.25; margin-bottom: 2px; }
+    .opt-desc  { font-size: 12px; font-weight: 400; color: #888; line-height: 1.35; }
+    .opt-card.selected .opt-title { color: var(--orange-deep); }
+    .opt-card.selected .opt-desc  { color: rgba(212,90,18,.7); }
+
+    /* level tints */
+    .opt-card.lvl-0 .opt-icon { background: #e6f4ea; color: #2d7a3a; }
+    .opt-card.lvl-1 .opt-icon { background: #fff3e0; color: #b45309; }
+    .opt-card.lvl-2 .opt-icon { background: #fce3da; color: #a23f00; }
+    .opt-card.lvl-3 .opt-icon { background: #fde8e8; color: #b91c1c; }
+    .opt-card.lvl-neutral .opt-icon { background: #ffe9e1; color: #a23f00; }
+    .opt-card.lvl-na .opt-icon { background: rgba(0,0,0,.04); color: #999; }
+
+    /* CHIPS */
+    .chips-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .chip {
+      padding: 11px 13px; border-radius: 14px;
+      background: linear-gradient(to left, rgba(221,229,247,.55), rgba(246,231,214,.52));
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,.88);
+      box-shadow: 0 1px 1px rgba(255,255,255,.8) inset, 0 2px 6px rgba(0,0,0,.04);
+      font-family: 'Assistant',sans-serif; font-size: 13px; font-weight: 600;
+      color: var(--grey); cursor: pointer; transition: all .18s;
+      display: flex; align-items: center; gap: 7px; user-select: none;
+    }
+    .chip:hover { border-color: rgba(242,107,31,.4); transform: translateY(-1px); }
+    .chip.selected { background: linear-gradient(to left, rgba(253,221,189,.70), rgba(254,240,231,.65)); border: 1.5px solid var(--orange); color: var(--orange-deep); box-shadow: 0 1px 1px rgba(255,255,255,.9) inset, 0 4px 14px rgba(242,107,31,.18); }
+    .chip-icon { display: flex; align-items: center; }
+    .chip-icon svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* TEXTAREA */
+    .quiz-textarea {
+      width: 100%; padding: 14px 16px; border-radius: 16px;
+      background: linear-gradient(to left, rgba(221,229,247,.45), rgba(246,231,214,.42));
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,.88);
+      box-shadow: 0 1px 1px rgba(255,255,255,.8) inset, 0 3px 10px rgba(0,0,0,.04);
+      font-family: 'Assistant',sans-serif; font-size: 14px; color: var(--ink);
+      resize: none; outline: none; min-height: 80px; transition: border-color .2s, box-shadow .2s; direction: rtl;
+    }
+    .quiz-textarea::placeholder { color: #aaa; }
+    .quiz-textarea:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(242,107,31,.12), 0 1px 1px rgba(255,255,255,.8) inset; }
+    .textarea-helper { font-size: 11px; color: #aaa; margin-top: 5px; text-align: right; font-style: italic; }
+
+    /* NAV BUTTONS */
+    .quiz-nav { display: flex; gap: 10px; margin-top: 28px; align-items: center; justify-content: space-between; }
+    .btn-back {
+      flex-shrink: 0; background: rgba(255,255,255,.55); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1.5px solid var(--border); color: var(--grey); border-radius: 14px; padding: 14px 22px;
+      font-family: 'Assistant',sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all .2s;
+    }
+    .btn-back:hover { background: rgba(255,255,255,.8); border-color: var(--grey); }
+    .btn-back:disabled { opacity: .3; cursor: not-allowed; }
+    .btn-next {
+      flex: 1; background: var(--orange); color: #fff; border: none; border-radius: 14px; padding: 15px 24px;
+      font-family: 'Assistant',sans-serif; font-size: 17px; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      box-shadow: 0 10px 28px rgba(242,107,31,.38); transition: all .2s;
+    }
+    .btn-next:hover { background: var(--orange-deep); transform: translateY(-1px); box-shadow: 0 12px 32px rgba(242,107,31,.48); }
+    .btn-next:disabled { opacity: .4; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-arrow { font-size: 18px; direction: ltr; font-weight: 400; }
+
+    @media (max-width: 600px) {
+      .top-nav { padding: 16px 20px; }
+      .flowli-logo { font-size: 22px; }
+      .page-wrap { padding: 12px 20px 30px; }
+      .block-title { font-size: 22px; }
+      .opt-card { padding: 10px 11px; gap: 8px; }
+      .opt-icon { width: 30px; height: 30px; min-width: 30px; }
+      .opt-title { font-size: 13px; }
+      .opt-desc  { font-size: 11px; }
+      .opt-radio { width: 17px; height: 17px; min-width: 17px; }
+    }
+  </style>
+</head>
+<body>
+
+  <svg class="wave-svg wave-svg-top" viewBox="0 0 1400 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="waveTopFill" cx="85%" cy="35%" r="75%">
+        <stop offset="0%"   stop-color="#FBBA76" stop-opacity="0.85"/>
+        <stop offset="25%"  stop-color="#FDC481" stop-opacity="0.70"/>
+        <stop offset="50%"  stop-color="#FDC481" stop-opacity="0.45"/>
+        <stop offset="75%"  stop-color="#FDC481" stop-opacity="0.22"/>
+        <stop offset="100%" stop-color="#FDC481" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <path fill="url(#waveTopFill)" d="M 450,0 C 580,70 750,150 900,210 C 1010,260 1110,330 1200,400 C 1280,460 1350,510 1400,540 L 1400,0 Z"/>
+  </svg>
+  <svg class="wave-svg wave-svg-bottom" viewBox="0 0 800 800" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="waveBottomFill" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%"   stop-color="#FBBA76" stop-opacity="0.75"/>
+        <stop offset="25%"  stop-color="#FDC481" stop-opacity="0.55"/>
+        <stop offset="55%"  stop-color="#FDC481" stop-opacity="0.30"/>
+        <stop offset="80%"  stop-color="#FDC481" stop-opacity="0.12"/>
+        <stop offset="100%" stop-color="#FDC481" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path fill="url(#waveBottomFill)" d="M 0,800 L 0,200 C 70,210 150,260 220,330 C 300,410 360,360 440,420 C 530,490 510,580 600,640 C 680,690 740,720 800,750 L 800,800 Z"/>
+  </svg>
+
+  <nav class="top-nav">
+    <a href="#" class="flowli-logo">
+      <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 30 Q25 15 40 30 Q55 45 70 30" stroke="#2A2A2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <path d="M10 45 Q25 30 40 45 Q55 60 70 45" stroke="#2A2A2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <path d="M10 60 Q25 45 40 60 Q55 75 70 60" stroke="#F26B1F" stroke-width="6" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span class="logo-text"><span class="logo-flow">flow</span><span class="logo-li">li</span></span>
+    </a>
+    <span class="nav-step-label" id="navStepLabel">שלב <span id="navStepNum">1</span> מתוך 4</span>
+  </nav>
+
+  <main class="page-wrap">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span class="progress-block-name" id="progressBlockName"></span>
+        <span class="progress-counter" id="progressCounter">25%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width: 25%;"></div>
+      </div>
+    </div>
+    <div id="quizContent"></div>
+    <div class="quiz-nav">
+      <button class="btn-back" id="btnBack" onclick="prevBlock()">חזור</button>
+      <button class="btn-next" id="btnNext" onclick="nextBlock()">
+        <span id="btnNextLabel">המשך</span>
+        <span class="btn-arrow">←</span>
+      </button>
+    </div>
+  </main>
+
+<script>
+// ─── SVG ICONS ───────────────────────────────────
+const icons = {
+  sentiment_satisfied: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 14s1.5 2 3.5 2 3.5-2 3.5-2"/><circle cx="9" cy="10" r=".5" fill="currentColor"/><circle cx="15" cy="10" r=".5" fill="currentColor"/></svg>`,
+  sentiment_neutral:   `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="9" y1="14.5" x2="15" y2="14.5"/><circle cx="9" cy="10" r=".5" fill="currentColor"/><circle cx="15" cy="10" r=".5" fill="currentColor"/></svg>`,
+  sentiment_stressed:  `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 15.5s1.5-1.5 3.5-1.5 3.5 1.5 3.5 1.5"/><path d="M8.5 9.5l1 1"/><path d="M15.5 9.5l-1 1"/></svg>`,
+  local_fire_department:`<svg viewBox="0 0 24 24"><path d="M12 2c0 0-4 4-4 8 0 2.2 1.8 4 4 4s4-1.8 4-4c0-1-.4-2-1-2.8 0 0 .5 2.3-1.5 3.3C13.5 9.5 12 7 12 2z"/><path d="M5 20c0-3.3 2-6 4-7.5.5 1 1.2 1.8 2 2.3-.5.7-.9 1.6-.9 2.7 0 1.4.9 2.5 2 2.5s2-1.1 2-2.5c0-1-.4-1.9-.9-2.6.7-.6 1.4-1.4 1.8-2.4 2 1.5 4 4.2 4 7.5H5z"/></svg>`,
+  business_center:     `<svg viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="13" rx="2"/><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M2 13h20"/></svg>`,
+  inventory_2:         `<svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"/><path d="M9 13h6"/></svg>`,
+  corporate_fare:      `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>`,
+  celebration:         `<svg viewBox="0 0 24 24"><path d="M3 21l7-7"/><path d="M6.5 3.5l14 14-3.5 3.5-14-14z"/><path d="M14 6l3.5-3.5"/><circle cx="18" cy="4" r="1" fill="currentColor"/><circle cx="20" cy="7" r="1" fill="currentColor"/></svg>`,
+  payments:            `<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="12" cy="15" r="2"/></svg>`,
+  account_balance_wallet:`<svg viewBox="0 0 24 24"><path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2"/><path d="M21 12H15a2 2 0 0 0 0 4h6"/></svg>`,
+  savings:             `<svg viewBox="0 0 24 24"><path d="M12 2C8.7 2 6 4.7 6 8c0 2.4 1.3 4.5 3.3 5.6L10 20h4l.7-6.4C16.7 12.5 18 10.4 18 8c0-3.3-2.7-6-6-6z"/><path d="M9 12h6"/></svg>`,
+  diamond:             `<svg viewBox="0 0 24 24"><path d="M12 2l4 6H8l4-6z"/><path d="M8 8l4 12 4-12"/><path d="M3 8h18"/></svg>`,
+  trending_up:         `<svg viewBox="0 0 24 24"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>`,
+  trending_down:       `<svg viewBox="0 0 24 24"><path d="M23 18l-9.5-9.5-5 5L1 6"/><path d="M17 18h6v-6"/></svg>`,
+  show_chart:          `<svg viewBox="0 0 24 24"><path d="M3 20l4-8 4 4 4-6 4 4"/><path d="M3 20h18"/></svg>`,
+  percent:             `<svg viewBox="0 0 24 24"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>`,
+  chat:                `<svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.5 7.2L4 21l1.8-5.5A8 8 0 1 1 21 12z"/></svg>`,
+  call:                `<svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 3.1 5.2 2 2 0 0 1 5.1 3h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.4 2L9 11c1.8 3.1 4 5.3 7 7.1l1.4-1.4a2 2 0 0 1 2-.4c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2z"/></svg>`,
+  language:            `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c-2.5 3-4 5.7-4 9s1.5 6 4 9"/><path d="M12 3c2.5 3 4 5.7 4 9s-1.5 6-4 9"/></svg>`,
+  smartphone:          `<svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="18" r="1" fill="currentColor"/></svg>`,
+  groups:              `<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="8" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M19 20c0-2.2-1.3-4-3-5"/></svg>`,
+  ads_click:           `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M17.7 6.3l-2.1 2.1M8.4 15.6l-2.1 2.1M17.7 17.7l-2.1-2.1M8.4 8.4L6.3 6.3"/></svg>`,
+  check_circle:        `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-5"/></svg>`,
+  assignment:          `<svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3v2h6V3"/><path d="M9 12h6"/><path d="M9 16h4"/></svg>`,
+  leak_remove:         `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><line x1="4" y1="4" x2="20" y2="20" stroke-width="1.5"/></svg>`,
+  cancel:              `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>`,
+  bolt:                `<svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>`,
+  timer:               `<svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M9 3h6M12 3v2"/></svg>`,
+  schedule:            `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>`,
+  hourglass_bottom:    `<svg viewBox="0 0 24 24"><path d="M6 2h12v6l-4 4 4 4v6H6v-6l4-4-4-4V2z"/><path d="M6 20h12"/></svg>`,
+  my_location:         `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>`,
+  push_pin:            `<svg viewBox="0 0 24 24"><path d="M12 17v5"/><path d="M9 11V5l-2-2h10l-2 2v6l2 2H7l2-2z"/></svg>`,
+  front_hand:          `<svg viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v6M10 10.5V6a2 2 0 0 0-4 0v8M6 14v2a6 6 0 0 0 12 0v-5a2 2 0 0 0-4 0"/></svg>`,
+  do_not_disturb:      `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="9" y1="12" x2="15" y2="12"/></svg>`,
+  money_off:           `<svg viewBox="0 0 24 24"><line x1="4" y1="4" x2="20" y2="20"/><path d="M14.5 9A2.5 2.5 0 0 0 12 6.5h-1A2.5 2.5 0 0 0 8.5 9v.5M8.5 15A2.5 2.5 0 0 0 11 17.5h1a2.5 2.5 0 0 0 2.5-2.5V14"/><line x1="12" y1="6" x2="12" y2="18"/></svg>`,
+  remove_circle_outline:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="8" y1="12" x2="16" y2="12"/></svg>`,
+  manage_search:       `<svg viewBox="0 0 24 24"><path d="M15 15l5 5"/><circle cx="10" cy="10" r="6"/><path d="M7 10h6M10 7v6"/></svg>`,
+  folder_off:          `<svg viewBox="0 0 24 24"><path d="M4 4l16 16M8 4h11a2 2 0 0 1 2 2v11M4 8v11a2 2 0 0 0 2 2h13"/></svg>`,
+  phone_in_talk:       `<svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 3.1 5.2 2 2 0 0 1 5.1 3h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.4 2L9 11c1.8 3.1 4 5.3 7 7.1l1.4-1.4a2 2 0 0 1 2-.4c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2z"/><path d="M16 3a5 5 0 0 1 0 8"/></svg>`,
+  repeat:              `<svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/></svg>`,
+  warning:             `<svg viewBox="0 0 24 24"><path d="M12 2L2 20h20L12 2z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg>`,
+};
+function svgIcon(name) {
+  return icons[name] || `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/></svg>`;
+}
+
+// ─── BLOCKS DATA ─────────────────────────────────
+const blocks = [
+  {
+    num: 1,
+    eyebrow: 'שלב 1 מתוך 4',
+    title: 'רגע לפני שמתחילים...',
+    sub: 'שאלה אחת קצרה שעוזרת לנו להבין איפה את.ה עכשיו',
+    questions: [
+      {
+        id: 'mood', label: 'איך את.ה מרגיש.ה בסוף יום עבודה?', type: 'single',
+        options: [
+          { icon: 'sentiment_satisfied', title: 'מרוצה, הספקתי הכל',     desc: 'יש לי שליטה על מה שקורה',          lvl: 'lvl-0' },
+          { icon: 'sentiment_neutral',   title: 'עייפ.ה אבל זה בסדר',       desc: 'יום עבודה רגיל, ממשיכים',          lvl: 'lvl-1' },
+          { icon: 'sentiment_stressed',  title: 'שרופ.ה, חצי משימות נשאר', desc: 'תמיד דברים נופלים לסוף הרשימה',   lvl: 'lvl-2' },
+          { icon: 'local_fire_department',title:'כל יום כיבוי שריפות',   desc: 'אני בקושי שורד.ת, אין זמן לבנות',   lvl: 'lvl-3' },
+        ]
+      }
+    ]
+  },
+  {
+    num: 2,
+    eyebrow: 'שלב 2 מתוך 4',
+    title: 'בוא.י נכיר את העסק שלך',
+    sub: 'כמה שאלות בסיסיות — ובסוף נחשב כמה כסף נופל על הרצפה',
+    questions: [
+      {
+        id: 'industry', label: 'באיזה תחום העסק שלך?', type: 'single',
+        options: [
+          { icon: 'business_center', title: 'שירותים',       desc: 'קליניקה, ייעוץ, טיפול',       lvl: 'lvl-neutral' },
+          { icon: 'inventory_2',     title: 'מסחר ומוצרים', desc: 'חנות, מלאי, משלוחים',         lvl: 'lvl-neutral' },
+          { icon: 'corporate_fare',  title: 'B2B',            desc: 'שירותים לעסקים',              lvl: 'lvl-neutral' },
+          { icon: 'celebration',     title: 'אירועים',        desc: 'הפקות, אירוח, צילום',         lvl: 'lvl-neutral' },
+        ]
+      },
+      {
+        id: 'dealsize', label: 'מה סכום עסקה ממוצע אצלך?', type: 'single',
+        options: [
+          { icon: 'payments',               title: 'עד 500 ₪',        desc: 'עסקאות קטנות ותכופות', lvl: 'lvl-0' },
+          { icon: 'account_balance_wallet', title: '500 – 2,000 ₪',   desc: 'עסקאות בינוניות',      lvl: 'lvl-1' },
+          { icon: 'savings',                title: '2,000 – 10,000 ₪',desc: 'עסקאות גדולות',         lvl: 'lvl-2' },
+          { icon: 'diamond',                title: 'מעל 10,000 ₪',    desc: 'עסקאות פרימיום',        lvl: 'lvl-neutral' },
+        ]
+      },
+      {
+        id: 'monthlyLeads', label: 'כמה פניות / לידים נכנסים לך בחודש?', type: 'single',
+        options: [
+          { icon: 'trending_down',  title: 'עד 10',    desc: 'כל ליד שווה הרבה',         lvl: 'lvl-3' },
+          { icon: 'show_chart',     title: '10 – 30',  desc: 'קצב סביר, יש מה לעשות',    lvl: 'lvl-2' },
+          { icon: 'trending_up',    title: '30 – 80',  desc: 'קצב טוב, חשוב לנהל נכון',  lvl: 'lvl-1' },
+          { icon: 'bolt',           title: 'מעל 80',   desc: 'נפח גבוה — חייבים מערכת',  lvl: 'lvl-0' },
+        ]
+      },
+      {
+        id: 'closeRate', label: 'מכמה מהם את.ה בסוף סוגר.ת עסקה?', type: 'single',
+        options: [
+          { icon: 'check_circle',  title: 'כמעט כולם',    desc: 'סגירה גבוהה, מעל 70%',      lvl: 'lvl-0' },
+          { icon: 'show_chart',    title: 'בערך חצי',      desc: 'סגירה של 40–60%',            lvl: 'lvl-1' },
+          { icon: 'trending_down', title: 'בערך רבע',      desc: 'סגירה של 20–30%',            lvl: 'lvl-2' },
+          { icon: 'cancel',        title: 'מעט מאוד',      desc: 'סגירה מתחת ל-20%',           lvl: 'lvl-3' },
+        ]
+      },
+      {
+        id: 'leadSources', label: 'מאיפה מגיעים הלידים שלך? (אפשר לבחור כמה)', type: 'multi',
+        options: [
+          { icon: 'chat',       title: 'וואטסאפ' },
+          { icon: 'call',       title: 'טלפון' },
+          { icon: 'language',   title: 'אתר / טופס' },
+          { icon: 'smartphone', title: 'אינסטגרם / פייסבוק' },
+          { icon: 'groups',     title: 'המלצות' },
+          { icon: 'ads_click',  title: 'מודעות ממומנות' },
+        ]
+      },
+    ]
+  },
+  {
+    num: 3,
+    eyebrow: 'שלב 3 מתוך 4',
+    title: 'איך את.ה מטפל.ת בלידים?',
+    sub: 'הדרך שבה לידים מטופלים — היא הלב של ההכנסה שלך',
+    questions: [
+      {
+        id: 'leads', label: 'מה קורה ללידים חדשים אצלך?', type: 'single',
+        options: [
+          { icon: 'check_circle', title: 'תהליך מסודר',          desc: 'יש מעקב, תזכורות, הכל בשליטה',   lvl: 'lvl-0' },
+          { icon: 'assignment',   title: 'רושמים, לא תמיד עוקבים',desc: 'מי שזוכר — זוכר',               lvl: 'lvl-1' },
+          { icon: 'leak_remove',  title: 'נופלים בין הכסאות',      desc: 'יש לידים שנעלמים ולא חוזרים',   lvl: 'lvl-2' },
+          { icon: 'cancel',       title: 'אין מעקב בכלל',          desc: 'מקווים שיחזרו מעצמם',           lvl: 'lvl-3' },
+        ]
+      },
+      {
+        id: 'responseTime', label: 'כמה זמן עובר מרגע שליד נכנס ועד שעונים לו?', type: 'single',
+        options: [
+          { icon: 'bolt',            title: 'תוך 5 דקות',    desc: 'מענה מיידי, לא מפספסים',       lvl: 'lvl-0' },
+          { icon: 'timer',           title: 'תוך שעה-שעתיים',desc: 'די מהר, ברוב המקרים',          lvl: 'lvl-1' },
+          { icon: 'schedule',        title: 'אותו יום',       desc: 'בסוף עונים, אבל לוקח זמן',     lvl: 'lvl-2' },
+          { icon: 'hourglass_bottom',title: 'יום או יותר',   desc: 'לפעמים שוכחים ולא חוזרים',    lvl: 'lvl-3' },
+        ]
+      },
+      {
+        id: 'followup', label: 'האם אתם משקיעים בפולואפים?', type: 'single',
+        options: [
+          { icon: 'my_location',   title: 'כן, יש מערכת מסודרת', desc: 'תזכורות ומעקב אחרי כל ליד',   lvl: 'lvl-0' },
+          { icon: 'push_pin',      title: 'מדי פעם, לא שיטתי',   desc: 'מי שנזכר — עושה',             lvl: 'lvl-1' },
+          { icon: 'front_hand',    title: 'רק אם הלקוח מתעקש',   desc: 'לא יוזמים, ממתינים',          lvl: 'lvl-2' },
+          { icon: 'do_not_disturb',title: 'בכלל לא',              desc: 'אין זמן ואין מי שאחראי',     lvl: 'lvl-3' },
+        ]
+      },
+    ]
+  },
+  {
+    num: 4,
+    eyebrow: 'שלב 4 מתוך 4',
+    title: 'איך עובדים אצלך במשרד?',
+    sub: 'הנהלים והמידע הם הבסיס שעליו הכל עומד',
+    questions: [
+      {
+        id: 'quotes', label: 'כמה זמן לוקח להכין הצעת מחיר?', type: 'single',
+        options: [
+          { icon: 'bolt',            title: 'עד 10 דקות',       desc: 'תבנית מוכנה, כמה לחיצות',          lvl: 'lvl-0' },
+          { icon: 'timer',           title: 'חצי שעה עד שעה',   desc: 'מרכיב.ה כל פעם מחדש',               lvl: 'lvl-1' },
+          { icon: 'hourglass_bottom',title: 'כמה שעות',          desc: 'אוספ.ת מידע ממקורות שונים',         lvl: 'lvl-2' },
+          { icon: 'money_off',       title: 'מאחרים — ומפסידים',desc: 'הלקוח הלך לפני שנשלחה ההצעה',    lvl: 'lvl-3' },
+          { icon: 'remove_circle_outline', title: 'לא רלוונטי', desc: '', lvl: 'lvl-na' },
+        ]
+      },
+      {
+        id: 'info', label: 'אם לקוח מתקשר עכשיו — כמה זמן למצוא את ההיסטוריה שלו?', type: 'single',
+        options: [
+          { icon: 'bolt',            title: 'תוך דקה',              desc: 'הכל מרוכז במקום אחד',           lvl: 'lvl-0' },
+          { icon: 'manage_search',   title: 'חיפוש בכמה מקומות',    desc: 'תלוי מי טיפל בו לאחרונה',      lvl: 'lvl-1' },
+          { icon: 'hourglass_bottom',title: 'לוקח זמן',              desc: 'לפעמים לא מוצאים בכלל',       lvl: 'lvl-2' },
+          { icon: 'folder_off',      title: 'אין מקום מרכזי',        desc: 'כל אחד שומר אצלו',             lvl: 'lvl-3' },
+        ]
+      },
+      {
+        id: 'questions', label: 'כמה שיחות על מחירים / מלאי / סטטוס — ביום?', type: 'single',
+        options: [
+          { icon: 'check_circle',  title: 'עד 3 ביום',      desc: 'יש שליטה, לא מציפות אותי',         lvl: 'lvl-0' },
+          { icon: 'phone_in_talk', title: '4–10 ביום',      desc: 'לוקח זמן אבל מסתדרים',             lvl: 'lvl-1' },
+          { icon: 'repeat',        title: 'יותר מ-10',      desc: 'מבזבז זמן יקר על שאלות חוזרות',    lvl: 'lvl-2' },
+          { icon: 'warning',       title: 'חצי יום על זה',  desc: 'הצוות לא עובד, רק עונה',           lvl: 'lvl-3' },
+          { icon: 'remove_circle_outline', title: 'לא רלוונטי', desc: '', lvl: 'lvl-na' },
+        ]
+      },
+      {
+        id: 'painPoint',
+        label: 'מה הכאב העיקרי שלך כרגע?',
+        type: 'text',
+        placeholder: 'למשל: "אני מקבל המון פניות בוואטסאפ ולא מצליח לעקוב אחרי כולן..."',
+        optional: true
+      }
+    ]
+  }
+];
+
+// ─── STATE ───────────────────────────────────────
+let currentBlock = 1;
+let answers = {};
+
+// ─── RENDER ──────────────────────────────────────
+function render() {
+  const block = blocks[currentBlock - 1];
+  const total = blocks.length;
+  const pct = Math.round((currentBlock / total) * 100);
+
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressCounter').textContent = pct + '%';
+  document.getElementById('progressBlockName').textContent = block.title;
+  document.getElementById('navStepNum').textContent = currentBlock;
+
+  document.getElementById('btnBack').disabled = currentBlock === 1;
+  const isLast = currentBlock === total;
+  document.getElementById('btnNextLabel').textContent = isLast ? 'סיים אבחון' : 'המשך';
+
+  let html = `
+    <div class="block-header">
+      <div class="block-eyebrow">${block.eyebrow}</div>
+      <div class="block-title">${block.title}</div>
+      <div class="block-sub">${block.sub}</div>
+    </div>`;
+
+  block.questions.forEach(q => {
+    html += `<div class="question-wrap"><div class="q-label">${q.label}${q.optional ? ' <span style="font-weight:400;color:#aaa;font-size:13px">(אופציונלי)</span>' : ''}</div>`;
+
+    if (q.type === 'single') {
+      html += `<div class="options-list">`;
+      q.options.forEach((opt, i) => {
+        const sel = answers[q.id] === i ? 'selected' : '';
+        html += `
+          <div class="opt-card ${opt.lvl} ${sel}" onclick="selectSingle('${q.id}',${i},this)">
+            <div class="opt-radio"><div class="opt-radio-dot"></div></div>
+            <div class="opt-icon">${svgIcon(opt.icon)}</div>
+            <div class="opt-text">
+              <div class="opt-title">${opt.title}</div>
+              ${opt.desc ? `<div class="opt-desc">${opt.desc}</div>` : ''}
+            </div>
+          </div>`;
+      });
+      html += `</div>`;
+
+    } else if (q.type === 'multi') {
+      const selected = answers[q.id] || [];
+      html += `<div class="chips-wrap">`;
+      q.options.forEach((opt, i) => {
+        const sel = selected.includes(i) ? 'selected' : '';
+        html += `<div class="chip ${sel}" onclick="selectMulti('${q.id}',${i},this)"><span class="chip-icon">${svgIcon(opt.icon)}</span>${opt.title}</div>`;
+      });
+      html += `</div>`;
+
+    } else if (q.type === 'text') {
+      const val = answers[q.id] || '';
+      html += `
+        <div class="text-area-wrap">
+          <textarea class="quiz-textarea" placeholder="${q.placeholder || ''}" oninput="answers['${q.id}']=this.value">${val}</textarea>
+          <div class="textarea-helper">ככל שתפרט.י יותר — המפה שלך תהיה מדויקת יותר</div>
+        </div>`;
+    }
+    html += `</div>`;
+  });
+
+  document.getElementById('quizContent').innerHTML = html;
+  updateNextBtn();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function selectSingle(qid, idx, el) {
+  answers[qid] = idx;
+  el.closest('.options-list').querySelectorAll('.opt-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  updateNextBtn();
+}
+
+function selectMulti(qid, idx, el) {
+  if (!answers[qid]) answers[qid] = [];
+  const pos = answers[qid].indexOf(idx);
+  if (pos === -1) { answers[qid].push(idx); el.classList.add('selected'); }
+  else            { answers[qid].splice(pos, 1); el.classList.remove('selected'); }
+  updateNextBtn();
+}
+
+function updateNextBtn() {
+  const block = blocks[currentBlock - 1];
+  const allDone = block.questions.every(q => {
+    if (q.type === 'text' || q.optional) return true;
+    if (q.type === 'multi') return (answers[q.id] || []).length > 0;
+    return answers[q.id] !== undefined;
+  });
+  document.getElementById('btnNext').disabled = !allDone;
+}
+
+function nextBlock() {
+  if (currentBlock < blocks.length) {
+    currentBlock++;
+    render();
+  } else {
+    // שמור תשובות ועבור לעמוד הניתוח
+    try {
+      localStorage.setItem('flowliAnswers', JSON.stringify(answers));
+    } catch(e) {}
+    window.location.href = 'flowli-avchon-loading.html';
+  }
+}
+
+function prevBlock() {
+  if (currentBlock > 1) { currentBlock--; render(); }
+}
+
+render();
+</script>
+<script src="flowli-legal.js"></script>
+</body>
+</html>
