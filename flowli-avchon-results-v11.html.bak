@@ -37,13 +37,12 @@ body {
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
-  padding-bottom: 40px;
 }
 
 /* ══ גלים — זהים לדף 1 ══ */
 .wave-svg { position: fixed; pointer-events: none; z-index: 0; }
 .wave-svg-top    { top: 80px; right: 0; width: 100%; max-width: 1400px; height: 900px; }
-.wave-svg-bottom { bottom: 0; left: 0; width: 70%; max-width: 750px; height: 60vh; min-height: 400px; }
+.wave-svg-bottom { bottom: 0; left: 0; width: 70%; max-width: 750px; height: auto; }
 
 /* ── Nav ── */
 .top-nav {
@@ -101,12 +100,10 @@ body {
   border: 1.5px solid #F0D4A8; border-radius: 16px;
   padding: 16px 24px; flex-shrink: 0;
   animation: float 5s ease-in-out infinite; min-width: 165px;
-  min-height: 100px;
 }
 .loss-amount {
   font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 900;
   color: var(--orange); letter-spacing: -0.04em; line-height: 1;
-  min-height: 1.2em; display: block;
 }
 .loss-label { font-size: 11px; font-weight: 700; color: var(--ink); margin-top: 5px; }
 .loss-sub   { font-size: 10px; color: var(--muted); margin-top: 2px; }
@@ -426,7 +423,18 @@ body {
       <div class="metrics" id="metricsEl"></div>
     </div>
 
-    <div class="gauge-card" id="demoWidgetWrap" style="display:flex;align-items:center;justify-content:center;"></div>
+    <div class="matrix-card">
+      <div class="matrix-label">לאן קודם? מפת עדיפויות</div>
+      <div class="matrix-wrap">
+        <div class="axis-y"><span>השפעה גבוהה</span><span>השפעה נמוכה</span></div>
+        <div class="quad q1" id="quadQ1"><strong>התחל כאן</strong><span id="q1items"></span></div>
+        <div class="quad q2" id="quadQ2"><strong>תכנן קדימה</strong><span id="q2items"></span></div>
+        <div class="quad q3" id="quadQ3"><strong>ניצחונות מהירים</strong><span id="q3items"></span></div>
+        <div class="quad q4" id="quadQ4"><strong>בינתיים לא</strong><span id="q4items"></span></div>
+        <div></div>
+        <div class="axis-x"><span>מאמץ נמוך</span><span>מאמץ גבוה</span></div>
+      </div>
+    </div>
 
   </div>
 
@@ -454,10 +462,10 @@ body {
     <div class="cta-overlay">
       <div class="cta-box">
         <div class="cta-lock-icon"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
-        <div class="cta-title">רוצה את תוכנית הפעולה המלאה?</div>
+        <div class="cta-title">רוצ.ה את תוכנית הפעולה המלאה?</div>
         <div class="cta-body">בשיחה של 30 דקות — נבנה יחד את המפה המדויקת לעסק שלך.</div>
         <div class="cta-scarcity">💛 אני עובדת עם מספר מצומצם של עסקים בכל חודש —<br>כדי שאוכל להיות נוכחת באמת.</div>
-        <button class="btn-cta" id="btnCta" onclick="openContact()">📞 אשמח לשיחת היכרות קצרה — צרי קשר!</button>
+        <button class="btn-cta" onclick="openContact()">קבע.י שיחה חינמית ←</button>
       </div>
     </div>
   </div>
@@ -570,92 +578,18 @@ document.getElementById('metricsEl').innerHTML=areas.map(a=>{
 }).join('');
 setTimeout(()=>{ document.querySelectorAll('.metric-fill').forEach(b=>{ b.style.width=b.dataset.w+'%'; }); },600);
 
+document.getElementById('q1items').textContent=(qMap.q1||[]).join(' · ')||'—';
+document.getElementById('q2items').textContent=(qMap.q2||[]).join(' · ')||'—';
+document.getElementById('q3items').textContent=(qMap.q3||[]).join(' · ')||'—';
+document.getElementById('q4items').textContent=(qMap.q4||[]).join(' · ')||'—';
+
 document.getElementById('recoTool').textContent=rec.tool;
 document.getElementById('recoBody').innerHTML=rec.body;
 document.getElementById('recoImpact').textContent=rec.impact;
 
-// ── Demo widget לפי ההמלצה ──
-(function(){
-  var name = firstName;
-  var area = worstArea.name;
-  var recTool = rec.tool || '';
-  var html = '';
-
-  if (recTool.includes('בוט') || area.includes('תגובה')) {
-    html = '<div style="background:#fff;border-radius:16px;padding:16px;max-width:320px;margin:0 auto;box-shadow:0 2px 12px rgba(0,0,0,.08);font-family:\'Assistant\',sans-serif;direction:rtl;">'
-      + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #f0f0f0;">'
-      + '<div style="width:36px;height:36px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.1-1.4z"/></svg></div>'
-      + '<div><div style="font-weight:700;font-size:14px;">Flowli Bot</div><div style="font-size:11px;color:#25D366;">● מחובר</div></div></div>'
-      + '<div style="background:#f0f0f0;border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:13px;max-width:85%;">שלום! קיבלתי את פנייתך 👋 אחזור אליך תוך כשעה. בינתיים — ספר.י לי על העסק שלך.</div>'
-      + '<div style="background:#dcf8c6;border-radius:12px;padding:10px 12px;margin-right:auto;margin-left:0;font-size:13px;max-width:85%;text-align:right;">אחד, עסק קטן</div>'
-      + '<div style="font-size:11px;color:#aaa;text-align:center;margin-top:10px;">זו הודעה אוטומטית — נשלחת תוך 8 שניות מהפנייה</div></div>';
-  } else if (recTool.includes('מעקב') || recTool.includes('CRM') || area.includes('לידים')) {
-    html = '<div style="background:#fff;border-radius:16px;padding:16px;max-width:320px;margin:0 auto;box-shadow:0 2px 12px rgba(0,0,0,.08);font-family:\'Assistant\',sans-serif;direction:rtl;">'
-      + '<div style="font-weight:700;font-size:14px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f0f0f0;">📋 לידים פתוחים</div>'
-      + '<div style="display:flex;flex-direction:column;gap:8px;">'
-      + '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:#fff8f0;border-radius:10px;border-right:3px solid #F26B1F;">'
-      + '<div><div style="font-weight:700;font-size:13px;">ישראל כהן</div><div style="font-size:11px;color:#888;">נכנס לפני 2 שעות</div></div>'
-      + '<span style="background:#F26B1F;color:#fff;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:600;">חדש</span></div>'
-      + '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:#f8f8f8;border-radius:10px;">'
-      + '<div><div style="font-weight:700;font-size:13px;">רונית לוי</div><div style="font-size:11px;color:#888;">נכנסה אתמול</div></div>'
-      + '<span style="background:#fef0e7;color:#D45A12;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:600;">ממתין</span></div>'
-      + '<div style="font-size:11px;color:#aaa;text-align:center;margin-top:6px;">מתעדכן אוטומטית בכל פנייה חדשה</div></div></div>';
-  } else if (recTool.includes('הצעות') || area.includes('תפעול')) {
-    html = '<div style="background:#fff;border-radius:16px;padding:16px;max-width:320px;margin:0 auto;box-shadow:0 2px 12px rgba(0,0,0,.08);font-family:\'Assistant\',sans-serif;direction:rtl;">'
-      + '<div style="font-weight:700;font-size:14px;margin-bottom:4px;">📄 הצעת מחיר — ' + name + '</div>'
-      + '<div style="font-size:11px;color:#888;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #f0f0f0;">נוצרה אוטומטית · ' + new Date().toLocaleDateString('he-IL') + '</div>'
-      + '<table style="width:100%;font-size:13px;border-collapse:collapse;">'
-      + '<tr style="background:#f8f8f8;"><td style="padding:6px 8px;font-weight:600;">שירות</td><td style="padding:6px 8px;text-align:left;font-weight:600;">מחיר</td></tr>'
-      + '<tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;">ייעוץ ראשוני</td><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:left;">₪500</td></tr>'
-      + '<tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;">הטמעה</td><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:left;">₪2,000</td></tr>'
-      + '<tr style="font-weight:700;"><td style="padding:8px 8px;">סה"כ</td><td style="padding:8px 8px;text-align:left;color:#F26B1F;">₪2,500</td></tr>'
-      + '</table>'
-      + '<div style="font-size:11px;color:#aaa;text-align:center;margin-top:10px;">PDF נשלח למייל הלקוח אוטומטית</div></div>';
-  } else {
-    html = '<div style="background:#fff;border-radius:16px;padding:16px;max-width:320px;margin:0 auto;box-shadow:0 2px 12px rgba(0,0,0,.08);font-family:\'Assistant\',sans-serif;direction:rtl;">'
-      + '<div style="font-weight:700;font-size:14px;margin-bottom:12px;">⚡ משימות היום</div>'
-      + '<div style="display:flex;flex-direction:column;gap:7px;">'
-      + '<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#e6f4ea;border-radius:10px;"><span style="color:#2D7A3A;font-size:16px;">✓</span><span style="font-size:13px;color:#2D7A3A;font-weight:600;">מענה ל-3 לידים חדשים</span></div>'
-      + '<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#fff8f0;border-radius:10px;"><span style="color:#F26B1F;font-size:16px;">○</span><span style="font-size:13px;font-weight:600;">שלח הצעת מחיר לרונית</span></div>'
-      + '<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#f8f8f8;border-radius:10px;"><span style="color:#999;font-size:16px;">○</span><span style="font-size:13px;color:#888;">פולואפ לדנה כהן</span></div>'
-      + '<div style="font-size:11px;color:#aaa;text-align:center;margin-top:6px;">מתעדכן אוטומטית מכל הערוצים</div></div></div>';
-  }
-
-  var wrapEl = document.getElementById('demoWidgetWrap');
-  if (wrapEl) wrapEl.innerHTML = html;
-})();
-
-function openContact() {
-  var SUPABASE_URL = 'https://whuuevjoqitwslnykvgd.supabase.co';
-  var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndodXVldmpvcWl0d3NsbnlrdmdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTk3NDQsImV4cCI6MjA5NDY5NTc0NH0.r_lxvPFY275H7ODxYGHs0-NvqfQd8_e3fKHYy4sgq34';
-
-  // 1. עדכן כפתור + הצג אישור
-  var btn = document.getElementById('btnCta');
-  btn.disabled = true;
-  btn.style.background = 'linear-gradient(135deg,#2D7A3A,#3a9a4a)';
-  btn.style.border = '2.5px solid #1a5c28';
-  btn.style.boxShadow = '0 10px 28px rgba(45,122,58,.4)';
-  btn.style.cursor = 'default';
-
-  // 2. PATCH callback_requested
-  try {
-    var lead = JSON.parse(localStorage.getItem('flowli_lead') || '{}');
-    var email = lead.email;
-    if (email) {
-      fetch(SUPABASE_URL + '/rest/v1/leads?email=eq.' + encodeURIComponent(email), {
-        method: 'PATCH',
-        headers: {
-          'Content-Type':  'application/json',
-          'apikey':        SUPABASE_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_KEY,
-          'Prefer':        'return=minimal'
-        },
-        body: JSON.stringify({ callback_requested: true })
-      }).catch(function(){});
-    }
-  } catch(e) {}
-}
+function openContact(){ window.open('mailto:hadas@flowli.co.il?subject=קביעת שיחת אסטרטגיה Flowli&body=שלום הדס, אשמח לקבוע שיחה.','_blank'); }
 </script>
+
 
 <script>
 // Supabase - update answers on existing lead
@@ -686,6 +620,6 @@ function openContact() {
 })();
 </script>
 
-<script src="flowli-legal.js"></script>
-</body>
-</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+<script>
+function openContact() {
+  var SUPABASE_URL = '
