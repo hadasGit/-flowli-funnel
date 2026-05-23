@@ -21,7 +21,6 @@
       background: var(--bg); color: var(--text);
       -webkit-font-smoothing: antialiased;
       min-height: 100vh; position: relative; overflow-x: hidden;
-      padding-bottom: 40px;
     }
     .wave-svg { position: absolute; pointer-events: none; z-index: 0; }
     .wave-svg-top  { top: 80px; right: 0; width: 100%; max-width: 1400px; height: 900px; }
@@ -31,14 +30,14 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 22px 32px 16px; max-width: 1400px; margin: 0 auto;
     }
-    .flowli-logo { display: inline-flex; align-items: center; gap: 0.3em; font-size: clamp(26px, 3.5vw, 36px); text-decoration: none; direction: ltr; }
+    .flowli-logo { display: inline-flex; align-items: center; gap: 0.3em; font-size: 24px; text-decoration: none; direction: ltr; }
     .flowli-logo svg { width: 1.1em; height: 1.1em; }
     .flowli-logo .logo-text { font-family: 'Inter', sans-serif; font-weight: 800; letter-spacing: -0.035em; }
     .flowli-logo .logo-flow { color: #2A2A2A; }
     .flowli-logo .logo-li   { color: var(--orange); }
     .nav-step-label { font-family: 'Assistant', sans-serif; font-size: 14px; font-weight: 600; color: #777; }
     .nav-step-label span { color: var(--orange); }
-    .page-wrap { position: relative; z-index: 5; max-width: 640px; margin: 0 auto; padding: 28px 24px 80px; }
+    .page-wrap { position: relative; z-index: 5; max-width: 640px; margin: 0 auto; padding: 20px 24px 80px; }
 
     /* PROGRESS */
     .progress-wrap { margin-bottom: 28px; }
@@ -145,16 +144,13 @@
     @media (max-width: 600px) {
       .top-nav { padding: 16px 20px; }
       .flowli-logo { font-size: 22px; }
-      .page-wrap { padding: 22px 20px 30px; }
+      .page-wrap { padding: 12px 20px 30px; }
       .block-title { font-size: 22px; }
-      /* קוביות — שורה אחת בכל אפשרות במובייל */
-      .options-list { grid-template-columns: 1fr; gap: 7px; }
-      .opt-card { padding: 11px 14px; gap: 12px; flex-direction: row; align-items: center; }
-      .opt-icon { width: 34px; height: 34px; min-width: 34px; border-radius: 10px; }
-      .opt-icon svg { width: 18px; height: 18px; }
-      .opt-title { font-size: 14px; }
-      .opt-desc  { font-size: 12px; }
-      .opt-radio { width: 18px; height: 18px; min-width: 18px; }
+      .opt-card { padding: 10px 11px; gap: 8px; }
+      .opt-icon { width: 30px; height: 30px; min-width: 30px; }
+      .opt-title { font-size: 13px; }
+      .opt-desc  { font-size: 11px; }
+      .opt-radio { width: 17px; height: 17px; min-width: 17px; }
     }
   </style>
 </head>
@@ -521,27 +517,10 @@ function nextBlock() {
     currentBlock++;
     render();
   } else {
-    // שמור תשובות ב-localStorage
-    try {
-      localStorage.setItem('flowliAnswers', JSON.stringify(answers));
-      localStorage.setItem('flowli_abandoned_step', '3');
-    } catch(e) {}
+    // שמור תשובות ועבור לעמוד הניתוח
+    try { localStorage.setItem('flowliAnswers', JSON.stringify(answers)); } catch(e) {}
 
-    // חישוב ציון ושמירה ב-Supabase כבר כאן — לפני דף התוצאות
+    // שמור תוצאות ב-Supabase כבר כאן — לא מחכים לדף התוצאות
     (function(){
-      var SURL = 'https://whuuevjoqitwslnykvgd.supabase.co';
-      var SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndodXVldmpvcWl0d3NsbnlrdmdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTk3NDQsImV4cCI6MjA5NDY5NTc0NH0.r_lxvPFY275H7ODxYGHs0-NvqfQd8_e3fKHYy4sgq34';
-      try {
-        var lead = JSON.parse(localStorage.getItem('flowli_lead') || '{}');
-        if (!lead.email) return;
-
-        // חישוב ציון מקוצר
-        function sc(keys) {
-          var v = keys.map(function(k){ return answers[k]; })
-                      .filter(function(x){ return x !== undefined && typeof x === 'number' && x !== 4; });
-          return v.length ? Math.round(100 - (v.reduce(function(a,b){return a+b;},0) / v.length / 3) * 100) : null;
-        }
-        var areaScores = [
-          { name:'ניהול לידים', s: sc(['leads','followup']) },
-          { name:'זמן תגובה',   s: sc(['responseTime']) },
-          { name:'תפעול �
+      var SURL='https://whuuevjoqitwslnykvgd.supabase.co';
+      var SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ
