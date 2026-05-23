@@ -174,22 +174,8 @@
       .trust-item { font-size:16px; font-weight:500; color:#1A1A1A; direction:rtl; }
       .trust-he { display:inline; }
       .trust-en { display:none; }
-      .bottom-nav {
-        position:fixed; bottom:0; left:50%; transform:translateX(-50%);
-        width:100%; max-width:430px;
-        background:rgba(255,255,255,.94);
-        backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-        border-top:1px solid rgba(0,0,0,.05);
-        display:flex; padding:10px 0 24px; z-index:100;
-      }
-      .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; padding:4px 0; text-decoration:none; }
-      .nav-icon { width:26px; height:26px; display:flex; align-items:center; justify-content:center; }
-      .nav-icon svg { width:100%; height:100%; stroke:#1A1A1A; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
-      .nav-label { font-size:12px; font-weight:500; color:#1A1A1A; }
-      .nav-item.active .nav-label { color:var(--orange); }
-      .nav-item.active .nav-icon svg { stroke:var(--orange); }
-      .nav-item.active .nav-icon svg circle:last-of-type { fill:var(--orange); stroke:var(--orange); }
-      .home-indicator { position:fixed; bottom:8px; left:50%; transform:translateX(-50%); width:134px; height:5px; background:var(--ink); border-radius:3px; z-index:101; display:block; }
+      .bottom-nav { display:none !important; }
+      .home-indicator { display:none !important; }
     }
   </style>
 </head>
@@ -235,7 +221,6 @@
         <span class="logo-flow">flow</span><span class="logo-li">li</span>
       </span>
     </a>
-    <button class="btn-outline-sm" onclick="document.getElementById('fullname').focus()">התחל.י אבחון</button>
   </nav>
 
   <main class="page-wrap">
@@ -367,3 +352,13 @@
       // שולח ל-Supabase ברקע — לא מחכים, לא חוסמים
       try {
         var SURL='https://whuuevjoqitwslnykvgd.supabase.co';
+        var SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndodXVldmpvcWl0d3NsbnlrdmdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTk3NDQsImV4cCI6MjA5NDY5NTc0NH0.r_lxvPFY275H7ODxYGHs0-NvqfQd8_e3fKHYy4sgq34';
+        fetch(SURL+'/rest/v1/leads',{method:'POST',headers:{'Content-Type':'application/json','apikey':SKEY,'Authorization':'Bearer '+SKEY,'Prefer':'return=minimal'},body:JSON.stringify({name:name,email:email,phone:phone,consent:true,source:'avchon-funnel'})}).catch(function(){});
+      } catch(e){}
+      window.location.href = 'flowli-avchon-step2-v2.html';
+    }
+  </script>
+  <script src="flowli-legal.js"></script>
+</body>
+</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
