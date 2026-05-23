@@ -22,9 +22,9 @@
       -webkit-font-smoothing:antialiased;
       min-height:100vh; position:relative; overflow-x:hidden;
     }
-    .wave-svg { position:fixed; pointer-events:none; z-index:0; }
+    .wave-svg { position:absolute; pointer-events:none; z-index:0; }
     .wave-svg-top { top:80px; right:0; width:100%; max-width:1400px; height:900px; }
-    .wave-svg-bottom { bottom:0; left:0; width:70%; max-width:750px; height:60vh; min-height:400px; }
+    .wave-svg-bottom { bottom:0; left:0; width:70%; max-width:750px; height:auto; }
 
     .top-nav {
       position:relative; z-index:10;
@@ -43,7 +43,7 @@
 
     .flowli-logo {
       display:inline-flex; align-items:center; gap:0.3em;
-      font-size:clamp(32px, 3.5vw, 40px); text-decoration:none; direction:ltr;
+      font-size:clamp(26px, 3.5vw, 36px); text-decoration:none; direction:ltr;
     }
     .flowli-logo svg { width:1.1em; height:1.1em; }
     .flowli-logo .logo-text {
@@ -159,10 +159,10 @@
     @media (max-width: 600px) {
       body { max-width:430px; margin:0 auto; padding-bottom:20px; background:var(--bg); }
       .wave-svg-top { width:110%; max-width:none; }
-      .wave-svg-bottom { width:110%; max-width:none; bottom:0; height:55vh; min-height:350px; }
+      .wave-svg-bottom { width:110%; max-width:none; bottom:90px; }
       .top-nav { padding:16px 20px; }
       .btn-outline-sm { padding:9px 18px; font-size:14px; }
-      .flowli-logo { font-size:30px; }
+      .flowli-logo { font-size:22px; }
       .page-wrap { padding:14px 22px 30px; }
       .hero { padding:16px 0 0; }
       .hero h1 { font-size:44px; line-height:1.12; margin-bottom:20px; }
@@ -227,7 +227,7 @@
     <section class="hero">
       <h1>
         בלי בלאגן.<br>
-        בלי פניות שנופלות.<br>
+        בלי לידים שנופלים.<br>
         <span class="accent">בלי טירוף.</span>
       </h1>
       <p>
@@ -328,6 +328,12 @@
 
       localStorage.setItem('flowli_lead', JSON.stringify({ name, email, phone }));
 
+      // מנטרל את הכפתור כדי למנוע לחיצה כפולה
+      const btn = document.getElementById('btnStart');
+      btn.disabled = true;
+      btn.textContent = 'שניה...';
+
+      // שומר ב-Supabase ורק אחרי כן עובר — חשוב למובייל עם חיבור איטי
       fetch(`${SUPABASE_URL}/rest/v1/leads`, {
         method: 'POST',
         headers: {
@@ -337,11 +343,14 @@
           'Prefer': 'return=minimal'
         },
         body: JSON.stringify({ name, email, phone, consent: true, source: 'avchon-funnel' })
-      }).catch(()=>{});
-
-      window.location.href = 'flowli-avchon-step2-v2.html';
+      })
+      .catch(()=>{}) // אם נכשל — עדיין עוברים
+      .finally(()=>{
+        window.location.href = 'flowli-avchon-step2-v2.html';
+      });
     }
     </script>
     <script src="flowli-legal.js"></script>
   </body>
 </html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
