@@ -590,6 +590,7 @@ function buildRec(){
 }
 
 const rec=buildRec();
+const pri=priByType[rec.type]||priByType.bundle;
 
 // render demo card based on rec type
 function renderDemoCard(type){
