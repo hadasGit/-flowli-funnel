@@ -275,15 +275,12 @@ body {
 /* הכרטיסים נראים: למעלה (מעל הCTA), משמאל ומימין, ומלמטה */
 .cta-overlay {
   position: absolute;
-  /* ממוקם בחלק העליון-אמצעי, לא מכסה הכל */
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
   display: flex;
   justify-content: center;
   pointer-events: none;
-  /* עיטור fade עגול מאחורי הCTA */
-  filter: drop-shadow(0 0 40px rgba(246,241,230,.95));
 }
 .cta-overlay > * { pointer-events: auto; }
 
@@ -293,10 +290,7 @@ body {
   border-radius: 22px; padding: 26px 24px 22px;
   text-align: center;
   width: 380px; max-width: 85%;
-  box-shadow:
-    0 0 0 20px rgba(246,241,230,.7),   /* halo שמסתיר מעט את הרקע מסביב */
-    0 12px 40px rgba(180,110,60,.18),
-    0 1px 2px rgba(255,255,255,.9) inset;
+  box-shadow: 0 12px 40px rgba(180,110,60,.18), 0 1px 2px rgba(255,255,255,.9) inset;
 }
 .cta-lock-icon { width: 48px; height: 48px; background: #B8966A; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; box-shadow: 0 4px 12px rgba(0,0,0,.1); }
 .cta-lock-icon svg { width: 22px; height: 22px; stroke: #FFF5E8; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
@@ -322,6 +316,13 @@ body {
 
 /* ── Footer ── */
 .footer-note { text-align: center; font-size: 13px; color: var(--muted); padding-bottom: 40px; }
+
+@media (max-width: 600px) {
+  body { background: linear-gradient(to top, #FBBA76 0%, #F6F1E6 35%); }
+  .flowli-logo { font-size: clamp(32px, 4vw, 44px); }
+  .two-col { grid-template-columns: 1fr; }
+  .btn-cta { font-size: 15px; }
+}
 </style>
 </head>
 <body>
@@ -340,18 +341,18 @@ body {
   <path fill="url(#waveTopFill)" d="M 450,0 C 580,70 750,150 900,210 C 1010,260 1110,330 1200,400 C 1280,460 1350,510 1400,540 L 1400,0 Z"/>
 </svg>
 
-<!-- גל תחתון -זהה לדף 1 -->
+<!-- גל תחתון -->
 <svg class="wave-svg wave-svg-bottom" viewBox="0 0 800 800" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="waveBottomFill" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%"   stop-color="#FBBA76" stop-opacity="0.75"/>
-      <stop offset="25%"  stop-color="#FDC481" stop-opacity="0.55"/>
-      <stop offset="55%"  stop-color="#FDC481" stop-opacity="0.30"/>
-      <stop offset="80%"  stop-color="#FDC481" stop-opacity="0.12"/>
+      <stop offset="0%"   stop-color="#FBBA76" stop-opacity="1"/>
+      <stop offset="30%"  stop-color="#FDC481" stop-opacity="0.85"/>
+      <stop offset="60%"  stop-color="#FDC481" stop-opacity="0.50"/>
       <stop offset="100%" stop-color="#FDC481" stop-opacity="0"/>
     </linearGradient>
   </defs>
-  <path fill="url(#waveBottomFill)" d="M 0,800 L 0,200 C 70,210 150,260 220,330 C 300,410 360,360 440,420 C 530,490 510,580 600,640 C 680,690 740,720 800,750 L 800,800 Z"/>
+  <path fill="url(#waveBottomFill)" d="M 0,800 L 0,150 C 70,170 150,230 220,300 C 300,390 360,340 440,400 C 530,470 510,560 600,620 C 680,670 740,700 800,730 L 800,800 Z"/>
+  <rect x="0" y="750" width="800" height="50" fill="#FBBA76" opacity="1"/>
 </svg>
 
 <!-- Nav -->
@@ -486,11 +487,9 @@ body {
         <div class="cta-title">רוצ.ה את תוכנית הפעולה המלאה?</div>
         <div class="cta-body">בשיחה של 30 דקות - נבנה יחד את המפה המדויקת לעסק שלך.</div>
         <div class="cta-scarcity">💛 אני עובדת עם מספר מצומצם של עסקים בכל חודש -<br>כדי שאוכל להיות נוכחת באמת.</div>
-        <button class="btn-cta" id="btnContact" onclick="openContact()">
-          <span style="display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.35;">
-            <span>📞 אשמח לשיחת היכרות קצרה -</span>
-            <span>צרי קשר!</span>
-          </span>
+        <button class="btn-cta" id="btnContact" onclick="openContact()" style="flex-direction:column;gap:2px;line-height:1.4;">
+          <span>📞 אשמח לשיחת היכרות קצרה -</span>
+          <span>צרי קשר!</span>
         </button>
       </div>
     </div>
@@ -614,9 +613,28 @@ function openContact(){
   window.open('mailto:hadas@flowli.co.il?subject=קביעת שיחת אסטרטגיה Flowli&body=שלום הדס, אשמח לקבוע שיחה.','_blank');
   if(btn){
     btn.classList.add('booked');
+    btn.style.flexDirection = 'row';
     btn.innerHTML = '👍 קיבלתי - אחזור אליך בהקדם!';
     btn.onclick = null;
   }
+  // עדכון Supabase
+  (function(){
+    var SURL='https://whuuevjoqitwslnykvgd.supabase.co';
+    var SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndodXVldmpvcWl0d3NsbnlrdmdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTk3NDQsImV4cCI6MjA5NDY5NTc0NH0.r_lxvPFY275H7ODxYGHs0-NvqfQd8_e3fKHYy4sgq34';
+    try{
+      var email='';
+      // נסה כמה פורמטים אפשריים
+      try{ email=(JSON.parse(localStorage.getItem('flowli_lead')||'{}')).email||''; }catch(e){}
+      if(!email){ email=localStorage.getItem('flowliEmail')||''; }
+      if(!email){ email=localStorage.getItem('flowli_email')||''; }
+      if(!email){ console.warn('Flowli: no email found in localStorage'); return; }
+      fetch(SURL+'/rest/v1/leads?email=eq.'+encodeURIComponent(email),{
+        method:'PATCH',
+        headers:{'Content-Type':'application/json','apikey':SKEY,'Authorization':'Bearer '+SKEY,'Prefer':'return=minimal'},
+        body:JSON.stringify({callback_requested:true})
+      }).catch(function(){});
+    }catch(e){ console.error('Flowli callback update error:',e); }
+  })();
 }
 </script>
 

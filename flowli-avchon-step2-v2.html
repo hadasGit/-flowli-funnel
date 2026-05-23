@@ -143,14 +143,18 @@
 
     @media (max-width: 600px) {
       .top-nav { padding: 16px 20px; }
-      .flowli-logo { font-size: 22px; }
+      .flowli-logo { font-size: clamp(32px, 4vw, 44px); }
       .page-wrap { padding: 12px 20px 30px; }
       .block-title { font-size: 22px; }
+      .options-list { grid-template-columns: 1fr; }
+      .chips-wrap { grid-template-columns: 1fr 1fr; }
       .opt-card { padding: 10px 11px; gap: 8px; }
       .opt-icon { width: 30px; height: 30px; min-width: 30px; }
       .opt-title { font-size: 13px; }
       .opt-desc  { font-size: 11px; }
       .opt-radio { width: 17px; height: 17px; min-width: 17px; }
+      .wave-svg-bottom { bottom: 0; }
+      body { background: linear-gradient(to top, #FBBA76 0%, #F6F1E6 35%); }
     }
   </style>
 </head>
@@ -171,14 +175,14 @@
   <svg class="wave-svg wave-svg-bottom" viewBox="0 0 800 800" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="waveBottomFill" x1="0%" y1="100%" x2="100%" y2="0%">
-        <stop offset="0%"   stop-color="#FBBA76" stop-opacity="0.75"/>
-        <stop offset="25%"  stop-color="#FDC481" stop-opacity="0.55"/>
-        <stop offset="55%"  stop-color="#FDC481" stop-opacity="0.30"/>
-        <stop offset="80%"  stop-color="#FDC481" stop-opacity="0.12"/>
+        <stop offset="0%"   stop-color="#FBBA76" stop-opacity="1"/>
+        <stop offset="30%"  stop-color="#FDC481" stop-opacity="0.85"/>
+        <stop offset="60%"  stop-color="#FDC481" stop-opacity="0.50"/>
         <stop offset="100%" stop-color="#FDC481" stop-opacity="0"/>
       </linearGradient>
     </defs>
-    <path fill="url(#waveBottomFill)" d="M 0,800 L 0,200 C 70,210 150,260 220,330 C 300,410 360,360 440,420 C 530,490 510,580 600,640 C 680,690 740,720 800,750 L 800,800 Z"/>
+    <path fill="url(#waveBottomFill)" d="M 0,800 L 0,150 C 70,170 150,230 220,300 C 300,390 360,340 440,400 C 530,470 510,560 600,620 C 680,670 740,700 800,730 L 800,800 Z"/>
+    <rect x="0" y="750" width="800" height="50" fill="#FBBA76" opacity="1"/>
   </svg>
 
   <nav class="top-nav">

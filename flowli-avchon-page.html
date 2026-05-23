@@ -157,12 +157,12 @@
     .home-indicator { display:none; }
 
     @media (max-width: 600px) {
-      body { max-width:430px; margin:0 auto; padding-bottom:90px; background:var(--bg); }
+      body { max-width:430px; margin:0 auto; padding-bottom:90px; background: linear-gradient(to top, #FBBA76 0%, #F6F1E6 35%); }
       .wave-svg-top { width:110%; max-width:none; }
-      .wave-svg-bottom { width:110%; max-width:none; bottom:90px; }
+      .wave-svg-bottom { width:110%; max-width:none; bottom:0; }
       .top-nav { padding:16px 20px; }
       .btn-outline-sm { padding:9px 18px; font-size:14px; }
-      .flowli-logo { font-size:22px; }
+      .flowli-logo { font-size:clamp(32px, 4vw, 44px); }
       .page-wrap { padding:14px 22px 30px; }
       .hero { padding:16px 0 0; }
       .hero h1 { font-size:44px; line-height:1.12; margin-bottom:20px; }
@@ -199,14 +199,14 @@
   <svg class="wave-svg wave-svg-bottom" viewBox="0 0 800 800" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="waveBottomFill" x1="0%" y1="100%" x2="100%" y2="0%">
-        <stop offset="0%"   stop-color="#FBBA76" stop-opacity="0.75"/>
-        <stop offset="25%"  stop-color="#FDC481" stop-opacity="0.55"/>
-        <stop offset="55%"  stop-color="#FDC481" stop-opacity="0.30"/>
-        <stop offset="80%"  stop-color="#FDC481" stop-opacity="0.12"/>
+        <stop offset="0%"   stop-color="#FBBA76" stop-opacity="1"/>
+        <stop offset="30%"  stop-color="#FDC481" stop-opacity="0.85"/>
+        <stop offset="60%"  stop-color="#FDC481" stop-opacity="0.50"/>
         <stop offset="100%" stop-color="#FDC481" stop-opacity="0"/>
       </linearGradient>
     </defs>
-    <path fill="url(#waveBottomFill)" d="M 0,800 L 0,200 C 70,210 150,260 220,330 C 300,410 360,360 440,420 C 530,490 510,580 600,640 C 680,690 740,720 800,750 L 800,800 Z"/>
+    <path fill="url(#waveBottomFill)" d="M 0,800 L 0,150 C 70,170 150,230 220,300 C 300,390 360,340 440,400 C 530,470 510,560 600,620 C 680,670 740,700 800,730 L 800,800 Z"/>
+    <rect x="0" y="750" width="800" height="50" fill="#FBBA76" opacity="1"/>
   </svg>
 
   <!-- ניווט עליון -->
@@ -350,15 +350,13 @@
 
       localStorage.setItem('flowli_lead', JSON.stringify({ name, email, phone }));
 
+      const payload = JSON.stringify({ name, email, phone, consent: true, source: 'avchon-funnel' });
+
+      // keepalive: true - מבטיח שה-fetch יסתיים גם אחרי ניווט
       fetch(`${SUPABASE_URL}/rest/v1/leads`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${SUPABASE_KEY}`,
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({ name, email, phone, consent: true, source: 'avchon-funnel' })
+        method: 'POST', keepalive: true,
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Prefer': 'return=minimal' },
+        body: payload
       }).catch(()=>{});
 
       window.location.href = 'flowli-avchon-step2-v2.html';
