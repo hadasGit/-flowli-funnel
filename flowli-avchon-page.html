@@ -43,7 +43,7 @@
 
     .flowli-logo {
       display:inline-flex; align-items:center; gap:0.3em;
-      font-size:24px; text-decoration:none; direction:ltr;
+      font-size:clamp(26px, 3.5vw, 36px); text-decoration:none; direction:ltr;
     }
     .flowli-logo svg { width:1.1em; height:1.1em; }
     .flowli-logo .logo-text {
@@ -221,6 +221,7 @@
         <span class="logo-flow">flow</span><span class="logo-li">li</span>
       </span>
     </a>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--orange);letter-spacing:.04em;">התחל.י אבחון ↓</span>
   </nav>
 
   <main class="page-wrap">
@@ -256,7 +257,7 @@
         <input class="field-input" id="phone" type="tel" placeholder="050-1234567" autocomplete="tel" inputmode="tel">
       </div>
 
-      <div class="consent-row">
+      <div class="consent-row" id="consent_anchor">
         <input type="checkbox" id="consent">
         <label class="consent-label" for="consent">
           אני מאשר.ת קבלת תכנים מקצועיים ועדכונים מ-Flowli במייל
@@ -327,13 +328,13 @@
   <div class="home-indicator"></div>
 
   <script>
-    function updateBtn() {
-      const btn = document.getElementById('btnStart');
-      btn.disabled = !document.getElementById('consent').checked;
-    }
+    const SUPABASE_URL = 'https://whuuevjoqitwslnykvgd.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndodXVldmpvcWl0d3NsbnlrdmdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTk3NDQsImV4cCI6MjA5NDY5NTc0NH0.r_lxvPFY275H7ODxYGHs0-NvqfQd8_e3fKHYy4sgq34';
 
     document.addEventListener('DOMContentLoaded', function() {
-      document.getElementById('consent').addEventListener('change', updateBtn);
+      document.getElementById('consent').addEventListener('change', function() {
+        document.getElementById('btnStart').disabled = !this.checked;
+      });
     });
 
     function startFunnel() {
@@ -342,23 +343,28 @@
       const phone   = document.getElementById('phone').value.trim();
       const consent = document.getElementById('consent').checked;
 
-      if (!name)  { document.getElementById('fullname').focus(); return; }
-      if (!email) { document.getElementById('email').focus(); return; }
-      if (!phone) { document.getElementById('phone').focus(); return; }
-
+      if (!name)    { document.getElementById('fullname').focus(); return; }
+      if (!email)   { document.getElementById('email').focus(); return; }
+      if (!phone)   { document.getElementById('phone').focus(); return; }
       if (!consent) return;
 
       localStorage.setItem('flowli_lead', JSON.stringify({ name, email, phone }));
-      // שולח ל-Supabase ברקע — לא מחכים, לא חוסמים
-      try {
-        var SURL='https://whuuevjoqitwslnykvgd.supabase.co';
-        var SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndodXVldmpvcWl0d3NsbnlrdmdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTk3NDQsImV4cCI6MjA5NDY5NTc0NH0.r_lxvPFY275H7ODxYGHs0-NvqfQd8_e3fKHYy4sgq34';
-        fetch(SURL+'/rest/v1/leads',{method:'POST',headers:{'Content-Type':'application/json','apikey':SKEY,'Authorization':'Bearer '+SKEY,'Prefer':'return=minimal'},body:JSON.stringify({name:name,email:email,phone:phone,consent:true,source:'avchon-funnel'})}).catch(function(){});
-      } catch(e){}
+
+      fetch(`${SUPABASE_URL}/rest/v1/leads`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ name, email, phone, consent: true, source: 'avchon-funnel' })
+      }).catch(()=>{});
+
       window.location.href = 'flowli-avchon-step2-v2.html';
     }
-  </script>
-  <script src="flowli-legal.js"></script>
-</body>
+    </script>
+    <script src="flowli-legal.js"></script>
+  </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+                                                                                                                                                                                                                                                                                                                   

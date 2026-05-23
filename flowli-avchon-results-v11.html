@@ -486,7 +486,7 @@ const improvedClose=Math.min(closeRates*1.35,0.85);
 const leadsLost=Math.round(leadsPerMonth*(1-closeRates));
 const moneyLost=Math.round(leadsLost*dealValues*improvedClose);
 
-// ערך 4 = "לא רלוונטי" — מסונן מחישוב הציון
+// ערך 4 = "לא רלוונטי" — מסונן מחישוב
 function score(keys){const v=keys.map(k=>answers[k]).filter(x=>x!==undefined&&typeof x==='number'&&x!==4);return v.length?Math.round(100-(v.reduce((a,b)=>a+b,0)/v.length/3)*100):null;}
 
 const areas=[
@@ -588,4 +588,39 @@ document.getElementById('recoTool').textContent=rec.tool;
 document.getElementById('recoBody').innerHTML=rec.body;
 document.getElementById('recoImpact').textContent=rec.impact;
 
-function openC
+function openContact(){ window.open('mailto:hadas@flowli.co.il?subject=קביעת שיחת אסטרטגיה Flowli&body=שלום הדס, אשמח לקבוע שיחה.','_blank'); }
+</script>
+
+
+<script>
+// Supabase - update answers on existing lead
+(function(){
+  var SUPABASE_URL = 'https://whuuevjoqitwslnykvgd.supabase.co';
+  var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndodXVldmpvcWl0d3NsbnlrdmdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTk3NDQsImV4cCI6MjA5NDY5NTc0NH0.r_lxvPFY275H7ODxYGHs0-NvqfQd8_e3fKHYy4sgq34';
+  try {
+    var lead = JSON.parse(localStorage.getItem('flowli_lead') || '{}');
+    var email = lead.email;
+    if (!email) return;
+    var payload = {
+      answers: answers,
+      score: totalScore,
+      worst_area: worstArea.name,
+      roi_estimate: moneyLost
+    };
+    fetch(SUPABASE_URL + '/rest/v1/leads?email=eq.' + encodeURIComponent(email), {
+      method: 'PATCH',
+      headers: {
+        'Content-Type':  'application/json',
+        'apikey':        SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Prefer':        'return=minimal'
+      },
+      body: JSON.stringify(payload)
+    }).catch(function(){});
+  } catch(e) {}
+})();
+</script>
+
+<script>
+function openContact() {
+  var SUPABASE_URL = '
