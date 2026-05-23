@@ -24,7 +24,7 @@
     }
     .wave-svg { position:absolute; pointer-events:none; z-index:0; }
     .wave-svg-top { top:80px; right:0; width:100%; max-width:1400px; height:900px; }
-    .wave-svg-bottom { bottom:0; left:0; width:70%; max-width:750px; height:auto; }
+    .wave-svg-bottom { bottom:0; left:0; width:70%; max-width:750px; height:auto; min-height:300px; }
 
     .top-nav {
       position:relative; z-index:10;
@@ -43,7 +43,7 @@
 
     .flowli-logo {
       display:inline-flex; align-items:center; gap:0.3em;
-      font-size:clamp(26px, 3.5vw, 36px); text-decoration:none; direction:ltr;
+      font-size:clamp(32px, 4vw, 44px); text-decoration:none; direction:ltr;
     }
     .flowli-logo svg { width:1.1em; height:1.1em; }
     .flowli-logo .logo-text {
@@ -174,22 +174,8 @@
       .trust-item { font-size:16px; font-weight:500; color:#1A1A1A; direction:rtl; }
       .trust-he { display:inline; }
       .trust-en { display:none; }
-      .bottom-nav {
-        position:fixed; bottom:0; left:50%; transform:translateX(-50%);
-        width:100%; max-width:430px;
-        background:rgba(255,255,255,.94);
-        backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-        border-top:1px solid rgba(0,0,0,.05);
-        display:flex; padding:10px 0 24px; z-index:100;
-      }
-      .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; padding:4px 0; text-decoration:none; }
-      .nav-icon { width:26px; height:26px; display:flex; align-items:center; justify-content:center; }
-      .nav-icon svg { width:100%; height:100%; stroke:#1A1A1A; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
-      .nav-label { font-size:12px; font-weight:500; color:#1A1A1A; }
-      .nav-item.active .nav-label { color:var(--orange); }
-      .nav-item.active .nav-icon svg { stroke:var(--orange); }
-      .nav-item.active .nav-icon svg circle:last-of-type { fill:var(--orange); stroke:var(--orange); }
-      .home-indicator { position:fixed; bottom:8px; left:50%; transform:translateX(-50%); width:134px; height:5px; background:var(--ink); border-radius:3px; z-index:101; display:block; }
+      .bottom-nav { display:none !important; }
+      .home-indicator { display:none !important; }
     }
   </style>
 </head>
@@ -243,13 +229,13 @@
     <section class="hero">
       <h1>
         בלי בלאגן.<br>
-        בלי לידים שנופלים.<br>
+        בלי פניות שנופלות.<br>
         <span class="accent">בלי טירוף.</span>
       </h1>
       <p>
-        בוא.י נסדר את העסק שלך — צעד אחד בכל פעם.
+        בוא.י נסדר את העסק שלך - צעד אחד בכל פעם.
         <strong>אבחון של 5 דקות</strong> יראה לך בדיוק
-        מאיפה להתחיל, איזו אוטומציה תעשה לך את ההבדל הכי גדול —
+        מאיפה להתחיל, איזו אוטומציה תעשה לך את ההבדל הכי גדול -
         ואיך זה ייראה אצלך.
       </p>
     </section>
