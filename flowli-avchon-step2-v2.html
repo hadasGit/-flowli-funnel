@@ -587,9 +587,19 @@ function nextBlock() {
     })();
 
     window.location.href = 'flowli-avchon-loading.html';
+    return;
   }
-
   render();
+}
+
+function prevBlock() {
+  if (currentBlock > 1) {
+    currentBlock--;
+    render();
+  }
+}
+
+render();
 
   </script>
 </body>
