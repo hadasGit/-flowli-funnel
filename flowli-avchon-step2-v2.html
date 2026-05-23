@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flowli — אבחון</title>
+  <title>Flowli - אבחון</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&family=Rubik:ital,wght@0,300..900;1,300..900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -23,15 +23,15 @@
       min-height: 100vh; position: relative; overflow-x: hidden;
       padding-bottom: 40px;
     }
-    .wave-svg { position: absolute; pointer-events: none; z-index: 0; }
+    .wave-svg { position: fixed; pointer-events: none; z-index: 0; }
     .wave-svg-top  { top: 80px; right: 0; width: 100%; max-width: 1400px; height: 900px; }
-    .wave-svg-bottom { bottom: 0; left: 0; width: 70%; max-width: 750px; height: auto; }
+    .wave-svg-bottom { bottom: 0; left: 0; width: 70%; max-width: 750px; height: 60vh; min-height: 400px; }
     .top-nav {
       position: relative; z-index: 10;
       display: flex; align-items: center; justify-content: space-between;
       padding: 22px 32px 16px; max-width: 1400px; margin: 0 auto;
     }
-    .flowli-logo { display: inline-flex; align-items: center; gap: 0.3em; font-size: clamp(26px, 3.5vw, 36px); text-decoration: none; direction: ltr; }
+    .flowli-logo { display: inline-flex; align-items: center; gap: 0.3em; font-size: clamp(30px, 3.5vw, 36px); text-decoration: none; direction: ltr; }
     .flowli-logo svg { width: 1.1em; height: 1.1em; }
     .flowli-logo .logo-text { font-family: 'Inter', sans-serif; font-weight: 800; letter-spacing: -0.035em; }
     .flowli-logo .logo-flow { color: #2A2A2A; }
@@ -144,10 +144,10 @@
 
     @media (max-width: 600px) {
       .top-nav { padding: 16px 20px; }
-      .flowli-logo { font-size: 22px; }
+      .flowli-logo { font-size: 28px; }
       .page-wrap { padding: 22px 20px 30px; }
       .block-title { font-size: 22px; }
-      /* קוביות — שורה אחת בכל אפשרות במובייל */
+      /* קוביות - שורה אחת בכל אפשרות במובייל */
       .options-list { grid-template-columns: 1fr; gap: 7px; }
       .opt-card { padding: 11px 14px; gap: 12px; flex-direction: row; align-items: center; }
       .opt-icon { width: 34px; height: 34px; min-width: 34px; border-radius: 10px; }
@@ -289,7 +289,7 @@ const blocks = [
     num: 2,
     eyebrow: 'שלב 2 מתוך 4',
     title: 'בוא.י נכיר את העסק שלך',
-    sub: 'כמה שאלות בסיסיות — ובסוף נחשב כמה כסף נופל על הרצפה',
+    sub: 'כמה שאלות בסיסיות - ובסוף נחשב כמה כסף נופל על הרצפה',
     questions: [
       {
         id: 'industry', label: 'באיזה תחום העסק שלך?', type: 'single',
@@ -310,12 +310,12 @@ const blocks = [
         ]
       },
       {
-        id: 'monthlyLeads', label: 'כמה פניות / לידים נכנסים לך בחודש?', type: 'single',
+        id: 'monthlyLeads', label: 'כמה פניות נכנסות לך בחודש?', type: 'single',
         options: [
-          { icon: 'trending_down',  title: 'עד 10',    desc: 'כל ליד שווה הרבה',         lvl: 'lvl-3' },
+          { icon: 'trending_down',  title: 'עד 10',    desc: 'כל פנייה שווה הרבה',       lvl: 'lvl-3' },
           { icon: 'show_chart',     title: '10 – 30',  desc: 'קצב סביר, יש מה לעשות',    lvl: 'lvl-2' },
           { icon: 'trending_up',    title: '30 – 80',  desc: 'קצב טוב, חשוב לנהל נכון',  lvl: 'lvl-1' },
-          { icon: 'bolt',           title: 'מעל 80',   desc: 'נפח גבוה — חייבים מערכת',  lvl: 'lvl-0' },
+          { icon: 'bolt',           title: 'מעל 80',   desc: 'נפח גבוה - חייבים מערכת',  lvl: 'lvl-0' },
         ]
       },
       {
@@ -328,7 +328,7 @@ const blocks = [
         ]
       },
       {
-        id: 'leadSources', label: 'מאיפה מגיעים הלידים שלך? (אפשר לבחור כמה)', type: 'multi',
+        id: 'leadSources', label: 'מאיפה מגיעות הפניות שלך? (אפשר לבחור כמה)', type: 'multi',
         options: [
           { icon: 'chat',       title: 'וואטסאפ' },
           { icon: 'call',       title: 'טלפון' },
@@ -343,20 +343,20 @@ const blocks = [
   {
     num: 3,
     eyebrow: 'שלב 3 מתוך 4',
-    title: 'איך את.ה מטפל.ת בלידים?',
-    sub: 'הדרך שבה לידים מטופלים — היא הלב של ההכנסה שלך',
+    title: 'איך את.ה מטפל.ת בפניות?',
+    sub: 'הדרך שבה פניות מטופלות - היא הלב של ההכנסה שלך',
     questions: [
       {
-        id: 'leads', label: 'מה קורה ללידים חדשים אצלך?', type: 'single',
+        id: 'leads', label: 'מה קורה לפניות חדשות אצלך?', type: 'single',
         options: [
-          { icon: 'check_circle', title: 'תהליך מסודר',          desc: 'יש מעקב, תזכורות, הכל בשליטה',   lvl: 'lvl-0' },
-          { icon: 'assignment',   title: 'רושמים, לא תמיד עוקבים',desc: 'מי שזוכר — זוכר',               lvl: 'lvl-1' },
-          { icon: 'leak_remove',  title: 'נופלים בין הכסאות',      desc: 'יש לידים שנעלמים ולא חוזרים',   lvl: 'lvl-2' },
-          { icon: 'cancel',       title: 'אין מעקב בכלל',          desc: 'מקווים שיחזרו מעצמם',           lvl: 'lvl-3' },
+          { icon: 'check_circle', title: 'תהליך מסודר',            desc: 'יש מעקב, תזכורות, הכל בשליטה',   lvl: 'lvl-0' },
+          { icon: 'assignment',   title: 'רושמים, לא תמיד עוקבים', desc: 'מי שזוכר - זוכר',               lvl: 'lvl-1' },
+          { icon: 'leak_remove',  title: 'נופלות בין הכסאות',       desc: 'יש פניות שנעלמות ולא חוזרות',   lvl: 'lvl-2' },
+          { icon: 'cancel',       title: 'אין מעקב בכלל',           desc: 'מקווים שיחזרו מעצמם',           lvl: 'lvl-3' },
         ]
       },
       {
-        id: 'responseTime', label: 'כמה זמן עובר מרגע שליד נכנס ועד שעונים לו?', type: 'single',
+        id: 'responseTime', label: 'כמה זמן עובר מרגע שפנייה נכנסת ועד שעונים לה?', type: 'single',
         options: [
           { icon: 'bolt',            title: 'תוך 5 דקות',    desc: 'מענה מיידי, לא מפספסים',       lvl: 'lvl-0' },
           { icon: 'timer',           title: 'תוך שעה-שעתיים',desc: 'די מהר, ברוב המקרים',          lvl: 'lvl-1' },
@@ -365,10 +365,10 @@ const blocks = [
         ]
       },
       {
-        id: 'followup', label: 'האם אתם משקיעים בפולואפים?', type: 'single',
+        id: 'followup', label: 'האם אתם משקיעים במעקב?', type: 'single',
         options: [
-          { icon: 'my_location',   title: 'כן, יש מערכת מסודרת', desc: 'תזכורות ומעקב אחרי כל ליד',   lvl: 'lvl-0' },
-          { icon: 'push_pin',      title: 'מדי פעם, לא שיטתי',   desc: 'מי שנזכר — עושה',             lvl: 'lvl-1' },
+          { icon: 'my_location',   title: 'כן, יש מערכת מסודרת', desc: 'תזכורות ומעקב אחרי כל פנייה', lvl: 'lvl-0' },
+          { icon: 'push_pin',      title: 'מדי פעם, לא שיטתי',   desc: 'מי שנזכר - עושה',             lvl: 'lvl-1' },
           { icon: 'front_hand',    title: 'רק אם הלקוח מתעקש',   desc: 'לא יוזמים, ממתינים',          lvl: 'lvl-2' },
           { icon: 'do_not_disturb',title: 'בכלל לא',              desc: 'אין זמן ואין מי שאחראי',     lvl: 'lvl-3' },
         ]
@@ -387,12 +387,12 @@ const blocks = [
           { icon: 'bolt',            title: 'עד 10 דקות',       desc: 'תבנית מוכנה, כמה לחיצות',          lvl: 'lvl-0' },
           { icon: 'timer',           title: 'חצי שעה עד שעה',   desc: 'מרכיב.ה כל פעם מחדש',               lvl: 'lvl-1' },
           { icon: 'hourglass_bottom',title: 'כמה שעות',          desc: 'אוספ.ת מידע ממקורות שונים',         lvl: 'lvl-2' },
-          { icon: 'money_off',       title: 'מאחרים — ומפסידים',desc: 'הלקוח הלך לפני שנשלחה ההצעה',    lvl: 'lvl-3' },
+          { icon: 'money_off',       title: 'מאחרים - ומפסידים',desc: 'הלקוח הלך לפני שנשלחה ההצעה',    lvl: 'lvl-3' },
           { icon: 'remove_circle_outline', title: 'לא רלוונטי', desc: '', lvl: 'lvl-na' },
         ]
       },
       {
-        id: 'info', label: 'אם לקוח מתקשר עכשיו — כמה זמן למצוא את ההיסטוריה שלו?', type: 'single',
+        id: 'info', label: 'אם לקוח מתקשר עכשיו - כמה זמן למצוא את ההיסטוריה שלו?', type: 'single',
         options: [
           { icon: 'bolt',            title: 'תוך דקה',              desc: 'הכל מרוכז במקום אחד',           lvl: 'lvl-0' },
           { icon: 'manage_search',   title: 'חיפוש בכמה מקומות',    desc: 'תלוי מי טיפל בו לאחרונה',      lvl: 'lvl-1' },
@@ -401,7 +401,7 @@ const blocks = [
         ]
       },
       {
-        id: 'questions', label: 'כמה שיחות על מחירים / מלאי / סטטוס — ביום?', type: 'single',
+        id: 'questions', label: 'כמה שיחות על מחירים / מלאי / סטטוס ביום?', type: 'single',
         options: [
           { icon: 'check_circle',  title: 'עד 3 ביום',      desc: 'יש שליטה, לא מציפות אותי',         lvl: 'lvl-0' },
           { icon: 'phone_in_talk', title: '4–10 ביום',      desc: 'לוקח זמן אבל מסתדרים',             lvl: 'lvl-1' },
@@ -480,7 +480,7 @@ function render() {
       html += `
         <div class="text-area-wrap">
           <textarea class="quiz-textarea" placeholder="${q.placeholder || ''}" oninput="answers['${q.id}']=this.value">${val}</textarea>
-          <div class="textarea-helper">ככל שתפרט.י יותר — המפה שלך תהיה מדויקת יותר</div>
+          <div class="textarea-helper">ככל שתפרט.י יותר - המפה שלך תהיה מדויקת יותר</div>
         </div>`;
     }
     html += `</div>`;
@@ -554,5 +554,4 @@ render();
 </script>
 <script src="flowli-legal.js"></script>
 <script src="flowli-legal.js"></script>
-</body>
-</html>
+</body

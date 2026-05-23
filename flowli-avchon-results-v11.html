@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flowli — תוצאות האבחון שלך</title>
+<title>Flowli - תוצאות האבחון שלך</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&family=Rubik:ital,wght@0,300..900;1,300..900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -40,7 +40,7 @@ body {
   padding-bottom: 40px;
 }
 
-/* ══ גלים — זהים לדף 1 ══ */
+/* ══ גלים - זהים לדף 1 ══ */
 .wave-svg { position: fixed; pointer-events: none; z-index: 0; }
 .wave-svg-top    { top: 80px; right: 0; width: 100%; max-width: 1400px; height: 900px; }
 .wave-svg-bottom { bottom: 0; left: 0; width: 70%; max-width: 750px; height: 60vh; min-height: 400px; }
@@ -51,7 +51,7 @@ body {
   display: flex; align-items: center; justify-content: space-between;
   padding: 22px 32px 16px; max-width: 1400px; margin: 0 auto;
 }
-.flowli-logo { display: inline-flex; align-items: center; gap: 0.3em; font-size: 24px; text-decoration: none; direction: ltr; }
+.flowli-logo { display: inline-flex; align-items: center; gap: 0.3em; font-size: clamp(30px, 3.5vw, 36px); text-decoration: none; direction: ltr; }
 .flowli-logo svg { width: 1.1em; height: 1.1em; }
 .flowli-logo .logo-text { font-family: 'Inter', sans-serif; font-weight: 800; letter-spacing: -0.035em; }
 .flowli-logo .logo-flow { color: #2A2A2A; }
@@ -90,7 +90,7 @@ body {
   box-shadow: 0 1px 1px rgba(255,255,255,1) inset, 0 30px 50px -18px rgba(180,110,60,.22), 0 4px 12px rgba(0,0,0,.04);
 }
 .hero-name {
-  font-family: 'Rubik', sans-serif; font-size: 22px; font-weight: 700;
+  font-family: 'Assistant', sans-serif; font-size: 22px; font-weight: 700;
   color: var(--ink); letter-spacing: -0.03em; margin-bottom: 5px;
 }
 .hero-sub { font-size: 15px; color: var(--muted); font-weight: 500; }
@@ -100,13 +100,15 @@ body {
   background: linear-gradient(135deg, #FFF4E6, #FFDDB8);
   border: 1.5px solid #F0D4A8; border-radius: 16px;
   padding: 16px 24px; flex-shrink: 0;
-  animation: float 5s ease-in-out infinite; min-width: 165px;
+  animation: float 5s ease-in-out infinite;
+  width: 175px; min-width: 175px; max-width: 175px;
   min-height: 100px;
 }
 .loss-amount {
   font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 900;
   color: var(--orange); letter-spacing: -0.04em; line-height: 1;
   min-height: 1.2em; display: block;
+  width: 100%; overflow: hidden;
 }
 .loss-label { font-size: 11px; font-weight: 700; color: var(--ink); margin-top: 5px; }
 .loss-sub   { font-size: 10px; color: var(--muted); margin-top: 2px; }
@@ -122,7 +124,12 @@ body {
 
 /* ── Two-col ── */
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
-@media (max-width: 620px) { .two-col { grid-template-columns: 1fr; } }
+@media (max-width: 620px) {
+  .two-col { grid-template-columns: 1fr; }
+  .hero-strip { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .loss-bubble { width: 100% !important; max-width: 100% !important; min-width: unset !important; box-sizing: border-box; }
+  .loss-amount { font-size: 28px; }
+}
 
 /* ── Priority card ── */
 .priority-card {
@@ -132,7 +139,7 @@ body {
   box-shadow: 0 2px 16px rgba(180,110,60,.08), 0 1px 2px rgba(255,255,255,.9) inset;
 }
 .priority-tag   { font-size: 11px; font-weight: 700; color: var(--orange-deep); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 7px; }
-.priority-title { font-family: 'Rubik', sans-serif; font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 10px; line-height: 1.35; letter-spacing: -0.02em; }
+.priority-title { font-family: 'Assistant', sans-serif; font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 10px; line-height: 1.35; letter-spacing: -0.02em; }
 .priority-body  { font-size: 15px; color: #444; line-height: 1.75; }
 .priority-body em { font-style: normal; font-weight: 700; color: var(--ink); background: rgba(242,107,31,.12); padding: 1px 5px; border-radius: 4px; }
 .priority-action {
@@ -247,7 +254,7 @@ body {
 .reco-conf   { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--orange-deep); background: var(--orange-pale); border-radius: 8px; padding: 5px 10px; font-weight: 600; letter-spacing: .04em; }
 
 /* ══════════════════════════════════
-   CTA — תוכנית פעולה + קביעת שיחה
+   CTA - תוכנית פעולה + קביעת שיחה
    כרטיסים ברוחב מלא, CTA צף מעליהם
 ══════════════════════════════════ */
 .plan-section {
@@ -256,13 +263,17 @@ body {
   /* גובה קבוע כדי שהCTA יוצב בצורה נכונה */
 }
 
-/* הכרטיסים הנעולים — כל אחד בקוביה משלו, ברוחב מלא */
+/* הכרטיסים הנעולים - כל אחד בקוביה משלו, ברוחב מלא */
 .locked-cards {
   display: flex; flex-direction: column; gap: 9px;
-  filter: blur(4px); opacity: .38;
   user-select: none; pointer-events: none;
-  /* padding בתחתית כדי שהכרטיסים האחרונים יהיו גלויים מתחת לCTA */
   padding-bottom: 12px;
+}
+.locked-card-visible {
+  opacity: .75;
+}
+.locked-card-blurred {
+  filter: blur(4px); opacity: .38;
 }
 .locked-card {
   display: flex; gap: 14px; align-items: flex-start;
@@ -274,7 +285,7 @@ body {
 .locked-title { font-size: 14px; font-weight: 700; color: var(--ink); }
 .locked-desc  { font-size: 13px; color: var(--muted); margin-top: 3px; }
 
-/* CTA — absolute, יושב במרכז מעל הכרטיסים */
+/* CTA - absolute, יושב במרכז מעל הכרטיסים */
 /* הכרטיסים נראים: למעלה (מעל הCTA), משמאל ומימין, ומלמטה */
 .cta-overlay {
   position: absolute;
@@ -292,7 +303,7 @@ body {
 
 .cta-box {
   background: linear-gradient(145deg, #FEF5E7 0%, #F9EDDE 50%, #F5E4CC 100%);
-  border: 1.5px solid rgba(242,107,31,.25);
+  border: 2.5px solid rgba(242,107,31,.55);
   border-radius: 22px; padding: 26px 24px 22px;
   text-align: center;
   width: 380px; max-width: 85%;
@@ -303,7 +314,7 @@ body {
 }
 .cta-lock-icon { width: 48px; height: 48px; background: #B8966A; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; box-shadow: 0 4px 12px rgba(0,0,0,.1); }
 .cta-lock-icon svg { width: 22px; height: 22px; stroke: #FFF5E8; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.cta-title { font-family: 'Rubik', sans-serif; font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 8px; letter-spacing: -0.02em; }
+.cta-title { font-family: 'Assistant', sans-serif; font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 8px; letter-spacing: -0.02em; }
 .cta-body  { font-size: 14px; color: #555; line-height: 1.65; margin-bottom: 10px; }
 .cta-scarcity {
   display: inline-block; margin-bottom: 18px;
@@ -316,7 +327,7 @@ body {
   background: linear-gradient(135deg, var(--orange), var(--orange-deep));
   color: #fff; border: none; border-radius: 14px;
   padding: 16px; font-family: 'Assistant', sans-serif;
-  font-weight: 800; font-size: 16px; cursor: pointer;
+  font-weight: 700; font-size: 16px; cursor: pointer;
   box-shadow: 0 10px 28px rgba(242,107,31,.42);
   transition: transform .15s, box-shadow .2s; letter-spacing: .01em;
 }
@@ -328,7 +339,7 @@ body {
 </head>
 <body>
 
-<!-- גל עליון — זהה לדף 1 -->
+<!-- גל עליון - זהה לדף 1 -->
 <svg class="wave-svg wave-svg-top" viewBox="0 0 1400 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <radialGradient id="waveTopFill" cx="85%" cy="35%" r="75%">
@@ -342,7 +353,7 @@ body {
   <path fill="url(#waveTopFill)" d="M 450,0 C 580,70 750,150 900,210 C 1010,260 1110,330 1200,400 C 1280,460 1350,510 1400,540 L 1400,0 Z"/>
 </svg>
 
-<!-- גל תחתון — זהה לדף 1 -->
+<!-- גל תחתון - זהה לדף 1 -->
 <svg class="wave-svg wave-svg-bottom" viewBox="0 0 800 800" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="waveBottomFill" x1="0%" y1="100%" x2="100%" y2="0%">
@@ -375,7 +386,7 @@ body {
   <div class="hero-strip">
     <div>
       <div class="hero-name" id="heroName">האבחון שלך מוכן 🎉</div>
-      <div class="hero-sub">תוצאות אישיות — מבוסס על תשובותיך.</div>
+      <div class="hero-sub">תוצאות אישיות - מבוסס על תשובותיך.</div>
     </div>
     <div class="loss-bubble">
       <div class="loss-amount" id="lossAmount">₪0</div>
@@ -385,7 +396,7 @@ body {
   </div>
 
   <!-- עדיפות ראשונה -->
-  <div class="section-title">עדיפות ראשונה — בשבילך</div>
+  <div class="section-title">עדיפות ראשונה - בשבילך</div>
   <div class="priority-card">
     <div class="priority-tag">🔥 האבחון מגלה</div>
     <div class="priority-title" id="priorityTitle">טוען...</div>
@@ -431,7 +442,7 @@ body {
   </div>
 
   <!-- המלצה אישית -->
-  <div class="section-title">ההמלצה שלי — הכלי המדויק לך</div>
+  <div class="section-title">ההמלצה שלי - הכלי המדויק לך</div>
   <div class="reco-card">
     <div class="reco-tool" id="recoTool">טוען...</div>
     <div class="reco-body" id="recoBody">טוען...</div>
@@ -445,19 +456,19 @@ body {
   <div class="section-title">תוכנית פעולה מלאה</div>
   <div class="plan-section" style="min-height:500px;">
     <div class="locked-cards">
-      <div class="locked-card"><div class="locked-num">2</div><div><div class="locked-title">מערכת פולואפ אוטומטית</div><div class="locked-desc">לידים שלא ענו מקבלים תזכורת חכמה</div></div></div>
-      <div class="locked-card"><div class="locked-num">3</div><div><div class="locked-title">CRM מרכזי לכל הלקוחות</div><div class="locked-desc">היסטוריה, סטטוס, ביאורים — במקום אחד</div></div></div>
-      <div class="locked-card"><div class="locked-num">4</div><div><div class="locked-title">דשבורד ניהול לידים</div><div class="locked-desc">תרא.י בזמן אמת מה קורה בעסק שלך</div></div></div>
-      <div class="locked-card"><div class="locked-num">5</div><div><div class="locked-title">אוטומציית הצעות מחיר</div><div class="locked-desc">PDF מוכן תוך 3 דקות, ישירות ללקוח</div></div></div>
+      <div class="locked-card locked-card-visible"><div class="locked-num">2</div><div><div class="locked-title">מערכת פולואפ אוטומטית</div><div class="locked-desc">פניות שלא ענו מקבלות תזכורת חכמה</div></div></div>
+      <div class="locked-card locked-card-blurred"><div class="locked-num">3</div><div><div class="locked-title">CRM מרכזי לכל הלקוחות</div><div class="locked-desc">היסטוריה, סטטוס, ביאורים - במקום אחד</div></div></div>
+      <div class="locked-card locked-card-blurred"><div class="locked-num">4</div><div><div class="locked-title">דשבורד ניהול פניות</div><div class="locked-desc">תרא.י בזמן אמת מה קורה בעסק שלך</div></div></div>
+      <div class="locked-card locked-card-blurred"><div class="locked-num">5</div><div><div class="locked-title">אוטומציית הצעות מחיר</div><div class="locked-desc">PDF מוכן תוך 3 דקות, ישירות ללקוח</div></div></div>
     </div>
 
     <div class="cta-overlay">
       <div class="cta-box">
         <div class="cta-lock-icon"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
         <div class="cta-title">רוצה את תוכנית הפעולה המלאה?</div>
-        <div class="cta-body">בשיחה של 30 דקות — נבנה יחד את המפה המדויקת לעסק שלך.</div>
-        <div class="cta-scarcity">💛 אני עובדת עם מספר מצומצם של עסקים בכל חודש —<br>כדי שאוכל להיות נוכחת באמת.</div>
-        <button class="btn-cta" id="btnCta" onclick="openContact()">📞 אשמח לשיחת היכרות קצרה — צרי קשר!</button>
+        <div class="cta-body">בשיחה של 30 דקות - נבנה יחד את המפה המדויקת לעסק שלך.</div>
+        <div class="cta-scarcity">💛 אני עובדת עם מספר מצומצם של עסקים בכל חודש -<br>כדי שאוכל להיות נוכחת באמת.</div>
+        <button class="btn-cta" id="btnCta" onclick="openContact()">📞 אשמח לשיחת היכרות קצרה - צרי קשר!</button>
       </div>
     </div>
   </div>
@@ -481,7 +492,7 @@ const moneyLost=Math.round(leadsLost*dealValues*improvedClose);
 function score(keys){const v=keys.map(k=>answers[k]).filter(x=>x!==undefined&&typeof x==='number');return v.length?Math.round(100-(v.reduce((a,b)=>a+b,0)/v.length/3)*100):50;}
 
 const areas=[
-  {name:'ניהול לידים', score:score(['leads','followup'])},
+  {name:'ניהול פניות', score:score(['leads','followup'])},
   {name:'זמן תגובה',   score:score(['responseTime'])},
   {name:'תפעול משרד',  score:score(['quotes','info','questions'])},
   {name:'עומס יומי',   score:score(['mood'])},
@@ -506,41 +517,41 @@ autos.filter(a=>a.on).forEach(a=>{
 
 const priorityMap={
   'זמן תגובה':{
-    title:firstName+', הלקוח לא ממתין — הוא כבר אצל המתחרה',
-    body:`כשעוברות יותר מ-2 שעות עד לתגובה הראשונה — <em>שיעור הסגירה יורד ב-70%</em>. לא כי המוצר שלך פחות טוב, אלא כי מי שענה ראשון כבר יצר קשר ואמון.`,
+    title:firstName+', הלקוח לא ממתין - הוא כבר אצל המתחרה',
+    body:`כשעוברות יותר מ-2 שעות עד לתגובה הראשונה - <em>שיעור הסגירה יורד ב-70%</em>. לא כי המוצר שלך פחות טוב, אלא כי מי שענה ראשון כבר יצר קשר ואמון.`,
     step:`שלב 1: תגובה אוטומטית שמאשרת קבלת פנייה תוך 30 שניות`
   },
-  'ניהול לידים':{
+  'ניהול פניות':{
     title:leadsLost+' פניות יוצאות מהמשפך שלך כל חודש',
-    body:`לא בגלל שהן לא מתאימות — אלא כי <em>אין מעקב מסודר</em>. כל ליד שנופל בין הכסאות שווה ${dealValues.toLocaleString()}₪ שנשאר על השולחן.`,
+    body:`לא בגלל שהן לא מתאימות - אלא כי <em>אין מעקב מסודר</em>. כל פנייה שנופלת בין הכסאות שווה ${dealValues.toLocaleString()}₪ שנשאר על השולחן.`,
     step:`שלב 1: רשימה חיה של כל הפניות הפתוחות עם סטטוס ותאריך`
   },
   'תפעול משרד':{
     title:'שעה על הצעת מחיר = לקוח שנסגר אצל המתחרה',
-    body:`כל עיכוב בהצעה הוא הזדמנות למתחרה. <em>3 דקות במקום שעה</em> — זה אפשרי עם תבנית שמייצרת הצעות מחיר אוטומטיות.`,
+    body:`כל עיכוב בהצעה הוא הזדמנות למתחרה. <em>3 דקות במקום שעה</em> - זה אפשרי עם תבנית שמייצרת הצעות מחיר אוטומטיות.`,
     step:`שלב 1: תבנית הצעת מחיר שמתמלאת אוטומטית בנתוני הלקוח`
   },
   'עומס יומי':{
     title:'כל האנרגיה שלך הולכת לכיבוי שריפות',
-    body:`כשאת.ה מנהל.ת עסק ועוסק.ת בשאלות חוזרות ומשימות ידניות — <em>אין זמן לצמיחה אמיתית</em>. 2–3 אוטומציות פותחות 8 שעות שבועיות.`,
+    body:`כשאת.ה מנהל.ת עסק ועוסק.ת בשאלות חוזרות ומשימות ידניות - <em>אין זמן לצמיחה אמיתית</em>. 2–3 אוטומציות פותחות 8 שעות שבועיות.`,
     step:`שלב 1: לזהות את 3 המשימות החוזרות ביותר ולהפוך אותן לאוטומטיות`
   },
 };
-const pri=priorityMap[worstArea.name]||{title:'יש פוטנציאל משמעותי לשיפור',body:`<em>2–3 אוטומציות</em> יכולות לשחרר שעות ולשפר הכנסה.`,step:`שלב 1: למפות נקודות כאב — קבע.י שיחה ייעודית`};
+const pri=priorityMap[worstArea.name]||{title:'יש פוטנציאל משמעותי לשיפור',body:`<em>2–3 אוטומציות</em> יכולות לשחרר שעות ולשפר הכנסה.`,step:`שלב 1: למפות נקודות כאב - קבע.י שיחה ייעודית`};
 
 function buildRec(){
   const pain=(answers.painPoint||'').trim();
-  const painHtml=pain.length>10?`כתבת: <em>"${pain.length>60?pain.slice(0,58)+'...':pain}"</em> — זה בדיוק הנקודה. `:'';
+  const painHtml=pain.length>10?`כתבת: <em>"${pain.length>60?pain.slice(0,58)+'...':pain}"</em> - זה בדיוק הנקודה. `:'';
   const highDeal=(answers.dealsize||0)>=2;
   if(worstArea.name.includes('תגובה')||answers.responseTime>=2)
-    return{tool:'🤖 בוט תגובה אוטומטי',body:`${painHtml}הכלי שמתאים לך: <em>בוט WhatsApp שעונה תוך שניות</em> — מאשר קבלת פנייה, מקבל פרטים, ומעביר לך רק לידים מסוננים.`,impact:`מונע ~${Math.round(moneyLost*0.35).toLocaleString()}₪ אובדן חודשי`};
-  if(worstArea.name.includes('לידים')||answers.leads>=2){
-    if(highDeal) return{tool:'📋 מערכת מעקב לידים',body:`${painHtml}הכלי שמתאים לך: <em>CRM קל ואוטומטי</em> שרושם כל פנייה ושולח תזכורת כשליד לא קיבל מענה תוך 24 שעות.`,impact:`שחזור עד ${moneyLost.toLocaleString()}₪ בחודש`};
-    return{tool:'📋 מעקב פניות אוטומטי',body:`${painHtml}הכלי שמתאים לך: <em>רשימת לידים חיה</em> שמתעדכנת אוטומטית ושולחת תזכורת כשפנייה נשכחת.`,impact:`שחזור ${moneyLost.toLocaleString()}₪ בחודש`};
+    return{tool:'🤖 בוט תגובה אוטומטי',body:`${painHtml}הכלי שמתאים לך: <em>בוט WhatsApp שעונה תוך שניות</em> - מאשר קבלת פנייה, מקבל פרטים, ומעביר לך רק פניות מסוננות.`,impact:`מונע ~${Math.round(moneyLost*0.35).toLocaleString()}₪ אובדן חודשי`};
+  if(worstArea.name.includes('פניות')||answers.leads>=2){
+    if(highDeal) return{tool:'📋 מערכת מעקב פניות',body:`${painHtml}הכלי שמתאים לך: <em>CRM קל ואוטומטי</em> שרושם כל פנייה ושולח תזכורת כשפנייה לא קיבלה מענה תוך 24 שעות.`,impact:`שחזור עד ${moneyLost.toLocaleString()}₪ בחודש`};
+    return{tool:'📋 מעקב פניות אוטומטי',body:`${painHtml}הכלי שמתאים לך: <em>רשימת פניות חיה</em> שמתעדכנת אוטומטית ושולחת תזכורת כשפנייה נשכחת.`,impact:`שחזור ${moneyLost.toLocaleString()}₪ בחודש`};
   }
   if(worstArea.name.includes('תפעול')||answers.quotes>=2)
-    return{tool:'📄 הצעות מחיר אוטומטיות',body:`${painHtml}הכלי שמתאים לך: <em>תבנית הצעת מחיר חכמה</em> — מזין שם לקוח, מקבל PDF מוכן תוך 3 דקות. הלקוח מקבל לפני שסיים לחפש מתחרים.`,impact:'חוסך 5–8 שעות שבועיות'};
-  return{tool:'⚡ חבילת אוטומציה בסיסית',body:`${painHtml}הכלי שמתאים לך: <em>3 אוטומציות ליבה</em> — תגובה ראשונה, מעקב לידים, ועדכון סטטוס ללקוחות.`,impact:'8–10 שעות פנויות בשבוע'};
+    return{tool:'📄 הצעות מחיר אוטומטיות',body:`${painHtml}הכלי שמתאים לך: <em>תבנית הצעת מחיר חכמה</em> - מזין שם לקוח, מקבל PDF מוכן תוך 3 דקות. הלקוח מקבל לפני שסיים לחפש מתחרים.`,impact:'חוסך 5–8 שעות שבועיות'};
+  return{tool:'⚡ חבילת אוטומציה בסיסית',body:`${painHtml}הכלי שמתאים לך: <em>3 אוטומציות ליבה</em> - תגובה ראשונה, מעקב פניות, ועדכון סטטוס ללקוחות.`,impact:'8–10 שעות פנויות בשבוע'};
 }
 const rec=buildRec();
 
@@ -586,12 +597,12 @@ document.getElementById('recoImpact').textContent=rec.impact;
       + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #f0f0f0;">'
       + '<div style="width:36px;height:36px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.1-1.4z"/></svg></div>'
       + '<div><div style="font-weight:700;font-size:14px;">Flowli Bot</div><div style="font-size:11px;color:#25D366;">● מחובר</div></div></div>'
-      + '<div style="background:#f0f0f0;border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:13px;max-width:85%;">שלום! קיבלתי את פנייתך 👋 אחזור אליך תוך כשעה. בינתיים — ספר.י לי על העסק שלך.</div>'
+      + '<div style="background:#f0f0f0;border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:13px;max-width:85%;">שלום! קיבלתי את פנייתך 👋 אחזור אליך תוך כשעה. בינתיים - ספר.י לי על העסק שלך.</div>'
       + '<div style="background:#dcf8c6;border-radius:12px;padding:10px 12px;margin-right:auto;margin-left:0;font-size:13px;max-width:85%;text-align:right;">אחד, עסק קטן</div>'
-      + '<div style="font-size:11px;color:#aaa;text-align:center;margin-top:10px;">זו הודעה אוטומטית — נשלחת תוך 8 שניות מהפנייה</div></div>';
-  } else if (recTool.includes('מעקב') || recTool.includes('CRM') || area.includes('לידים')) {
+      + '<div style="font-size:11px;color:#aaa;text-align:center;margin-top:10px;">זו הודעה אוטומטית - נשלחת תוך 8 שניות מהפנייה</div></div>';
+  } else if (recTool.includes('מעקב') || recTool.includes('CRM') || area.includes('פניות')) {
     html = '<div style="background:#fff;border-radius:16px;padding:16px;max-width:320px;margin:0 auto;box-shadow:0 2px 12px rgba(0,0,0,.08);font-family:\'Assistant\',sans-serif;direction:rtl;">'
-      + '<div style="font-weight:700;font-size:14px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f0f0f0;">📋 לידים פתוחים</div>'
+      + '<div style="font-weight:700;font-size:14px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f0f0f0;">📋 פניות פתוחות</div>'
       + '<div style="display:flex;flex-direction:column;gap:8px;">'
       + '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:#fff8f0;border-radius:10px;border-right:3px solid #F26B1F;">'
       + '<div><div style="font-weight:700;font-size:13px;">ישראל כהן</div><div style="font-size:11px;color:#888;">נכנס לפני 2 שעות</div></div>'
@@ -602,7 +613,7 @@ document.getElementById('recoImpact').textContent=rec.impact;
       + '<div style="font-size:11px;color:#aaa;text-align:center;margin-top:6px;">מתעדכן אוטומטית בכל פנייה חדשה</div></div></div>';
   } else if (recTool.includes('הצעות') || area.includes('תפעול')) {
     html = '<div style="background:#fff;border-radius:16px;padding:16px;max-width:320px;margin:0 auto;box-shadow:0 2px 12px rgba(0,0,0,.08);font-family:\'Assistant\',sans-serif;direction:rtl;">'
-      + '<div style="font-weight:700;font-size:14px;margin-bottom:4px;">📄 הצעת מחיר — ' + name + '</div>'
+      + '<div style="font-weight:700;font-size:14px;margin-bottom:4px;">📄 הצעת מחיר - ' + name + '</div>'
       + '<div style="font-size:11px;color:#888;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #f0f0f0;">נוצרה אוטומטית · ' + new Date().toLocaleDateString('he-IL') + '</div>'
       + '<table style="width:100%;font-size:13px;border-collapse:collapse;">'
       + '<tr style="background:#f8f8f8;"><td style="padding:6px 8px;font-weight:600;">שירות</td><td style="padding:6px 8px;text-align:left;font-weight:600;">מחיר</td></tr>'
@@ -615,7 +626,7 @@ document.getElementById('recoImpact').textContent=rec.impact;
     html = '<div style="background:#fff;border-radius:16px;padding:16px;max-width:320px;margin:0 auto;box-shadow:0 2px 12px rgba(0,0,0,.08);font-family:\'Assistant\',sans-serif;direction:rtl;">'
       + '<div style="font-weight:700;font-size:14px;margin-bottom:12px;">⚡ משימות היום</div>'
       + '<div style="display:flex;flex-direction:column;gap:7px;">'
-      + '<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#e6f4ea;border-radius:10px;"><span style="color:#2D7A3A;font-size:16px;">✓</span><span style="font-size:13px;color:#2D7A3A;font-weight:600;">מענה ל-3 לידים חדשים</span></div>'
+      + '<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#e6f4ea;border-radius:10px;"><span style="color:#2D7A3A;font-size:16px;">✓</span><span style="font-size:13px;color:#2D7A3A;font-weight:600;">מענה ל-3 פניות חדשות</span></div>'
       + '<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#fff8f0;border-radius:10px;"><span style="color:#F26B1F;font-size:16px;">○</span><span style="font-size:13px;font-weight:600;">שלח הצעת מחיר לרונית</span></div>'
       + '<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#f8f8f8;border-radius:10px;"><span style="color:#999;font-size:16px;">○</span><span style="font-size:13px;color:#888;">פולואפ לדנה כהן</span></div>'
       + '<div style="font-size:11px;color:#aaa;text-align:center;margin-top:6px;">מתעדכן אוטומטית מכל הערוצים</div></div></div>';
@@ -632,9 +643,11 @@ function openContact() {
   // 1. עדכן כפתור + הצג אישור
   var btn = document.getElementById('btnCta');
   btn.disabled = true;
-  btn.style.background = 'linear-gradient(135deg,#2D7A3A,#3a9a4a)';
-  btn.style.border = '2.5px solid #1a5c28';
-  btn.style.boxShadow = '0 10px 28px rgba(45,122,58,.4)';
+  btn.textContent = '👍 קיבלתי - אחזור אליך בהקדם!';
+  btn.style.background = '#25d366';
+  btn.style.border = 'none';
+  btn.style.color = '#fff';
+  btn.style.boxShadow = '0 10px 28px rgba(37,211,102,.35)';
   btn.style.cursor = 'default';
 
   // 2. PATCH callback_requested
@@ -688,4 +701,4 @@ function openContact() {
 
 <script src="flowli-legal.js"></script>
 </body>
-</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
