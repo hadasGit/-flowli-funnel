@@ -364,5 +364,6 @@
       if (!consent) return;
 
       localStorage.setItem('flowli_lead', JSON.stringify({ name, email, phone }));
-      const SUPABASE_URL = 'https://whuuevjoqitwslnykvgd.supabase.co';
-      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdX
+      // שולח ל-Supabase ברקע — לא מחכים, לא חוסמים
+      try {
+        var SURL='https://whuuevjoqitwslnykvgd.supabase.co';
