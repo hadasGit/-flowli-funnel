@@ -386,7 +386,7 @@ body {
 </svg>
 
 <!-- גל תחתון -->
-<svg class="wave-svg wave-svg-bottom" viewBox="0 0 800 700" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+<svg class="wave-svg wave-svg-bottom" viewBox="0 0 700 650" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="waveBottomFill" x1="0%" y1="100%" x2="100%" y2="0%">
       <stop offset="0%"   stop-color="#FBBA76" stop-opacity="1"/>
@@ -557,21 +557,25 @@ autos.filter(a=>a.on).forEach(a=>{
   qMap[q].push(a.name);
 });
 
-// ה-insight ו-buildRec מבוססים על rec.type
+// ה-insight ו-buildRec מבוססים על rec.type — דינמי לפי נתוני השאלון
+const rtLabels=['תוך 5 דקות','תוך שעה-שעתיים','אותו יום','יום או יותר'];
+const rtLabel=answers.responseTime>=0&&answers.responseTime<=3?rtLabels[answers.responseTime]:'זמן ארוך';
+const leadsMonthly=[7,20,50,100][answers.monthlyLeads??1];
+
 const priByType={
   whatsapp:{
-    title:firstName+', הלקוח לא ממתין — הוא כבר אצל המתחרה',
-    body:`כשעוברות יותר מ-2 שעות עד לתגובה הראשונה — <em>שיעור הסגירה יורד ב-70%</em>. לא כי המוצר שלך פחות טוב, אלא כי מי שענה ראשון כבר יצר קשר ואמון.`,
+    title:`${firstName}, פנייה שלא ענית עליה ${rtLabel} — כבר אצל המתחרה`,
+    body:`כשעוברות יותר מ-2 שעות עד לתגובה הראשונה — <em>שיעור הסגירה יורד ב-70%</em>. עם ${leadsMonthly} פניות בחודש, זה כסף שנשאר על השולחן.`,
     step:`שלב 1: תגובה אוטומטית שמאשרת קבלת פנייה תוך 30 שניות`
   },
   crm:{
-    title:leadsLost+' פניות יוצאות מהמשפך שלך כל חודש',
-    body:`לא בגלל שהן לא מתאימות — אלא כי <em>אין מעקב מסודר</em>. כל ליד שנופל בין הכסאות שווה ${dealValues.toLocaleString()}₪ שנשאר על השולחן.`,
+    title:`${leadsLost} פניות יוצאות מהמשפך שלך כל חודש`,
+    body:`לא בגלל שהן לא מתאימות — אלא כי <em>אין מעקב מסודר</em>. כל פנייה שנופלת שווה ${dealValues.toLocaleString()}₪ שנשאר על השולחן.`,
     step:`שלב 1: רשימה חיה של כל הפניות הפתוחות עם סטטוס ותאריך`
   },
   quotes:{
-    title:'שעה על הצעת מחיר = לקוח שנסגר אצל המתחרה',
-    body:`כל עיכוב בהצעה הוא הזדמנות למתחרה. <em>3 דקות במקום שעה</em> — זה אפשרי עם תבנית שמייצרת הצעות מחיר אוטומטיות.`,
+    title:`הצעת מחיר שמאחרת = עסקת ${dealValues.toLocaleString()}₪ אצל המתחרה`,
+    body:`כל עיכוב בהצעה הוא הזדמנות למתחרה. <em>3 דקות במקום שעות</em> — זה אפשרי עם תבנית שמייצרת הצעות מחיר אוטומטיות.`,
     step:`שלב 1: תבנית הצעת מחיר שמתמלאת אוטומטית בנתוני הלקוח`
   },
   faq:{
@@ -580,8 +584,8 @@ const priByType={
     step:`שלב 1: רשימת השאלות הנפוצות ותשובות אוטומטיות`
   },
   bundle:{
-    title:'כל האנרגיה שלך הולכת לכיבוי שריפות',
-    body:`כשאת.ה מנהל.ת עסק ועוסק.ת במשימות ידניות — <em>אין זמן לצמיחה אמיתית</em>. 2–3 אוטומציות פותחות 8 שעות שבועיות.`,
+    title:`${firstName}, כל האנרגיה שלך הולכת לכיבוי שריפות`,
+    body:`עם ${leadsMonthly} פניות בחודש ועסקאות של ${dealValues.toLocaleString()}₪ — <em>כל דקה שהולכת לשגרה ידנית</em> היא דקה שלא הולכת לצמיחה.`,
     step:`שלב 1: לזהות את 3 המשימות החוזרות ביותר ולהפוך אותן לאוטומטיות`
   },
 };
@@ -591,20 +595,38 @@ function buildRec(){
   const painHtml=pain.length>10?`כתבת: <em>"${pain.length>60?pain.slice(0,58)+'...':pain}"</em> — זה בדיוק הנקודה. `:'';
   const highDeal=(answers.dealsize||0)>=2;
   const NA=4;
-  const rt  = answers.responseTime!==NA ? (answers.responseTime??0) : -1;
-  const fu  = answers.followup!==NA     ? (answers.followup??0)     : -1;
-  const qu  = answers.quotes!==NA       ? (answers.quotes??0)       : -1;
-  const inf = answers.info!==NA         ? (answers.info??0)         : -1;
-  const qst = answers.questions!==NA    ? (answers.questions??0)    : -1;
 
+  // זיהוי painPoint אוטומטי לפי מילות מפתח מהטקסט החופשי
+  const painLow=pain.toLowerCase();
+  const painKeywords={
+    whatsapp:['וואטסאפ','whatsapp','הודע','תגוב','ענ','חזר','פניות','נכנס'],
+    crm:['עוקב','מעקב','ליד','נופל','שוכח','לא זוכר','היסטוריה','לקוח'],
+    quotes:['הצעת מחיר','הצעה','מחיר','PDF','אקסל','זמן','להכין','שעות'],
+    faq:['שאלות','אותן','חוזר','מחיר','מלאי','סטטוס','מידע','שוב ושוב'],
+  };
+  let painType=null;
+  for(const [type,words] of Object.entries(painKeywords)){
+    if(words.some(w=>painLow.includes(w))){ painType=type; break; }
+  }
+
+  const rt  = answers.responseTime!==undefined && answers.responseTime!==NA ? answers.responseTime : -1;
+  const fu  = answers.followup!==undefined     && answers.followup!==NA     ? answers.followup     : -1;
+  const qu  = answers.quotes!==undefined       && answers.quotes!==NA       ? answers.quotes       : -1;
+  const inf = answers.info!==undefined         && answers.info!==NA         ? answers.info         : -1;
+  const qst = answers.questions!==undefined    && answers.questions!==NA    ? answers.questions    : -1;
+  const lds = answers.leads!==undefined                                     ? answers.leads        : -1;
+
+  // ציון לכל סוג — גבוה יותר = בעיה חמורה יותר
   const scored=[
-    {type:'whatsapp',score:rt},
-    {type:'crm',     score:fu},
-    {type:'quotes',  score:qu},
-    {type:'faq',     score:Math.max(qst,inf)},
-  ].filter(x=>x.score>=2).sort((a,b)=>b.score-a.score);
+    {type:'whatsapp', score: Math.max(rt, lds)},
+    {type:'crm',      score: fu},
+    {type:'quotes',   score: qu},
+    {type:'faq',      score: Math.max(qst, inf)},
+  ].filter(x=>x.score>=1).sort((a,b)=>b.score-a.score);
 
-  const worst=scored[0]?.type||'bundle';
+  // אם painPoint מצביע על סוג ספציפי — תן לו בונוס ראשוניות
+  let worst=scored[0]?.type||'bundle';
+  if(painType && scored.find(s=>s.type===painType)) worst=painType;
 
   if(worst==='whatsapp') return{type:'whatsapp',
     tool:'🤖 בוט WhatsApp אוטומטי',
@@ -641,6 +663,9 @@ function renderDemoCard(type){
   if(!el)return;
   const lead=JSON.parse(localStorage.getItem('flowli_lead')||'{}');
   const firstName=(lead.name||'').split(' ')[0]||'ישראל';
+  const pain=(answers.painPoint||'').trim();
+  // שורת הכאב האישית — מקוצרת ל-50 תווים לשימוש בדמו
+  const painShort=pain.length>8?(pain.length>50?pain.slice(0,48)+'...':pain):null;
 
   const row=(name,time,badge,badgeColor,badgeBg)=>`
     <div style="padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(0,0,0,.05);">
@@ -651,52 +676,58 @@ function renderDemoCard(type){
       <span style="background:${badgeBg};color:${badgeColor};font-size:10px;font-weight:700;padding:3px 9px;border-radius:7px;border:1px solid rgba(0,0,0,.06);">${badge}</span>
     </div>`;
 
+  // נתוני השאלון לשימוש בדמו
+  const dealLabel=['עד 500₪','500–2,000₪','2,000–10,000₪','מעל 10,000₪'][answers.dealsize??2];
+  const leadsLabel=['עד 10','10–30','30–80','מעל 80'][answers.monthlyLeads??1];
+  const painLine=painShort?`<div style="font-size:11px;color:var(--orange-deep);margin-top:6px;padding:6px 10px;background:rgba(242,107,31,.08);border-radius:8px;text-align:right;">"${painShort}"</div>`:'';
+
   const templates={
     whatsapp:`
       <div style="background:#075E54;padding:10px 14px;display:flex;align-items:center;gap:8px;">
         <div style="width:32px;height:32px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:16px;">💬</div>
         <div>
-          <div style="font-size:12px;font-weight:700;color:#fff;">WhatsApp Business</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.7);">תגובה אוטומטית פעילה</div>
+          <div style="font-size:12px;font-weight:700;color:#fff;">WhatsApp Business · ${firstName}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.7);">תגובה אוטומטית פעילה · ${leadsLabel} פניות/חודש</div>
         </div>
       </div>
       <div style="background:#ECE5DD;padding:12px 14px;display:flex;flex-direction:column;gap:8px;">
-        <div style="background:#DCF8C6;border-radius:10px 0 10px 10px;padding:10px 12px;font-size:12px;max-width:80%;align-self:flex-end;text-align:right;">
-          שלום, ${firstName} כאן — מתעניין/ת בשירותים שלך
-          <div style="font-size:10px;color:#999;margin-top:4px;">${firstName} · עכשיו</div>
+        <div style="background:#DCF8C6;border-radius:10px 0 10px 10px;padding:10px 12px;font-size:12px;max-width:82%;align-self:flex-end;text-align:right;">
+          ${painShort?`"${painShort}"`:' שלום, מתעניין.ת בשירות שלך'}
+          <div style="font-size:10px;color:#999;margin-top:4px;">לקוח חדש · עכשיו</div>
         </div>
-        <div style="background:#fff;border-radius:0 10px 10px 10px;padding:10px 12px;font-size:12px;max-width:80%;text-align:right;">
-          שלום ${firstName}! קיבלנו את פנייתך 🙏<br>נחזור אליך תוך שעה.
-          <div style="font-size:10px;color:#999;margin-top:4px;">לקוח חדש · לפני 2 דק׳</div>
+        <div style="background:#fff;border-radius:0 10px 10px 10px;padding:10px 12px;font-size:12px;max-width:82%;text-align:right;">
+          שלום! קיבלנו את פנייתך 🙏 נחזור אליך תוך שעה.<br>
+          <span style="font-size:10px;color:#aaa;">בוט אוטומטי · 0 שניות</span>
         </div>
       </div>
-      <div style="padding:8px 14px;text-align:center;font-size:11px;color:#aaa;">עונה אוטומטית 24/7 — גם בשישי בלילה</div>`,
+      <div style="padding:8px 14px;text-align:center;font-size:11px;color:#aaa;">עונה אוטומטית 24/7 — אף פנייה לא נופלת</div>`,
 
     crm:`
       <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid rgba(0,0,0,.06);">
-        <span style="font-size:13px;font-weight:700;color:#1A1A1A;">פניות פתוחות</span>
+        <span style="font-size:13px;font-weight:700;color:#1A1A1A;">פניות פתוחות · ${leadsLabel}/חודש</span>
         <span style="font-size:16px;">📋</span>
       </div>
-      ${row(firstName,'נכנס לפני שעה','חדש','#fff','var(--orange)')}
-      ${row('רונית לוי','נכנסה אתמול - ✉️ תזכורת נשלחה','ממתין','var(--orange-deep)','#FEF0E7')}
-      ${row('דוד ביטון','נסגר ✓','נסגר','#16a34a','#f0fdf4')}
-      <div style="padding:8px 14px;text-align:center;font-size:11px;color:#aaa;">מתעדכן אוטומטית בכל פנייה חדשה</div>`,
+      ${row(firstName,'נכנס.ה לפני שעה','חדש','#fff','var(--orange)')}
+      ${row('לקוח נוסף','אתמול · ✉️ תזכורת נשלחה','ממתין','var(--orange-deep)','#FEF0E7')}
+      ${row('ישראל כהן','עסקה: '+dealLabel+' · נסגר ✓','נסגר','#16a34a','#f0fdf4')}
+      ${painLine}
+      <div style="padding:8px 14px;text-align:center;font-size:11px;color:#aaa;">מתעדכן אוטומטית · אף לקוח לא נשכח</div>`,
 
     quotes:`
       <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid rgba(0,0,0,.06);">
         <span style="font-size:13px;font-weight:700;color:#1A1A1A;">הצעת מחיר — PDF מוכן</span>
         <span style="font-size:16px;">📄</span>
       </div>
-      <div style="padding:14px;">
+      <div style="padding:12px 14px;">
         <div style="background:#f8f8f8;border-radius:10px;padding:12px;font-size:12px;line-height:1.8;border:1px solid #eee;">
           <div style="font-weight:700;margin-bottom:6px;">הצעה מספר 042</div>
           <div>לקוח: <b>${firstName}</b></div>
-          <div>שירות: <b>פרויקט עיצוב</b></div>
-          <div>סכום: <b style="color:var(--orange);">₪8,500</b></div>
+          <div>ערך עסקה: <b style="color:var(--orange);">${dealLabel}</b></div>
+          ${painShort?`<div style="font-size:11px;color:#888;margin-top:4px;">הערה: "${painShort}"</div>`:''}
           <div style="margin-top:8px;padding-top:8px;border-top:1px solid #eee;color:#888;">נוצר אוטומטית · זמן: 12 שניות ⚡</div>
         </div>
       </div>
-      <div style="padding:8px 14px;text-align:center;font-size:11px;color:#aaa;">ממלא תבנית → PDF → נשלח ללקוח אוטומטית</div>`,
+      <div style="padding:8px 14px;text-align:center;font-size:11px;color:#aaa;">תבנית → PDF → נשלח ללקוח אוטומטית</div>`,
 
     faq:`
       <div style="background:#f0f4ff;padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(0,0,0,.06);">
@@ -705,19 +736,19 @@ function renderDemoCard(type){
       </div>
       <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px;">
         <div style="background:#f8f8f8;border-radius:10px;padding:10px;font-size:12px;text-align:right;border:1px solid #eee;">
-          "מה המחיר שלכם לפרויקט בסיסי?"
-          <div style="font-size:10px;color:#888;margin-top:3px;">לקוח · 10:34</div>
+          ${painShort?`"${painShort}"`:`"מה המחיר שלכם?"`}
+          <div style="font-size:10px;color:#888;margin-top:3px;">${firstName} · עכשיו</div>
         </div>
         <div style="background:#FEF0E7;border-radius:10px;padding:10px;font-size:12px;text-align:right;border:1px solid rgba(242,107,31,.15);">
-          הפרויקט הבסיסי שלנו מתחיל מ-₪3,500 ✨<br>
-          <span style="font-size:10px;color:var(--orange-deep);">הבוט ענה אוטומטית · 10:34</span>
+          שלום! הנה המידע שביקשת ✨<br>
+          <span style="font-size:10px;color:var(--orange-deep);">בוט ענה אוטומטית · 0 שניות</span>
         </div>
       </div>
-      <div style="padding:8px 14px;text-align:center;font-size:11px;color:#aaa;">עונה על 80% מהשאלות — בלי להטריד אותך</div>`,
+      <div style="padding:8px 14px;text-align:center;font-size:11px;color:#aaa;">עונה על 80% מהשאלות — בלי להפריע לך</div>`,
 
     bundle:`
       <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid rgba(0,0,0,.06);">
-        <span style="font-size:13px;font-weight:700;color:#1A1A1A;">לוח בקרה — אוטומציות פעילות</span>
+        <span style="font-size:13px;font-weight:700;color:#1A1A1A;">אוטומציות פעילות · ${firstName}</span>
         <span style="font-size:16px;">⚡</span>
       </div>
       <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px;">
@@ -726,15 +757,16 @@ function renderDemoCard(type){
           <span style="font-size:11px;color:#16a34a;font-weight:700;">פעיל ✓</span>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;background:#f0fdf4;border-radius:8px;padding:8px 12px;">
-          <span style="font-size:12px;font-weight:600;">📋 מעקב פניות</span>
+          <span style="font-size:12px;font-weight:600;">📋 מעקב ${leadsLabel} פניות</span>
           <span style="font-size:11px;color:#16a34a;font-weight:700;">פעיל ✓</span>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;background:#f0fdf4;border-radius:8px;padding:8px 12px;">
-          <span style="font-size:12px;font-weight:600;">📧 עדכון סטטוס</span>
+          <span style="font-size:12px;font-weight:600;">💰 עסקאות ${dealLabel}</span>
           <span style="font-size:11px;color:#16a34a;font-weight:700;">פעיל ✓</span>
         </div>
       </div>
-      <div style="padding:8px 14px;text-align:center;font-size:11px;color:#aaa;">3 תהליכים רצים אוטומטית — 24/7</div>`
+      ${painLine}
+      <div style="padding:8px 14px;text-align:center;font-size:11px;color:#aaa;">3 תהליכים אוטומטיים — 24/7</div>`
   };
 
   el.innerHTML=templates[type]||templates.crm;

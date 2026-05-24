@@ -63,13 +63,18 @@
 
     /* Badge תודה */
     .thank-you-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: linear-gradient(to left, rgba(253,221,189,.70), rgba(254,240,231,.65));
-      border: 1.5px solid var(--orange);
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(135deg,
+        rgba(255,248,235,.98) 0%,
+        rgba(254,232,200,.95) 50%,
+        rgba(251,210,165,.90) 100%);
+      border: 1.5px solid rgba(242,107,31,.45);
       border-radius: 100px;
-      padding: 11px 28px;
+      padding: 12px 30px;
       font-size: 19px; font-weight: 700; color: var(--orange-deep);
-      box-shadow: 0 4px 14px rgba(242,107,31,.18);
+      box-shadow:
+        0 8px 24px rgba(242,107,31,.20),
+        0 1px 0 rgba(255,255,255,.9) inset;
     }
 
     .loading-headline {
@@ -284,7 +289,7 @@
   </svg>
 
   <!-- גל תחתון -->
-  <svg class="wave-svg wave-svg-bottom" viewBox="0 0 800 700" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <svg class="wave-svg wave-svg-bottom" viewBox="0 0 700 650" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="waveBottomFill" x1="0%" y1="100%" x2="100%" y2="0%">
         <stop offset="0%"   stop-color="#FBBA76" stop-opacity="1"/>
