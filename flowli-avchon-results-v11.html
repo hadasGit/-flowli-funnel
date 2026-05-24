@@ -93,6 +93,10 @@ body {
   color: var(--ink); letter-spacing: -0.03em; margin-bottom: 5px;
 }
 .hero-sub { font-size: 15px; color: var(--muted); font-weight: 500; }
+@media (max-width: 600px) {
+  .hero-name { font-size: 17px; }
+  .hero-sub { font-size: 13px; }
+}
 
 .loss-bubble {
   text-align: center;
@@ -323,6 +327,19 @@ body {
   .two-col { grid-template-columns: 1fr; }
   .btn-cta { font-size: 15px; }
 }
+
+/* ── כפתור נגישות ── */
+.a11y-btn {
+  position: fixed; bottom: 20px; left: 20px; z-index: 999;
+  width: 46px; height: 46px; border-radius: 50%;
+  background: #7A5C38;
+  border: 2px solid rgba(255,255,255,.35);
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .2s, transform .2s;
+}
+.a11y-btn:hover { background: #5E4425; transform: scale(1.08); }
+.a11y-btn svg { width: 24px; height: 24px; fill: #fff; }
 </style>
 </head>
 <body>
@@ -346,13 +363,12 @@ body {
   <defs>
     <linearGradient id="waveBottomFill" x1="0%" y1="100%" x2="100%" y2="0%">
       <stop offset="0%"   stop-color="#FBBA76" stop-opacity="1"/>
-      <stop offset="30%"  stop-color="#FDC481" stop-opacity="0.85"/>
-      <stop offset="60%"  stop-color="#FDC481" stop-opacity="0.50"/>
+      <stop offset="35%"  stop-color="#FDC481" stop-opacity="0.80"/>
+      <stop offset="65%"  stop-color="#FDC481" stop-opacity="0.45"/>
       <stop offset="100%" stop-color="#FDC481" stop-opacity="0"/>
     </linearGradient>
   </defs>
-  <path fill="url(#waveBottomFill)" d="M 0,800 L 0,150 C 70,170 150,230 220,300 C 300,390 360,340 440,400 C 530,470 510,560 600,620 C 680,670 740,700 800,730 L 800,800 Z"/>
-  <rect x="0" y="750" width="800" height="50" fill="#FBBA76" opacity="1"/>
+  <path fill="url(#waveBottomFill)" d="M 0,800 L 0,160 C 80,180 170,240 250,310 C 340,390 390,345 470,405 C 560,470 545,555 630,615 C 700,665 750,700 800,720 L 800,800 Z"/>
 </svg>
 
 <!-- Nav -->
@@ -374,7 +390,7 @@ body {
   <div class="hero-strip">
     <div>
       <div class="hero-name" id="heroName">האבחון שלך מוכן 🎉</div>
-      <div class="hero-sub">תוצאות אישיות -מבוסס על תשובותיך.</div>
+      <div class="hero-sub">תוצאות אישיות · מבוסס על תשובותיך</div>
     </div>
     <div class="loss-bubble">
       <div class="loss-amount" id="lossAmount">₪0</div>
@@ -448,11 +464,11 @@ body {
 
   <!-- תוכנית פעולה מלאה -->
   <div class="section-title">תוכנית פעולה מלאה</div>
-  <div class="plan-section" style="min-height:460px;">
+  <!-- המלצה #2 - גלויה, מחוץ לplan-section, מעל ה-CTA -->
+  <div id="planCard2" style="opacity:1;filter:none;margin-bottom:9px;background:linear-gradient(145deg,#FEF5E7 0%,#F9EDDE 100%);border:1px solid rgba(255,255,255,.92);border-radius:14px;padding:14px 18px;box-shadow:0 2px 16px rgba(180,110,60,.08);display:flex;gap:14px;align-items:flex-start;">
+  </div>
 
-    <!-- המלצה #2 - גלויה, ממולאת ב-JS -->
-    <div id="planCard2" style="opacity:1;filter:none;margin-bottom:9px;background:linear-gradient(145deg,#FEF5E7 0%,#F9EDDE 100%);border:1px solid rgba(255,255,255,.92);border-radius:14px;padding:14px 18px;box-shadow:0 2px 16px rgba(180,110,60,.08);display:flex;gap:14px;align-items:flex-start;">
-    </div>
+  <div class="plan-section" style="min-height:380px;">
 
     <!-- המלצות 3-5 - מטושטשות, ממולאות ב-JS -->
     <div class="locked-cards" style="padding-bottom:12px;" id="planCards35">
@@ -464,9 +480,8 @@ body {
         <div class="cta-title">רוצ.ה את תוכנית הפעולה המלאה?</div>
         <div class="cta-body">בשיחה של 30 דקות - נבנה יחד את המפה המדויקת לעסק שלך.</div>
         <div class="cta-scarcity">💛 אני עובדת עם מספר מצומצם של עסקים בכל חודש -<br>כדי שאוכל להיות נוכחת באמת.</div>
-        <button class="btn-cta" id="btnContact" onclick="openContact()" style="flex-direction:column;gap:2px;line-height:1.4;">
-          <span>📞 אשמח לשיחת היכרות קצרה -</span>
-          <span>צרי קשר!</span>
+        <button class="btn-cta" id="btnContact" onclick="openContact()">
+          📞 אשמח לשיחת היכרות קצרה — צרי קשר!
         </button>
       </div>
     </div>
@@ -799,5 +814,16 @@ function openContact(){
 }
 
 </script>
+
+<!-- כפתור נגישות -->
+<button class="a11y-btn" aria-label="נגישות" title="הצהרת נגישות">
+  <!-- אייקון אדם בעיגול - סמל נגישות מקובל -->
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="4.5" r="2.5"/>
+    <path d="M12 8.5c-3 0-5.5 1.5-5.5 3.5v1h11v-1c0-2-2.5-3.5-5.5-3.5z"/>
+    <path d="M7.5 14l-1.5 6h2l1.5-4.5 2.5 1.5 2.5-1.5 1.5 4.5h2l-1.5-6H7.5z"/>
+  </svg>
+</button>
+
 </body>
 </html>
