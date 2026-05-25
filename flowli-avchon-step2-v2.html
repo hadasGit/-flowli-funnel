@@ -575,11 +575,26 @@ function nextBlock() {
           (dealArr[Math.min(ds,3)]  || 1200) * 0.3
         );
 
+        // tool1 + tool2 לפי worst_area
+        var toolMap = {
+          responseTime: { tool1: 'בוט WhatsApp אוטומטי — עונה תוך שניות ומסנן פניות', tool2: 'מעקב פניות אוטומטי — אף לקוח לא נופל בין הכיסאות' },
+          followup:     { tool1: 'מעקב פניות אוטומטי — תזכורות חכמות לכל ליד', tool2: 'CRM קל — כל הלקוחות במקום אחד עם סטטוס עדכני' },
+          quotes:       { tool1: 'הצעות מחיר אוטומטיות — PDF מוכן תוך 3 דקות', tool2: 'תזכורת מעקב אוטומטית — מגיעה ללקוח לפני שהוא שוכח' },
+          info:         { tool1: 'CRM מרכזי — כל הידע, ההיסטוריה והפרטים במקום אחד', tool2: 'בוט FAQ — עונה על שאלות חוזרות אוטומטית' },
+          questions:    { tool1: 'בוט FAQ אוטומטי — עונה על 80% מהשאלות בלי מגע יד', tool2: 'בסיס ידע מסודר — מידע זמין לכל מי שצריך, מיד' },
+          mood:         { tool1: 'מיפוי 3 המשימות החוזרות הכי הרבה — והפיכתן לאוטומטיות', tool2: 'דשבורד ניהול — תמונת מצב יומית של העסק בלחיצה אחת' },
+          leads:        { tool1: 'מעקב פניות אוטומטי — CRM קל שעובד בשבילך', tool2: 'בוט WhatsApp — תגובה ראשונה מיידית לכל פנייה' },
+          general:      { tool1: 'אוטומציית תגובה ראשונה — לקוח מקבל מענה תוך שניות', tool2: 'מעקב פניות ולקוחות — מסודר, אוטומטי, בלי להחמיץ כלום' }
+        };
+        var tools = toolMap[worstArea] || toolMap['general'];
+
         var payload = {
           score: totalScore,
           worst_area: areaMap[worstArea] || worstArea,
           roi_estimate: roiEst,
-          answers: ans
+          answers: ans,
+          tool1: tools.tool1,
+          tool2: tools.tool2
         };
 
         fetch(SURL + '/rest/v1/leads?email=eq.' + encodeURIComponent(lead.email), {
