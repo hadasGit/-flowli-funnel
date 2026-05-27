@@ -349,13 +349,14 @@ const rawScores = {
   FLOW:    raw.flow_score    ?? 0,
 };
 
-function problemPct(raw) { return Math.round((raw / 9) * 100); }
+const MAX = { LEADS: 12, OPS: 12, CONTROL: 6, FLOW: 6 };
+function problemPct(raw, key) { return Math.min(100, Math.round((raw / (MAX[key] || 9)) * 100)); }
 
 const problems = {
-  LEADS:   problemPct(rawScores.LEADS),
-  OPS:      problemPct(rawScores.OPS),
-  CONTROL: problemPct(rawScores.CONTROL),
-  FLOW:    problemPct(rawScores.FLOW),
+  LEADS:   problemPct(rawScores.LEADS, 'LEADS'),
+  OPS:      problemPct(rawScores.OPS, 'OPS'),
+  CONTROL: problemPct(rawScores.CONTROL, 'CONTROL'),
+  FLOW:    problemPct(rawScores.FLOW, 'FLOW'),
 };
 
 const avgProblem = Math.round(Object.values(problems).reduce((a,b)=>a+b,0) / 4);
