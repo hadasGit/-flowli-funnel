@@ -740,7 +740,7 @@ async function submitQuiz() {
 
   try {
     if (payload.email) {
-      await fetch(`${SUPABASE_URL}/rest/v1/leads`, {
+      await fetch(`${SUPABASE_URL}/rest/v1/leads?on_conflict=email`, {
         method: 'POST',
         headers: {
           'apikey': SUPABASE_KEY,
