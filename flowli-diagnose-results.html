@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowli - תוצאות האבחון שלך</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&family=Rubik:ital,wght@0,300..900;1,300..900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:          #F6F1E6;
+  --ink:         #1A1A1A;
+  --text:        #2A2A2A;
+  --muted:       #8A8378;
+  --orange:      #F26B1F;
+  --orange-deep: #D45A12;
+  --orange-pale: #FEF0E7;
+  --orange-mid:  #FDDDBD;
+  --green:       #2D7A3A;
+  --green-pale:  #E6F4EA;
+  --border:      #D8D0BE;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Assistant', system-ui, sans-serif;
+  background: var(--bg); color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh; position: relative; overflow-x: hidden;
+}
+
+/* ── WAVES ── */
+.wave-svg { position: fixed; pointer-events: none; z-index: 0; }
+.wave-svg-top    { top: 80px; right: 0; width: 100%; max-width: 1400px; height: 900px; }
+.wave-svg-bottom { bottom: 0; left: 0; width: 70%; max-width: 750px; height: auto; min-height: 300px; }
+
+/* ── NAV ── */
+.top-nav {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 32px 16px; max-width: 1400px; margin: 0 auto;
+}
+.flowli-logo { display: inline-flex; align-items: center; gap: 0.3em; font-size: clamp(32px, 4vw, 44px); text-decoration: none; direction: ltr; }
+.flowli-logo svg { width: 1.1em; height: 1.1em; }
+.flowli-logo .logo-text { font-family: 'Inter', sans-serif; font-weight: 800; letter-spacing: -0.035em; }
+.flowli-logo .logo-flow { color: #2A2A2A; }
+.flowli-logo .logo-li   { color: var(--orange); }
+.nav-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+  color: var(--orange-deep); background: var(--orange-pale);
+  border: 1px solid var(--orange-mid); border-radius: 20px; padding: 5px 14px; letter-spacing: .04em;
+}
+
+/* ── PAGE ── */
+.page-wrap { position: relative; z-index: 5; max-width: 840px; margin: 0 auto; padding: 8px 28px 100px; }
+
+/* ── HERO ── */
+.hero-strip {
+  position: relative; overflow: hidden;
+  background: linear-gradient(to left, rgba(221,229,247,.72) 0%, rgba(218,236,239,.65) 35%, rgba(246,231,214,.70) 100%);
+  backdrop-filter: blur(28px) saturate(1.5);
+  border: 1px solid rgba(255,255,255,.9);
+  border-radius: 22px; padding: 26px 30px; margin-bottom: 18px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  box-shadow: 0 1px 1px rgba(255,255,255,1) inset, 0 30px 50px -18px rgba(180,110,60,.22), 0 4px 12px rgba(0,0,0,.04);
+  animation: heroIn .7s cubic-bezier(.2,.7,.2,1) both;
+}
+/* glow כתום עדין בפינה */
+.hero-strip::before {
+  content: ''; position: absolute; top: -60px; right: -40px;
+  width: 260px; height: 260px; pointer-events: none;
+  background: radial-gradient(circle, rgba(242,107,31,.20) 0%, rgba(242,107,31,0) 70%);
+}
+@keyframes heroIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+.hero-strip > div:first-child { flex: 1; min-width: 0; position: relative; z-index: 1; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--green-pale); border: 1px solid rgba(45,122,58,.25);
+  color: var(--green); font-family: 'Rubik', sans-serif; font-weight: 700;
+  font-size: 11px; letter-spacing: .02em; border-radius: 20px;
+  padding: 4px 12px 4px 10px; margin-bottom: 10px;
+}
+.hero-badge svg { width: 13px; height: 13px; }
+.hero-name {
+  font-family: 'Rubik', sans-serif; font-size: 27px; font-weight: 800;
+  color: var(--ink); letter-spacing: -0.035em; line-height: 1.15; margin-bottom: 7px;
+}
+.hero-name .hl {
+  background: linear-gradient(120deg, var(--orange), var(--orange-deep));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: var(--orange-deep);
+}
+.hero-sub  { font-size: 15px; color: var(--muted); font-weight: 500; line-height: 1.5; }
+
+/* impact bubble */
+.impact-bubble {
+  text-align: center;
+  background: linear-gradient(135deg, #FFF4E6, #FFDDB8);
+  border: 1.5px solid #F0D4A8; border-radius: 16px;
+  padding: 16px 20px; flex-shrink: 0;
+  animation: float 5s ease-in-out infinite;
+  min-width: 165px;
+}
+.impact-icon  { font-size: 22px; line-height: 1; margin-bottom: 6px; }
+.impact-range { font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 900; color: var(--orange); letter-spacing: -0.03em; line-height: 1.2; }
+.impact-label { font-size: 11px; font-weight: 700; color: var(--ink); margin-top: 6px; }
+.impact-sub   { font-size: 10px; color: var(--muted); margin-top: 3px; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+
+/* ── SECTION TITLE ── */
+.section-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+  color: var(--orange); letter-spacing: .1em; text-transform: uppercase;
+  margin: 26px 0 12px; display: flex; align-items: center; gap: 8px;
+}
+.section-title::before { content: ''; width: 3px; height: 13px; background: var(--orange); border-radius: 2px; }
+
+/* ── TWO COL ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; align-items: stretch; }
+@media (max-width: 620px) { .two-col { grid-template-columns: 1fr; } }
+
+/* ── GAUGE CARD ── */
+.gauge-card {
+  background: linear-gradient(145deg, #FEF5E7 0%, #F9EDDE 40%, #F5E4CC 100%);
+  border: 1px solid rgba(255,255,255,.92);
+  border-radius: 20px; padding: 22px;
+  box-shadow: 0 2px 16px rgba(180,110,60,.08), 0 1px 2px rgba(255,255,255,.9) inset;
+}
+.gauge-center { display: flex; flex-direction: column; align-items: center; margin-bottom: 14px; }
+.gauge-wrap   { position: relative; width: 148px; height: 148px; }
+.gauge-svg    { width: 148px; height: 148px; transform: rotate(-90deg); }
+.gauge-bg     { fill: none; stroke: #EDD8BE; stroke-width: 11; }
+.gauge-fg     { fill: none; stroke: url(#gauge-grad); stroke-width: 11; stroke-linecap: round; stroke-dasharray: 339.3; stroke-dashoffset: 339.3; transition: stroke-dashoffset 1.5s cubic-bezier(.5,0,.2,1); }
+.gauge-text   { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.gauge-num    { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 34px; color: var(--ink); line-height: 1; min-width: 3ch; text-align: center; }
+.gauge-num .total { color: var(--muted); font-size: 17px; font-weight: 600; }
+.gauge-sub    { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.gauge-insight {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(242,107,31,.1); border: 1px solid rgba(242,107,31,.2);
+  border-radius: 10px; padding: 7px 12px; margin-bottom: 14px;
+}
+.gauge-insight span { font-size: 12px; font-weight: 600; color: var(--orange-deep); }
+
+/* ── METRICS ── */
+.metrics      { display: flex; flex-direction: column; gap: 11px; }
+.metric       { display: grid; grid-template-columns: 132px 1fr 38px; align-items: center; gap: 8px; }
+.metric-label { font-size: 13px; color: var(--text); font-weight: 600; text-align: right; white-space: nowrap; }
+.metric-bar   { background: #EDD8BE; height: 7px; border-radius: 4px; overflow: hidden; }
+.metric-fill  { height: 100%; border-radius: 4px; transition: width 1.2s cubic-bezier(.5,0,.2,1); width: 0%; }
+.metric-fill.bad  { background: linear-gradient(90deg,#E8956B,#D45A12); }
+.metric-fill.mid  { background: linear-gradient(90deg,#F7D387,#E8A030); }
+.metric-fill.good { background: linear-gradient(90deg,#7EC89A,#2D7A3A); }
+.metric-val   { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); direction: ltr; text-align: left; }
+
+/* ── DEMO FLOW VISUAL ── */
+.demo-container { display: flex; flex-direction: column; gap: 6px; margin: 12px 0; }
+.demo-node {
+  display: flex; align-items: center; gap: 10px;
+  background: #fff; border: 1px solid rgba(0,0,0,.06);
+  border-radius: 10px; padding: 8px 12px; width: 100%;
+}
+
+/* ── LOCKED / CTA ── */
+.plan-section { position: relative; margin-bottom: 40px; }
+.locked-cards { display: flex; flex-direction: column; gap: 9px; filter: blur(4px); opacity: .32; user-select: none; pointer-events: none; padding-bottom: 12px; }
+.locked-card  { display: flex; gap: 14px; align-items: flex-start; background: linear-gradient(145deg,#FEF5E7 0%,#F9EDDE 100%); border: 1px solid rgba(255,255,255,.8); border-radius: 14px; padding: 14px 18px; }
+.locked-num   { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; background: var(--orange-pale); color: var(--orange-deep); flex-shrink: 0; }
+.locked-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+.locked-desc  { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+.cta-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 100%; display: flex; justify-content: center; pointer-events: none; }
+.cta-overlay > * { pointer-events: auto; }
+.cta-box {
+  background: linear-gradient(160deg, rgba(255,248,235,.98) 0%, rgba(254,237,210,.95) 40%, rgba(251,220,180,.90) 100%);
+  border: 1.5px solid rgba(242,107,31,.45); border-radius: 22px; padding: 28px 30px 24px;
+  text-align: center; width: 440px; max-width: 92%;
+  box-shadow: 0 16px 48px rgba(180,110,60,.20), 0 2px 0 rgba(255,255,255,.95) inset, 0 0 0 1px rgba(255,255,255,.5);
+}
+.cta-lock-icon { width: 48px; height: 48px; background: #B8966A; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+.cta-lock-icon svg { width: 22px; height: 22px; stroke: #FFF5E8; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.cta-title { font-family: 'Rubik', sans-serif; font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 8px; letter-spacing: -0.02em; }
+.cta-body  { font-size: 14px; color: #555; line-height: 1.65; margin-bottom: 14px; }
+.cta-scarcity {
+  display: inline-block; margin-bottom: 18px;
+  background: linear-gradient(135deg, rgba(255,248,235,.9), rgba(251,220,180,.7));
+  border: 1px solid rgba(242,107,31,.25); border-radius: 10px; padding: 9px 16px;
+  font-size: 13px; font-weight: 600; color: var(--orange-deep); line-height: 1.6;
+}
+.btn-cta {
+  display: flex; align-items: center; justify-content: center; width: 100%;
+  background: linear-gradient(135deg, #F47C2F, #D45A12); color: #fff; border: none;
+  border-radius: 14px; padding: 16px 14px; font-family: 'Rubik', sans-serif;
+  font-weight: 700; font-size: 16px; cursor: pointer;
+  box-shadow: 0 10px 28px rgba(242,107,31,.42), 0 1px 0 rgba(255,255,255,.25) inset;
+  transition: transform .15s;
+}
+.btn-cta:hover { transform: translateY(-2px); }
+
+.footer-note { text-align: center; font-size: 13px; color: var(--muted); padding-bottom: 40px; }
+
+@media (max-width: 600px) {
+  .flowli-logo { font-size: clamp(24px, 7vw, 36px); }
+  .top-nav { padding: 14px 16px 10px; }
+  .page-wrap { padding: 6px 14px 80px; }
+  .hero-strip { padding: 16px; gap: 12px; }
+  .hero-name { font-size: 17px; }
+  .hero-sub  { font-size: 13px; }
+  .impact-bubble { min-width: 140px; padding: 12px; }
+  .impact-range { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<svg class="wave-svg wave-svg-top" viewBox="0 0 1400 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="waveTopFill" cx="85%" cy="35%" r="75%">
+      <stop offset="0%"   stop-color="#FBBA76" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#FDC481" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <path fill="url(#waveTopFill)" d="M 450,0 C 580,70 750,150 900,210 L 1400,0 Z"/>
+</svg>
+
+<nav class="top-nav">
+  <a class="flowli-logo" href="#">
+    <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 30 Q25 15 40 30 Q55 45 70 30" stroke="#2A2A2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M10 45 Q25 30 40 45 Q55 60 70 45" stroke="#2A2A2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M10 60 Q25 45 40 60 Q55 75 70 60" stroke="#F26B1F" stroke-width="6" fill="none" stroke-linecap="round"/>
+    </svg>
+    <span class="logo-text"><span class="logo-flow">flow</span><span class="logo-li">li</span></span>
+  </a>
+  <div class="nav-badge">תוצאות האבחון</div>
+</nav>
+
+<div class="page-wrap">
+
+  <div class="hero-strip">
+    <div>
+      <div class="hero-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#2D7A3A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        האבחון הושלם
+      </div>
+      <div class="hero-name" id="heroName">מפת האוטומציה שלך <span class="hl">מוכנה</span> 🎉</div>
+      <div class="hero-sub" id="heroSub">זיהינו איפה העסק מאבד זמן ואיפה אוטומציה תיתן את האימפקט הכי גדול.</div>
+    </div>
+    <div class="impact-bubble">
+      <div class="impact-icon">💸</div>
+      <div style="font-size:10px;font-weight:700;color:var(--ink);margin-bottom:4px;">פוטנציאל חיסכון חודשי</div>
+      <div class="impact-range" id="impactHours">~ 3–6 שעות/שבוע</div>
+      <div class="impact-range" id="impactMoney" style="font-size:13px;margin-top:2px;">~ 1,800–4,200 ₪</div>
+      <div class="impact-sub">הערכה לפי התשובות שלך</div>
+    </div>
+  </div>
+
+  <div class="section-title">מצב האוטומציה בעסק</div>
+  <div class="two-col">
+
+    <div class="gauge-card">
+      <div class="gauge-center">
+        <div class="gauge-wrap">
+          <svg class="gauge-svg" viewBox="0 0 130 130">
+            <defs>
+              <linearGradient id="gauge-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stop-color="#F8B98C"/>
+                <stop offset="100%" stop-color="#F26B1F"/>
+              </linearGradient>
+            </defs>
+            <circle class="gauge-bg" cx="65" cy="65" r="54"/>
+            <circle class="gauge-fg" id="gaugeFg" cx="65" cy="65" r="54"/>
+          </svg>
+          <div class="gauge-text">
+            <div class="gauge-num" id="gaugeNum">0<span class="total">/100</span></div>
+            <div class="gauge-sub">מצב נוכחי</div>
+          </div>
+        </div>
+      </div>
+      <div class="gauge-insight">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#D45A12" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="gaugeHint">מחשב...</span>
+      </div>
+      <div class="metrics" id="metricsEl"></div>
+    </div>
+
+    <div id="mainInsightCard" style="display:flex;flex-direction:column;gap:0;"></div>
+
+  </div>
+
+  <div id="recoToolBox"></div>
+
+  <div class="section-title">🧭 מה הכי בוער כרגע?</div>
+
+  <div id="planStep1" style="margin-bottom:10px;"></div>
+
+  <div id="planStep2" style="margin-bottom:10px;"></div>
+
+  <div class="plan-section" style="min-height:360px;">
+    <div class="locked-cards" id="planSteps34"></div>
+    <div class="cta-overlay">
+      <div class="cta-box">
+        <div class="cta-lock-icon"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
+        <div class="cta-title">רוצה לראות איך זה עובד אצלך בעסק?</div>
+        <div class="cta-body">נשב לשיחת אבחון ממוקדת של 20 דקות (בזום, בלי התחייבות) ונמפה את התהליך הראשון שנסגור אצלך באוטומציה.</div>
+        <div class="cta-scarcity">💛 מספר המקומות לפרויקטים מוגבל בכל חודש כדי להבטיח מעורבות אישית מלאה שלי.</div>
+        <button class="btn-cta" onclick="openContact()">
+          <span>קביעת שיחת אבחון ממוקדת ביומן 🗓️</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">© 2026 Flowli · כל הזכויות שמורות</div>
+</div>
+
+<script>
+// ─── LOAD DATA ────────────────────────────────────────────────────────────────
+const DEMO = {
+  leads_score: 7, ops_score: 5, control_score: 3, flow_score: 4,
+  worst_area: 'LEADS', tool1: 'CRM וניהול פניות חכם', tool2: 'פולו-אפ אוטומטי',
+  answers: { mood: 2, monthly_leads: 1, close_rate: 2, leads_handling: 2, response_time: 2,
+             repetitive_time: 1, client_history: 2, magic_task: 0, pain_point: '', business_name: '' }
+};
+
+const raw = (() => {
+  try { const d = localStorage.getItem('flowli_diagnose'); return d ? JSON.parse(d) : DEMO; }
+  catch(e) { return DEMO; }
+})();
+
+const firstName = (() => {
+  try { const u = localStorage.getItem('flowli_user'); if(u) return JSON.parse(u).name.split(' ')[0]; } catch(e){}
+  return raw.name ? raw.name.split(' ')[0] : '';
+})();
+
+const bizName = raw.answers?.business_name || '';
+const customPain = raw.answers?.pain_point || '';
+
+// ─── SCORES ──────────────────────────────────────────────────────────────────
+const rawScores = {
+  LEADS:   raw.leads_score   ?? 0,
+  OPS:      raw.ops_score     ?? 0,
+  CONTROL: raw.control_score ?? 0,
+  FLOW:    raw.flow_score    ?? 0,
+};
+
+function problemPct(raw) { return Math.round((raw / 9) * 100); }
+
+const problems = {
+  LEADS:   problemPct(rawScores.LEADS),
+  OPS:      problemPct(rawScores.OPS),
+  CONTROL: problemPct(rawScores.CONTROL),
+  FLOW:    problemPct(rawScores.FLOW),
+};
+
+const avgProblem = Math.round(Object.values(problems).reduce((a,b)=>a+b,0) / 4);
+const healthScore = Math.max(0, 100 - avgProblem);
+
+const sorted = Object.entries(problems).sort((a,b) => b[1]-a[1]);
+const top2   = sorted.slice(0,2);
+const worst  = raw.worst_area || sorted[0][0];
+
+const metaMeta = {
+  LEADS:   { label: 'פניות',    emoji: '💜' },
+  OPS:      { label: 'זמן ותפעול',      emoji: '🟠' },
+  CONTROL: { label: 'מידע ושליטה',     emoji: '🔵' },
+  FLOW:    { label: 'תהליכים שוטפים',  emoji: '🟢' },
+};
+
+// ─── RECOMMENDATIONS MAP (צמצום משמעותי - ניטרלי מגדרית וישר לתכלס) ───
+const recoMap = {
+  LEADS: {
+    priorityTitle: `פניות יוצאות מהמשפך ללא מעקב מסודר`,
+    priorityBody:  `ניתוח התשובות מראה שצוואר הבקבוק המרכזי ${bizName ? 'ב-' + bizName : 'בעסק'} הוא ניהול הפניות. ${customPain ? 'ציינת שמתמודדים עם: "' + customPain + '", וזה קורה בעיקר' : 'זה קורה'} כי פניות שלא מקבלות מענה ותזכורת תוך דקות – פשוט עוברות למתחרים.`,
+    tool1Body:     `מעביר את השליטה לידיים שלך: ריכוז אוטומטי של כל הפניות למקום אחד, שליחת הודעה מיידית ומניעת פספוסים.`,
+    tool1Impact:   '⬆ מקפיץ את אחוזי הסגירה',
+    steps: ['פנייה נכנסת', 'מענה אוטומטי', 'תזכורת פולו-אפ', 'סגירה'],
+    planCards: [
+      { title: 'מערכת פניות חכמה', desc: 'כל הפניות (וואטסאפ, פייסבוק, אתר) מתרכזות אוטומטית למסך אחד מסודר.' },
+      { title: 'מערך פולו-אפ ומעקב', desc: 'תזכורות אוטומטיות ללקוחות שלא ענו, כדי לוודא שאף עסקה לא מתמסמסת.' }
+    ]
+  },
+  OPS: {
+    priorityTitle: `שעות יקרות בשבוע מתבזבזות על משימות ידניות`,
+    priorityBody:  `הזמן שנשרף אצלך ${bizName ? 'ב-' + bizName : 'בעסק'} על פעולות חוזרות (תזכורות, הצעות מחיר, תיאומים) הוא הגורם הראשי לעומס. ${customPain ? 'הקושי שציינת ("' + customPain + '")' : 'הבלאגן התפעולי הזה'} נפתר בקלות על ידי אוטומציות פשוטות שמפנות 5-10 שעות שבועיות.`,
+    tool1Body:     `מבצע משימות תפעוליות במקומך: מפיק מסמכים, מתאם פגישות ושולח עדכונים בלי מגע יד אדם.`,
+    tool1Impact:   '⬇ חוסך 5–10 שעות בשבוע',
+    steps: ['משימה נכנסת', 'הפקה אוטומטית', 'עדכון לקוח', 'ביצוע'],
+    planCards: [
+      { title: 'הפקת מסמכים ואוטומציה תפעולית', desc: 'הצעות מחיר או אישורי רכש מתמלאים ונשלחים אוטומטית לפי נתוני הלקוח.' },
+      { title: 'לוח זמנים עצמאי', desc: 'תיאום פגישות, תזכורות ואישורים קורים מעצמם, ללא פינג-פונג מיילים מתיש.' }
+    ]
+  },
+  CONTROL: {
+    priorityTitle: `המידע בעסק מפוזר בכמה מקומות במקביל`,
+    priorityBody:  `כדי לתת שירות מקצועי, המידע חייב להיות זמין. כרגע, מציאת היסטוריית לקוח או סטטוס הזמנה דורשת חיפוש ידני מתיש, וזה מייצר תחושת חוסר שליטה.`,
+    tool1Body:     `מרכז את כל הנתונים, השיחות והקבצים של הלקוחות תחת מסך אחד נגיש בשנייה.`,
+    tool1Impact:   '⬆ שליטה מלאה בנתונים',
+    steps: ['פניית לקוח', 'שליפת היסטוריה', 'תמונת מצב', 'מענה מהיר'],
+    planCards: [
+      { title: 'מרכז מידע דיגיטלי', desc: 'כל הצעות המחיר, החוזים והשיחות עם הלקוח יושבים בתיקייה אחת מסודרת.' },
+      { title: 'דשבורד מנהלים שבועי', desc: 'מבט על מהיר ומדויק על מדדי ההכנסות, הפניות והביצועים בעסק.' }
+    ]
+  },
+  FLOW: {
+    priorityTitle: `יום העבודה מפוצל ומייצר כיבוי שריפות תמידי`,
+    priorityBody:  `המעברים הרבים בין הכלים וההפרעות השוטפות קוטעים את הריכוז בעסק. בניית תהליכים מובנים (כמו קליטת לקוח חדש) תחזיר את השקט והיציבות.`,
+    tool1Body:     `מנהל את זרימת העבודה ומייצר סדר קבוע מהרגע שבו עסקה נסגרת ועד לסיום הביצוע.`,
+    tool1Impact:   '⬆ סדר, שקט וזרימה',
+    steps: ['סגירת עסקה', 'Onboarding אוטומטי', 'משימות לצוות', 'מעקב יומי'],
+    planCards: [
+      { title: 'תהליך קליטת לקוח (Onboarding)', desc: 'שליחת חוזה, איסוף פרטים והודעת ברוך הבא – הכל קורה אוטומטית תוך דקה.' },
+      { title: 'אוטומציית סוף יום', desc: 'ריכוז משימות שהושלמו ומה שממתין לביצוע, כדי לפתוח את הבוקר הבא עם תוכנית עבודה חדה.' }
+    ]
+  }
+};
+
+const reco = recoMap[worst] || recoMap['LEADS'];
+const tool1 = raw.tool1 || '—';
+const tool2 = raw.tool2 || '—';
+
+// ─── IMPACT CALCULATION ──────────────────────────────────────────────────────
+const worstRaw = rawScores[worst] || 0;
+const hoursLow  = worstRaw >= 7 ? 6  : worstRaw >= 4 ? 4  : 2;
+const hoursHigh = worstRaw >= 7 ? 10 : worstRaw >= 4 ? 7  : 4;
+const dealSize  = (raw.answers?.deal_size ?? 1);
+const dealVal   = [250, 1200, 5500, 15000][dealSize] || 1200;
+const hourRate  = Math.round(dealVal / 40);
+const moneyLow  = hoursLow  * 4 * hourRate;
+const moneyHigh = hoursHigh * 4 * hourRate;
+
+function fmtMoney(n) { return n >= 1000 ? `${Math.round(n/100)*100}`.replace(/\B(?=(\d{3})+(?!\d))/g,',') : n; }
+
+document.getElementById('impactHours').textContent = `~ ${hoursLow}–${hoursHigh} שעות/שבוע`;
+document.getElementById('impactMoney').textContent = `~ ${fmtMoney(moneyLow)}–${fmtMoney(moneyHigh)} ₪`;
+
+// hero name
+document.getElementById('heroName').innerHTML = firstName
+  ? `${firstName}, מפת האוטומציה שלך <span class="hl">מוכנה</span> 🎉`
+  : `מפת האוטומציה שלך <span class="hl">מוכנה</span> 🎉`;
+
+// gauge animation
+setTimeout(() => {
+  const fg = document.getElementById('gaugeFg');
+  const circumference = 339.3;
+  fg.style.strokeDashoffset = circumference - circumference * (healthScore / 100);
+
+  let n = 0;
+  const gaugeEl = document.getElementById('gaugeNum');
+  const iv = setInterval(() => {
+    n += 2;
+    if (n >= healthScore) { n = healthScore; clearInterval(iv); }
+    gaugeEl.innerHTML = `${n}<span class="total">/100</span>`;
+  }, 18);
+
+  const hint = healthScore >= 75 ? 'יש פה תשתית טובה, שווה לשדרג' : healthScore >= 50 ? 'פוטנציאל שיפור משמעותי' : 'הזדמנות אמיתית לשינוי וסגירת ברזים';
+  document.getElementById('gaugeHint').textContent = hint;
+}, 200);
+
+// metrics bars
+const metricsEl = document.getElementById('metricsEl');
+metricsEl.innerHTML = sorted.map(([key, pct]) => {
+  const cls = pct >= 67 ? 'bad' : pct >= 34 ? 'mid' : 'good';
+  return `<div class="metric">
+    <div class="metric-label">${metaMeta[key].emoji} ${metaMeta[key].label}</div>
+    <div class="metric-bar"><div class="metric-fill ${cls}" data-pct="${pct}"></div></div>
+    <div class="metric-val">${pct}%</div>
+  </div>`;
+}).join('');
+setTimeout(() => {
+  document.querySelectorAll('.metric-fill').forEach(el => el.style.width = el.dataset.pct + '%');
+}, 300);
+
+// ── כרטיס ראשי: תובנה ממוקדת + זרימה חזותית ───────────────────────────
+const demoFlowHTML = reco.steps.map((s, i) => `
+  <div class="demo-node" style="animation-delay:${i*0.1}s;">
+    <div style="width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0;"></div>
+    <div style="font-size:13px;font-weight:600;color:var(--ink);">${s}</div>
+  </div>
+`).join('');
+
+document.getElementById('mainInsightCard').innerHTML = `
+  <div style="background:linear-gradient(145deg,#FEF5E7 0%,#F9EDDE 100%);border:1px solid rgba(255,255,255,.92);border-radius:20px;padding:22px;box-shadow:0 2px 16px rgba(180,110,60,.08);display:flex;flex-direction:column;gap:14px;">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--orange-deep);letter-spacing:.06em;margin-bottom:4px;">🔥 הממצא המרכזי:</div>
+      <div style="font-family:'Rubik',sans-serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;letter-spacing:-0.01em;">${reco.priorityTitle}</div>
+      <div style="font-size:14px;color:#444;line-height:1.6;">${reco.priorityBody}</div>
+    </div>
+
+    <div style="background:rgba(255,255,255,.5);border-radius:14px;padding:14px;">
+      <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:8px;">🎯 ככה זה ייראה באוטומציה:</div>
+      <div class="demo-container">${demoFlowHTML}</div>
+    </div>
+  </div>
+`;
+
+// ── הכלי המומלץ — מלבן עצמאי מעל "מה הכי בוער כרגע" ──────────────────
+document.getElementById('recoToolBox').innerHTML = `
+  <div style="background:linear-gradient(135deg,#FFF4E6,#FDE3C4);border:1.5px solid rgba(242,107,31,.35);border-radius:18px;padding:18px 20px;margin-top:6px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 8px 24px rgba(242,107,31,.13);">
+    <div style="width:46px;height:46px;border-radius:12px;background:var(--ink);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;">⚡</div>
+    <div style="flex:1;min-width:200px;">
+      <div style="font-size:11px;font-weight:700;color:var(--orange-deep);letter-spacing:.04em;margin-bottom:3px;">הכלי המומלץ עבורך</div>
+      <div style="font-family:'Rubik',sans-serif;font-size:17px;font-weight:700;color:var(--ink);margin-bottom:4px;">${tool1}</div>
+      <div style="font-size:13px;color:#555;line-height:1.5;">${reco.tool1Body}</div>
+    </div>
+    <div style="flex-shrink:0;text-align:center;background:var(--green-pale);border:1px solid rgba(45,122,58,.25);border-radius:10px;padding:9px 13px;font-size:12px;font-weight:700;color:var(--green);max-width:140px;line-height:1.4;">${reco.impactShift || reco.tool1Impact}</div>
+  </div>
+`;
+
+// ── מפת האוטומציה — שלבים תכלס ─────────────────────────────────────────
+function buildCompactStepCard(title, desc, num, badgeText) {
+  return `
+    <div style="background:linear-gradient(145deg,#FEF5E7 0%,#F9EDDE 100%);border:1px solid rgba(255,255,255,.92);border-radius:16px;padding:16px;box-shadow:0 1px 8px rgba(180,110,60,.05);display:flex;gap:14px;align-items:flex-start;">
+      <div style="width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;background:var(--orange-pale);color:var(--orange-deep);flex-shrink:0;">${num}</div>
+      <div style="flex:1;">
+        <div style="display:flex;justify-content:between;align-items:center;margin-bottom:2px;width:100%;">
+          <div style="font-family:'Rubik',sans-serif;font-size:15px;font-weight:700;color:var(--ink);flex:1;">${title}</div>
+          <span style="font-size:10px;font-weight:700;color:var(--muted);">${badgeText}</span>
+        </div>
+        <div style="font-size:13px;color:#555;line-height:1.5;">${desc}</div>
+      </div>
+    </div>`;
+}
+
+document.getElementById('planStep1').innerHTML = buildCompactStepCard(reco.planCards[0].title, reco.planCards[0].desc, '1', 'הכי דחוף');
+document.getElementById('planStep2').innerHTML = buildCompactStepCard(reco.planCards[1].title, reco.planCards[1].desc, '2', 'שלב הבא');
+
+// שלבים 3-4 מטושטשים
+document.getElementById('planSteps34').innerHTML = `
+  <div class="locked-card">
+    <div class="locked-num">3</div>
+    <div><div class="locked-title">ייצור רצף עבודה ושקט תפעולי</div></div>
+  </div>
+  <div class="locked-card">
+    <div class="locked-num">4</div>
+    <div><div class="locked-title">מרכוז מידע, שליטה ודאשבורד מנהלים</div></div>
+  </div>`;
+
+// ─── CTA — קישור לקלנדלי ──────────────────────────────────────────────────────
+function openContact() {
+  window.location.href = 'https://calendly.com/hadas-flowli/20min';
+}
+</script>
+
+<script src="flowli-legal.js"></script>
+</body>
+</html>
