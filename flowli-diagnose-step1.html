@@ -46,7 +46,7 @@
     .page-wrap { position: relative; z-index: 5; max-width: 700px; margin: 0 auto; padding: 20px 24px 100px; }
 
     /* ── PROGRESS ── */
-    .progress-wrap { margin-bottom: 28px; }
+    .progress-wrap { margin-bottom: 28px; margin-top: 6px; }
     .progress-meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; }
     .progress-block-name { font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
     .progress-counter { font-size: 12px; font-weight: 500; color: #999; direction: ltr; }
@@ -353,7 +353,7 @@ const blocks = [
       },
       {
         id: 'close_rate',
-        label: 'מתוך 10 פניות — כמה בדרך כלל הופכות ללקוח?',
+        label: 'מתוך 10 פניות - כמה בדרך כלל הופכות ללקוח?',
         type: 'single',
         required: true,
         metrics: { LEADS: [0,1,2,3] },
