@@ -145,14 +145,14 @@ body {
 
 /* ── METRICS ── */
 .metrics      { display: flex; flex-direction: column; gap: 11px; }
-.metric       { display: grid; grid-template-columns: 132px 1fr 38px; align-items: center; gap: 8px; }
+.metric       { display: grid; grid-template-columns: 132px 1fr 72px; align-items: center; gap: 8px; }
 .metric-label { font-size: 13px; color: var(--text); font-weight: 600; text-align: right; white-space: nowrap; }
 .metric-bar   { background: #EDD8BE; height: 7px; border-radius: 4px; overflow: hidden; }
 .metric-fill  { height: 100%; border-radius: 4px; transition: width 1.2s cubic-bezier(.5,0,.2,1); width: 0%; }
 .metric-fill.bad  { background: linear-gradient(90deg,#E8956B,#D45A12); }
 .metric-fill.mid  { background: linear-gradient(90deg,#F7D387,#E8A030); }
 .metric-fill.good { background: linear-gradient(90deg,#7EC89A,#2D7A3A); }
-.metric-val   { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); direction: ltr; text-align: left; }
+.metric-val   { font-family: 'Assistant', sans-serif; font-size: 11px; font-weight: 700; color: var(--text); white-space: nowrap; text-align: left; }
 
 /* ── DEMO FLOW VISUAL ── */
 .demo-container { display: flex; flex-direction: column; gap: 6px; margin: 12px 0; }
@@ -282,6 +282,7 @@ body {
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#D45A12" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         <span id="gaugeHint">מחשב...</span>
       </div>
+      <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:9px;">רמת עומס לפי תחום</div>
       <div class="metrics" id="metricsEl"></div>
     </div>
 
@@ -377,7 +378,7 @@ const metaMeta = {
 const recoMap = {
   LEADS: {
     priorityTitle: `פניות יוצאות מהמשפך ללא מעקב מסודר`,
-    priorityBody:  `הניתוח מראה שצוואר הבקבוק העיקרי ${bizName ? 'ב-' + bizName : 'בעסק'} הוא ניהול הפניות. ${customPain ? 'ציינת גם: "' + customPain + '". ' : ''}פניות שלא זוכות למענה ותזכורת בזמן קצר נוטות לעבור למתחרים.`,
+    priorityBody:  `${customPain ? `ציינת ש"${customPain}" — וזה בדרך כלל סימן לכך שצוואר הבקבוק העיקרי ${bizName ? 'ב-' + bizName : 'בעסק'} הוא ניהול הפניות, ופניות שלא זוכות למענה ותזכורת בזמן קצר נוטות לעבור למתחרים.` : `הניתוח מראה שצוואר הבקבוק העיקרי ${bizName ? 'ב-' + bizName : 'בעסק'} הוא ניהול הפניות. פניות שלא זוכות למענה ותזכורת בזמן קצר נוטות לעבור למתחרים.`}`,
     tool1Body:     `כל הפניות מתרכזות למקום אחד מסודר, עם מענה ראשוני מיידי ומעקב שלא משאיר אף פנייה באוויר.`,
     tool1Name:     'ריכוז פניות ומענה ראשוני אוטומטי',
     tool1Impact:   '⬆ מקפיץ את אחוזי הסגירה',
@@ -389,7 +390,7 @@ const recoMap = {
   },
   OPS: {
     priorityTitle: `שעות יקרות בשבוע מתבזבזות על משימות ידניות`,
-    priorityBody:  `חלק גדול מהעומס ${bizName ? 'ב-' + bizName : 'בעסק'} מגיע מפעולות שחוזרות על עצמן — תיאומים, הצעות מחיר ומשימות ידניות שגוזלות זמן לאורך השבוע.${customPain ? ' ציינת גם: "' + customPain + '".' : ''}`,
+    priorityBody:  `${customPain ? `ציינת ש"${customPain}" — וזה בדרך כלל סימן לכך שחלק גדול מהעומס ${bizName ? 'ב-' + bizName : 'בעסק'} מגיע מפעולות שחוזרות על עצמן — תיאומים, הצעות מחיר ומשימות ידניות שגוזלות זמן לאורך השבוע.` : `חלק גדול מהעומס ${bizName ? 'ב-' + bizName : 'בעסק'} מגיע מפעולות שחוזרות על עצמן — תיאומים, הצעות מחיר ומשימות ידניות שגוזלות זמן לאורך השבוע.`}`,
     tool1Body:     `פעולות שחוזרות על עצמן מתבצעות בצורה אוטומטית ומסודרת.`,
     tool1Name:     'תבניות ואוטומציה למשימות חוזרות',
     tool1Impact:   '⬇ חוסך 5–10 שעות בשבוע',
@@ -401,7 +402,7 @@ const recoMap = {
   },
   CONTROL: {
     priorityTitle: `המידע בעסק מפוזר בכמה מקומות במקביל`,
-    priorityBody:  `כשמידע על לקוחות, הצעות מחיר ועסקאות מפוזר בין כלים ותיקיות שונות, השליטה היומיומית הופכת ל"חיפוש מתמיד".${customPain ? ' ציינת גם: "' + customPain + '".' : ''} ריכוז כל המידע במקום אחד מאפשר לקבל תמונת מצב מלאה תוך שניות.`,
+    priorityBody:  `${customPain ? `ציינת ש"${customPain}" — וזה בדרך כלל סימן לכך שהמידע על לקוחות, הצעות מחיר ועסקאות מפוזר בין כלים ותיקיות שונות. ריכוז כל המידע במקום אחד מאפשר לקבל תמונת מצב מלאה תוך שניות.` : `כשמידע על לקוחות, הצעות מחיר ועסקאות מפוזר בין כלים ותיקיות שונות, השליטה היומיומית הופכת ל"חיפוש מתמיד". ריכוז כל המידע במקום אחד מאפשר לקבל תמונת מצב מלאה תוך שניות.`}`,
     tool1Body:     `כל הנתונים, השיחות והקבצים של הלקוחות יושבים תחת מסך אחד נגיש — בלי לחפש.`,
     tool1Name:     'תיק לקוח דיגיטלי מרוכז',
     tool1Impact:   '⬆ שליטה מלאה בנתונים',
@@ -412,12 +413,12 @@ const recoMap = {
     ]
   },
   FLOW: {
-    priorityTitle: `יום העבודה מפוצל ומייצר כיבוי שריפות תמידי`,
-    priorityBody:  `מעברים תכופים בין כלים והפרעות שוטפות שוחקים את הריכוז ואת תחושת השליטה.${customPain ? ' ציינת גם: "' + customPain + '".' : ''} תהליכים מובנים (כמו קליטת לקוח חדש או סיום יום) מחזירים את השקט והרצף.`,
+    priorityTitle: `יום העבודה מפוצל ומלא בהפרעות קטנות לאורך היום`,
+    priorityBody:  `${customPain ? `ציינת ש"${customPain}" — וזה בדרך כלל סימן לכך שחסרים תהליכים קבועים שמחזיקים את העבודה לאורך היום, ומעברים תכופים בין כלים והפרעות שוחקים את הריכוז ואת תחושת השליטה.` : `מעברים תכופים בין כלים והפרעות שוטפות שוחקים את הריכוז ואת תחושת השליטה. תהליכים מובנים (כמו קליטת לקוח חדש או סיום יום) מחזירים את השקט והרצף.`}`,
     tool1Body:     `תהליכי העבודה השוטפים מקבלים סדר קבוע מהרגע שעסקה נסגרת ועד לסיום הביצוע.`,
     tool1Name:     'תהליך עבודה מובנה לאורך כל המסע',
     tool1Impact:   '⬆ סדר, שקט וזרימה',
-    steps: ['עסקה נסגרת', 'קליטת לקוח אוטומטית', 'משימות מתחלקות לצוות', 'מעקב יומי'],
+    steps: ['עסקה נסגרת', 'נשלח חוזה אוטומטית', 'נפתחות משימות לצוות', 'הכל מתעדכן במקום אחד'],
     planCards: [
       { title: 'תהליך קליטת לקוח חדש', desc: 'שליחת חוזה, איסוף פרטים והודעת ברוך הבא — הכל קורה אוטומטית תוך דקה.' },
       { title: 'סיכום יומי אוטומטי', desc: 'ריכוז משימות שהושלמו ומה שממתין לביצוע, כדי לפתוח כל בוקר עם תוכנית עבודה ברורה.' }
@@ -469,12 +470,14 @@ setTimeout(() => {
 
 // metrics bars
 const metricsEl = document.getElementById('metricsEl');
+const levelMap = pct => pct >= 67 ? {label:'גבוה', icon:'🔥'} : pct >= 34 ? {label:'בינוני', icon:'⚠'} : {label:'נמוך', icon:'✓'};
 metricsEl.innerHTML = sorted.map(([key, pct]) => {
   const cls = pct >= 67 ? 'bad' : pct >= 34 ? 'mid' : 'good';
+  const lvl = levelMap(pct);
   return `<div class="metric">
     <div class="metric-label">${metaMeta[key].emoji} ${metaMeta[key].label}</div>
     <div class="metric-bar"><div class="metric-fill ${cls}" data-pct="${pct}"></div></div>
-    <div class="metric-val">${pct}%</div>
+    <div class="metric-val">${lvl.icon} ${lvl.label}</div>
   </div>`;
 }).join('');
 setTimeout(() => {
