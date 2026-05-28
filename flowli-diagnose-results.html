@@ -377,51 +377,59 @@ const metaMeta = {
 // ─── RECOMMENDATIONS MAP (צמצום משמעותי - ניטרלי מגדרית וישר לתכלס) ───
 const recoMap = {
   LEADS: {
-    priorityTitle: `פניות יוצאות מהמשפך ללא מעקב מסודר`,
-    priorityBody:  `${customPain ? `ציינת ש"${customPain}" — וזה בדרך כלל סימן לכך שצוואר הבקבוק העיקרי ${bizName ? 'ב-' + bizName : 'בעסק'} הוא ניהול הפניות, ופניות שלא זוכות למענה ותזכורת בזמן קצר נוטות לעבור למתחרים.` : `הניתוח מראה שצוואר הבקבוק העיקרי ${bizName ? 'ב-' + bizName : 'בעסק'} הוא ניהול הפניות. פניות שלא זוכות למענה ותזכורת בזמן קצר נוטות לעבור למתחרים.`}`,
-    tool1Body:     `כל הפניות מתרכזות למקום אחד מסודר, עם מענה ראשוני מיידי ומעקב שלא משאיר אף פנייה באוויר.`,
-    tool1Name:     'ריכוז פניות ומענה ראשוני אוטומטי',
-    tool1Impact:   '⬆ מקפיץ את אחוזי הסגירה',
-    steps: ['פנייה נכנסת', 'מענה ראשוני מיידי', 'תזכורת פולו-אפ', 'סגירת לקוח'],
+    gaugeSub:        `פניות מגיעות — אבל חלקן נופלות בלי מענה ותזכורת בזמן`,
+    priorityTitle:   `פניות יוצאות מהמשפך ללא מעקב מסודר`,
+    priorityBody:    `נראה שיש פניות שמגיעות — אבל לא כולן זוכות למענה ותזכורת בזמן.`,
+    priorityInsight: `כשאין מנגנון אוטומטי שתופס כל פנייה ומחזיר מענה ראשוני מיידי, פניות נוטות "להיתקע" באוויר ולעבור למתחרים.`,
+    tool1Name:       `ריכוז פניות ומענה ראשוני אוטומטי`,
+    tool1Body:       `כל הפניות מתרכזות למקום אחד מסודר, עם מענה ראשוני מיידי ומעקב שלא משאיר אף פנייה באוויר.`,
+    impact:          [`⬆ פחות פספוסים`, `⬆ מענה מהיר יותר`, `⬆ סגירות גבוהות יותר`],
+    steps:           [`פנייה נכנסת`, `מענה ראשוני מיידי`, `תזכורת פולו-אפ`, `סגירת לקוח`],
     planCards: [
-      { title: 'ריכוז פניות ממוקד', desc: 'כל הפניות (וואטסאפ, פייסבוק, אתר) מתרכזות אוטומטית למסך אחד מסודר.' },
-      { title: 'מעקב ותזכורות אוטומטיים', desc: 'תזכורות אוטומטיות ללקוחות שלא ענו, כדי לוודא שאף עסקה לא מתמסמסת.' }
+      { title: `ריכוז פניות ממוקד`,        desc: `כל הפניות (וואטסאפ, פייסבוק, אתר) מתרכזות אוטומטית למסך אחד מסודר.` },
+      { title: `מעקב ותזכורות אוטומטיים`, desc: `תזכורות אוטומטיות ללקוחות שלא ענו, כדי לוודא שאף עסקה לא מתמסמסת.` }
     ]
   },
   OPS: {
-    priorityTitle: `שעות יקרות בשבוע מתבזבזות על משימות ידניות`,
-    priorityBody:  `${customPain ? `ציינת ש"${customPain}" — וזה בדרך כלל סימן לכך שחלק גדול מהעומס ${bizName ? 'ב-' + bizName : 'בעסק'} מגיע מפעולות שחוזרות על עצמן — תיאומים, הצעות מחיר ומשימות ידניות שגוזלות זמן לאורך השבוע.` : `חלק גדול מהעומס ${bizName ? 'ב-' + bizName : 'בעסק'} מגיע מפעולות שחוזרות על עצמן — תיאומים, הצעות מחיר ומשימות ידניות שגוזלות זמן לאורך השבוע.`}`,
-    tool1Body:     `פעולות שחוזרות על עצמן מתבצעות בצורה אוטומטית ומסודרת.`,
-    tool1Name:     'תבניות ואוטומציה למשימות חוזרות',
-    tool1Impact:   '⬇ חוסך 5–10 שעות בשבוע',
-    steps: ['בקשה נכנסת', 'נוצרת הצעת מחיר', 'נשלח עדכון ללקוח', 'משימה מתבצעת'],
+    gaugeSub:        `העסק עובד — אבל הרבה זמן הולך על משימות שחוזרות על עצמן`,
+    priorityTitle:   `שעות יקרות בשבוע מתבזבזות על משימות ידניות`,
+    priorityBody:    `נראה שחלק משמעותי מהזמן שלך הולך על פעולות ידניות שחוזרות שוב ושוב לאורך השבוע.`,
+    priorityInsight: `תיאומים, עדכונים, מסמכים ומשימות קטנות מצטברים לעומס שמרגיש גדול יותר ממה שהוא באמת.`,
+    tool1Name:       `תבניות ואוטומציות למשימות חוזרות`,
+    tool1Body:       `פעולות שחוזרות על עצמן מקבלות תהליך קבוע — כדי שלא תצטרכי להתחיל כל פעם מחדש.`,
+    impact:          [`⬆ פחות עבודה ידנית`, `⬆ פחות עומס יומיומי`, `⬆ יותר זמן לעבודה עצמה`],
+    steps:           [`בקשה נכנסת`, `נוצרת משימה אוטומטית`, `נשלח עדכון ללקוח`, `הפעולה נסגרת בלי מעקב ידני`],
     planCards: [
-      { title: 'הפקת מסמכים אוטומטית', desc: 'הצעות מחיר או אישורי רכש מתמלאים ונשלחים אוטומטית לפי נתוני הלקוח.' },
-      { title: 'תיאומים ותזכורות אוטומטיים', desc: 'תיאום פגישות, תזכורות ואישורים קורים מעצמם, ללא פינג-פונג מיילים מתיש.' }
+      { title: `תבניות לעבודה שוטפת`,     desc: `יצירת מסרים, מסמכים ומשימות קבועות בלחיצה אחת במקום כל פעם מחדש.` },
+      { title: `אוטומציית משימות חוזרות`, desc: `פעולות כמו תזכורות, עדכונים ומשימות המשך קורות אוטומטית ברקע.` }
     ]
   },
   CONTROL: {
-    priorityTitle: `המידע בעסק מפוזר בכמה מקומות במקביל`,
-    priorityBody:  `${customPain ? `ציינת ש"${customPain}" — וזה בדרך כלל סימן לכך שהמידע על לקוחות, הצעות מחיר ועסקאות מפוזר בין כלים ותיקיות שונות. ריכוז כל המידע במקום אחד מאפשר לקבל תמונת מצב מלאה תוך שניות.` : `כשמידע על לקוחות, הצעות מחיר ועסקאות מפוזר בין כלים ותיקיות שונות, השליטה היומיומית הופכת ל"חיפוש מתמיד". ריכוז כל המידע במקום אחד מאפשר לקבל תמונת מצב מלאה תוך שניות.`}`,
-    tool1Body:     `כל הנתונים, השיחות והקבצים של הלקוחות יושבים תחת מסך אחד נגיש — בלי לחפש.`,
-    tool1Name:     'תיק לקוח דיגיטלי מרוכז',
-    tool1Impact:   '⬆ שליטה מלאה בנתונים',
-    steps: ['פניית לקוח', 'שליפת היסטוריה', 'תמונת מצב מלאה', 'מענה מבוסס מידע'],
+    gaugeSub:        `העסק רץ — אבל המידע מפוזר וקשה לקבל תמונת מצב אחת ברורה`,
+    priorityTitle:   `המידע בעסק מפוזר בכמה מקומות במקביל`,
+    priorityBody:    `נראה שהמידע על לקוחות, הצעות מחיר ועסקאות מפוזר בין כלים ותיקיות שונות.`,
+    priorityInsight: `כשתמונת המצב לא יושבת במקום אחד, השליטה היומיומית הופכת ל"חיפוש מתמיד" — וקשה לקבל החלטות מהירות.`,
+    tool1Name:       `תיק לקוח דיגיטלי מרוכז`,
+    tool1Body:       `כל הנתונים, השיחות והקבצים של הלקוחות יושבים תחת מסך אחד נגיש — בלי לחפש.`,
+    impact:          [`⬆ שליטה ברורה יותר`, `⬆ פחות זמן בחיפוש`, `⬆ החלטות מהירות ומדויקות`],
+    steps:           [`פניית לקוח`, `שליפת היסטוריה`, `תמונת מצב מלאה`, `מענה מבוסס מידע`],
     planCards: [
-      { title: 'תיק לקוח דיגיטלי', desc: 'הצעות מחיר, חוזים והתכתבויות יושבים במקום אחד מסודר ונגיש.' },
-      { title: 'סיכום שבועי של העסק', desc: 'תמונת מצב שבועית של הכנסות, פניות וביצועים — בלי לאסוף נתונים ידנית.' }
+      { title: `תיק לקוח דיגיטלי`,    desc: `הצעות מחיר, חוזים והתכתבויות יושבים במקום אחד מסודר ונגיש.` },
+      { title: `סיכום שבועי של העסק`, desc: `תמונת מצב שבועית של הכנסות, פניות וביצועים — בלי לאסוף נתונים ידנית.` }
     ]
   },
   FLOW: {
-    priorityTitle: `יום העבודה מפוצל ומלא בהפרעות קטנות לאורך היום`,
-    priorityBody:  `${customPain ? `ציינת ש"${customPain}" — וזה בדרך כלל סימן לכך שחסרים תהליכים קבועים שמחזיקים את העבודה לאורך היום, ומעברים תכופים בין כלים והפרעות שוחקים את הריכוז ואת תחושת השליטה.` : `מעברים תכופים בין כלים והפרעות שוטפות שוחקים את הריכוז ואת תחושת השליטה. תהליכים מובנים (כמו קליטת לקוח חדש או סיום יום) מחזירים את השקט והרצף.`}`,
-    tool1Body:     `תהליכי העבודה השוטפים מקבלים סדר קבוע מהרגע שעסקה נסגרת ועד לסיום הביצוע.`,
-    tool1Name:     'תהליך עבודה מובנה לאורך כל המסע',
-    tool1Impact:   '⬆ סדר, שקט וזרימה',
-    steps: ['עסקה נסגרת', 'נשלח חוזה אוטומטית', 'נפתחות משימות לצוות', 'הכל מתעדכן במקום אחד'],
+    gaugeSub:        `יש כאן הזדמנות אמיתית לייצר יותר סדר ושליטה ביום-יום`,
+    priorityTitle:   `יום העבודה מפוצל ומלא בהפרעות קטנות לאורך היום`,
+    priorityBody:    `נראה שחלק גדול מהעומס לא מגיע ממשימה אחת גדולה — אלא מהרבה דברים קטנים שמפוזרים לאורך היום.`,
+    priorityInsight: `כשאין תהליך קבוע לדברים שחוזרים על עצמם, העבודה נהיית תגובתית — וכל דבר קטן מרגיש דחוף.`,
+    tool1Name:       `תהליך קבלת לקוח אוטומטי`,
+    tool1Body:       `במקום לרדוף אחרי מסמכים, הודעות ומשימות — כל שלב קורה בצורה מסודרת וברורה.`,
+    impact:          [`⬆ יותר סדר`, `⬆ פחות עומס מנטלי`, `⬆ עבודה רציפה יותר`],
+    steps:           [`לקוח חדש נסגר`, `נשלח חוזה אוטומטית`, `נפתחות משימות לביצוע`, `הכל מתעדכן במקום אחד`],
     planCards: [
-      { title: 'תהליך קליטת לקוח חדש', desc: 'שליחת חוזה, איסוף פרטים והודעת ברוך הבא — הכל קורה אוטומטית תוך דקה.' },
-      { title: 'סיכום יומי אוטומטי', desc: 'ריכוז משימות שהושלמו ומה שממתין לביצוע, כדי לפתוח כל בוקר עם תוכנית עבודה ברורה.' }
+      { title: `קליטת לקוח חדש`,     desc: `שליחת חוזה, איסוף פרטים והודעת התחלה — בצורה אוטומטית ומסודרת.` },
+      { title: `סיכום יומי אוטומטי`, desc: `ריכוז משימות פתוחות ועדכונים במקום אחד כדי להתחיל את היום עם תמונה ברורה.` }
     ]
   }
 };
@@ -464,7 +472,7 @@ setTimeout(() => {
     gaugeEl.innerHTML = `${n}<span class="total">/100</span>`;
   }, 18);
 
-  const hint = healthScore >= 75 ? 'יש פה תשתית טובה, שווה לשדרג' : healthScore >= 50 ? 'פוטנציאל שיפור משמעותי' : 'הזדמנות אמיתית לשינוי וסגירת ברזים';
+  const hint = reco.gaugeSub || (healthScore >= 75 ? 'יש פה תשתית טובה, שווה לשדרג' : healthScore >= 50 ? 'פוטנציאל שיפור משמעותי' : 'הזדמנות אמיתית לשינוי וסגירת ברזים');
   document.getElementById('gaugeHint').textContent = hint;
 }, 200);
 
@@ -497,7 +505,9 @@ document.getElementById('mainInsightCard').innerHTML = `
     <div>
       <div style="font-size:11px;font-weight:700;color:var(--orange-deep);letter-spacing:.06em;margin-bottom:4px;">🔥 הממצא המרכזי:</div>
       <div style="font-family:'Rubik',sans-serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;letter-spacing:-0.01em;">${reco.priorityTitle}</div>
-      <div style="font-size:14px;color:#444;line-height:1.6;">${reco.priorityBody}</div>
+      <div style="font-size:14px;color:#444;line-height:1.65;">${reco.priorityBody}</div>
+      ${customPain ? `<div style="margin-top:10px;padding:10px 14px;background:rgba(255,255,255,.55);border-right:3px solid var(--orange);border-radius:8px;"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px;">ציינת גם:</div><div style="font-size:14px;font-style:italic;color:var(--ink);">"${customPain}"</div></div>` : ''}
+      ${reco.priorityInsight ? `<div style="font-size:14px;color:#444;line-height:1.65;margin-top:10px;">${reco.priorityInsight}</div>` : ''}
     </div>
 
     <div style="background:rgba(255,255,255,.5);border-radius:14px;padding:14px;">
@@ -509,14 +519,16 @@ document.getElementById('mainInsightCard').innerHTML = `
 
 // ── הכלי המומלץ — מלבן עצמאי מעל "מה הכי בוער כרגע" ──────────────────
 document.getElementById('recoToolBox').innerHTML = `
-  <div style="background:linear-gradient(135deg,#FFF4E6,#FDE3C4);border:1.5px solid rgba(242,107,31,.35);border-radius:18px;padding:18px 20px;margin-top:6px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 8px 24px rgba(242,107,31,.13);">
+  <div style="background:linear-gradient(135deg,#FFF4E6,#FDE3C4);border:1.5px solid rgba(242,107,31,.35);border-radius:18px;padding:20px 22px;margin-top:6px;display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;box-shadow:0 8px 24px rgba(242,107,31,.13);">
     <div style="width:46px;height:46px;border-radius:12px;background:var(--ink);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;">⚡</div>
-    <div style="flex:1;min-width:200px;">
+    <div style="flex:1;min-width:220px;">
       <div style="font-size:11px;font-weight:700;color:var(--orange-deep);letter-spacing:.04em;margin-bottom:3px;">האוטומציה הראשונה שהייתי בונה לך</div>
-      <div style="font-family:'Rubik',sans-serif;font-size:17px;font-weight:700;color:var(--ink);margin-bottom:4px;">${reco.tool1Name || tool1}</div>
-      <div style="font-size:13px;color:#555;line-height:1.5;">${reco.tool1Body}</div>
+      <div style="font-family:'Rubik',sans-serif;font-size:17px;font-weight:700;color:var(--ink);margin-bottom:6px;">${reco.tool1Name || tool1}</div>
+      <div style="font-size:13px;color:#555;line-height:1.65;margin-bottom:12px;">${reco.tool1Body}</div>
+      <div style="display:flex;flex-direction:column;gap:5px;padding-top:10px;border-top:1px solid rgba(0,0,0,.06);">
+        ${(reco.impact || [reco.tool1Impact || '']).map(line => `<div style="font-size:13px;font-weight:700;color:var(--green);">${line}</div>`).join('')}
+      </div>
     </div>
-    <div style="flex-shrink:0;text-align:center;background:var(--green-pale);border:1px solid rgba(45,122,58,.25);border-radius:10px;padding:9px 13px;font-size:12px;font-weight:700;color:var(--green);white-space:nowrap;line-height:1.4;">${reco.impactShift || reco.tool1Impact}<div style="font-size:10px;font-weight:400;opacity:.75;margin-top:3px;">הערכה לפי התשובות שלך</div></div>
   </div>
 `;
 
@@ -535,8 +547,8 @@ function buildCompactStepCard(title, desc, num, badgeText) {
     </div>`;
 }
 
-document.getElementById('planStep1').innerHTML = buildCompactStepCard(reco.planCards[0].title, reco.planCards[0].desc, '1', 'הכי דחוף');
-document.getElementById('planStep2').innerHTML = buildCompactStepCard(reco.planCards[1].title, reco.planCards[1].desc, '2', 'שלב הבא');
+document.getElementById('planStep1').innerHTML = buildCompactStepCard(reco.planCards[0].title, reco.planCards[0].desc, '1', '🔥 הכי דחוף');
+document.getElementById('planStep2').innerHTML = buildCompactStepCard(reco.planCards[1].title, reco.planCards[1].desc, '2', '⏳ שלב הבא');
 
 // שלבים 3-4 מטושטשים
 document.getElementById('planSteps34').innerHTML = `
