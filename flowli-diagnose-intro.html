@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowli - אבחון עסקי חכם</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300..800&family=Rubik:ital,wght@0,400..900;1,400..900&family=Inter:wght@500;700;800;900&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#F6F1E6; --ink:#1A1A1A; --text:#2A2A2A; --muted:#8A8378;
+  --orange:#F26B1F; --orange-deep:#D45A12; --orange-pale:#FEF0E7; --orange-mid:#FDDDBD;
+}
+html, body { height: 100%; }
+body {
+  font-family: 'Assistant', system-ui, sans-serif;
+  background: var(--bg); color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh; position: relative; overflow-x: hidden;
+  display: flex; flex-direction: column;
+}
+
+/* ── WAVES BG (זהה למערכת ה-diagnose) ── */
+.wave-svg { position: absolute; pointer-events: none; z-index: 0; }
+.wave-svg-top    { top: 60px; right: 0; width: 100%; max-width: 1400px; height: 600px; }
+.wave-svg-bottom { bottom: 0; left: 0; width: 60%; max-width: 650px; height: auto; max-height: 400px; }
+
+/* ── NAV ── */
+.top-nav {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 32px 8px; max-width: 1400px; margin: 0 auto; width: 100%;
+}
+.flowli-logo { display: inline-flex; align-items: center; gap: 0.3em; font-size: clamp(26px, 3.5vw, 36px); text-decoration: none; direction: ltr; }
+.flowli-logo svg { width: 1.1em; height: 1.1em; }
+.flowli-logo .logo-text { font-family: 'Inter', sans-serif; font-weight: 800; letter-spacing: -0.035em; }
+.flowli-logo .logo-flow { color: #2A2A2A; }
+.flowli-logo .logo-li   { color: var(--orange); }
+.nav-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+  color: var(--orange-deep); background: var(--orange-pale);
+  border: 1px solid var(--orange-mid); border-radius: 20px; padding: 6px 14px; letter-spacing: .04em;
+}
+
+/* ── HERO STAGE ── */
+.stage {
+  flex: 1; position: relative; z-index: 5;
+  width: 100%; max-width: 1240px; margin: 0 auto;
+  padding: 4px 28px 0;
+  display: flex; align-items: center;
+  min-height: 280px;
+}
+.hero-grid {
+  position: relative;
+  width: 100%;
+}
+
+/* ── CONTENT (TRULY centered on page - cards don't push it) ── */
+.content {
+  position: relative; z-index: 5;
+  text-align: center;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+  color: var(--orange-deep); background: var(--orange-pale);
+  border: 1px solid var(--orange-mid); border-radius: 20px; padding: 6px 14px;
+  margin-bottom: 14px; letter-spacing: .04em;
+  opacity: 0; transform: translateY(8px);
+  animation: fadeUp .8s .1s forwards;
+}
+
+.main-msg {
+  font-family: 'Rubik', sans-serif; font-weight: 800;
+  font-size: clamp(36px, 5.2vw, 60px); line-height: 1.08; letter-spacing: -0.04em;
+  color: var(--ink); margin-bottom: 8px;
+  opacity: 0; transform: translateY(14px);
+  animation: fadeUp .9s .2s forwards;
+}
+.main-msg .line { display: block; }
+.emphasis {
+  position: relative; display: inline-block;
+  font-style: italic; font-weight: 800;
+  color: var(--orange-deep);
+}
+.emphasis::after {
+  content: ''; position: absolute;
+  bottom: 4px; left: -4px; right: -4px;
+  height: 20px;
+  background: rgba(242,107,31,.30);
+  border-radius: 5px; z-index: -1;
+}
+
+.whisper {
+  font-family: 'Rubik', sans-serif; font-weight: 500; font-style: italic;
+  font-size: clamp(18px, 2.2vw, 24px); line-height: 1.35; letter-spacing: -0.015em;
+  color: var(--orange-deep); margin-bottom: 14px;
+  opacity: 0; transform: translateY(8px);
+  animation: fadeUp 1s 1.0s forwards;
+}
+.whisper .bold { font-style: normal; font-weight: 800; color: var(--ink); }
+
+.sub {
+  font-size: 13px; line-height: 1.55; color: #3a3a3a; max-width: 540px;
+  margin: 0 auto 18px;
+  opacity: 0; transform: translateY(8px);
+  animation: fadeUp 1s 1.6s forwards;
+}
+.sub .sub-bold {
+  font-weight: 700; color: var(--ink);
+}
+
+.cta-row {
+  display: flex; align-items: center; justify-content: center; gap: 22px; flex-wrap: wrap;
+  margin-bottom: 12px;
+  opacity: 0; transform: translateY(8px);
+  animation: fadeUp 1s 2.0s forwards;
+}
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: linear-gradient(135deg, #F47C2F, #D45A12);
+  color: #fff; border: none; cursor: pointer;
+  font-family: 'Rubik', sans-serif; font-weight: 700; font-size: 16px;
+  padding: 14px 30px; border-radius: 14px;
+  box-shadow: 0 14px 32px rgba(242,107,31,.42), 0 1px 0 rgba(255,255,255,.25) inset;
+  transition: transform .18s, box-shadow .18s;
+  position: relative; overflow: hidden;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(242,107,31,.5); }
+.btn-primary .arrow { transition: transform .2s; }
+.btn-primary:hover .arrow { transform: translateX(-4px); }
+.btn-primary::before {
+  content: ''; position: absolute; inset: -50%;
+  background: radial-gradient(circle, rgba(255,255,255,.35) 0%, transparent 60%);
+  transform: scale(0); transition: transform .6s ease-out; pointer-events: none;
+}
+.btn-primary:hover::before { transform: scale(1); }
+
+.trust-row {
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: .03em;
+  opacity: 0; transform: translateY(8px);
+  animation: fadeUp 1s 2.3s forwards;
+}
+.trust-row .item { display: inline-flex; align-items: center; gap: 6px; }
+.trust-row .bullet { color: #DBC9A9; font-weight: 400; }
+
+/* ── VISUAL - floating LEFT decoration, doesn't push the centered text ── */
+.visual {
+  position: absolute;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 220px;
+  height: 300px;
+  z-index: 3;
+}
+
+/* Chaos cards - notification style: head (icon + source + time) + body */
+.chaos-card {
+  position: absolute;
+  left: 50%;
+  background: rgba(255,255,255,.94);
+  border: 1px solid rgba(0,0,0,.06); border-radius: 14px;
+  padding: 10px 13px; width: 220px;
+  box-shadow: 0 14px 30px rgba(180,110,60,.18);
+  opacity: 0;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.chaos-card.urgent { border-color: rgba(242,107,31,.32); }
+.cc-head { display: flex; align-items: center; gap: 9px; margin-bottom: 5px; }
+.cc-icon {
+  width: 28px; height: 28px; border-radius: 8px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 15px; color: #fff; flex-shrink: 0;
+}
+.cc-source { font-size: 11px; font-weight: 700; color: var(--ink); }
+.cc-time   { font-size: 10px; color: var(--muted); margin-right: auto; font-family: 'JetBrains Mono', monospace; }
+.cc-body   { font-size: 13px; color: var(--text); line-height: 1.4; }
+
+.sticky {
+  background: rgba(255,224,102,.96); border-color: #E5C84F !important;
+  font-family: 'Rubik', sans-serif;
+}
+.sticky .cc-body { font-style: italic; }
+
+/* Vertical pile - 2-row notification cards, light overlap so body line is visible */
+.cc-1 { top:   0px; --x: -16px; --rot: -5deg; z-index: 1; }
+.cc-2 { top:  72px; --x:  14px; --rot:  6deg; z-index: 2; }
+.cc-3 { top: 144px; --x: -10px; --rot: -3deg; z-index: 3; }
+.cc-4 { top: 216px; --x:  14px; --rot:  4deg; z-index: 4; }
+
+@keyframes card-fall {
+  0%   { opacity: 0; transform: translateX(-50%) translateX(var(--x)) translateY(-40px) rotate(var(--rot)) scale(.92); }
+  100% { opacity: 1; transform: translateX(-50%) translateX(var(--x)) translateY(0)    rotate(var(--rot)) scale(1); }
+}
+@keyframes card-float {
+  0%, 100% { transform: translateX(-50%) translateX(var(--x)) translateY(0)   rotate(var(--rot)); }
+  50%      { transform: translateX(-50%) translateX(var(--x)) translateY(-6px) rotate(calc(var(--rot) - 1deg)); }
+}
+
+.cc-1 { animation: card-fall 1.0s 0.4s cubic-bezier(.25,.65,.35,1) forwards, card-float 5.0s 1.6s ease-in-out infinite; }
+.cc-2 { animation: card-fall 1.0s 0.9s cubic-bezier(.25,.65,.35,1) forwards, card-float 5.4s 2.1s ease-in-out infinite; }
+.cc-3 { animation: card-fall 1.0s 1.4s cubic-bezier(.25,.65,.35,1) forwards, card-float 5.2s 2.6s ease-in-out infinite; }
+.cc-4 { animation: card-fall 1.0s 1.9s cubic-bezier(.25,.65,.35,1) forwards, card-float 5.6s 3.1s ease-in-out infinite; }
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── POST-HERO SECTION (compact horizontal cards - no scroll) ── */
+.post-hero {
+  position: relative; z-index: 5;
+  width: 100%;
+  max-width: 1080px; margin: 0 auto;
+  padding: 4px 28px 12px;
+}
+.post-hero-eyebrow {
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--orange-deep);
+  letter-spacing: .14em; text-transform: uppercase;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.post-hero-title {
+  font-family: 'Rubik', sans-serif; font-weight: 800;
+  font-size: clamp(22px, 2.8vw, 30px); color: var(--ink);
+  text-align: center; margin-bottom: 6px;
+  letter-spacing: -0.025em; line-height: 1.2;
+}
+.post-hero-sub {
+  text-align: center;
+  font-size: 12.5px; color: #6a6560;
+  max-width: 540px; margin: 0 auto 14px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+.post-hero-sub .ph-bold {
+  font-weight: 700; color: var(--ink);
+}
+.post-hero-sub .ph-mobile { display: none; }
+@media (max-width: 640px) {
+  .post-hero-sub .ph-desktop { display: none; }
+  .post-hero-sub .ph-mobile { display: inline; }
+}
+
+/* soft closing line below the 3 cards - no button, just a sentence */
+.post-hero-outro {
+  text-align: center;
+  margin-top: 14px;
+  display: flex; flex-direction: column; gap: 1px;
+  opacity: .85;
+}
+.post-hero-outro .outro-q {
+  font-family: 'Rubik', sans-serif;
+  font-size: 13.5px; font-weight: 600; color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.post-hero-outro .outro-a {
+  font-size: 13px; color: var(--muted);
+  font-style: italic;
+}
+.reveal-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+}
+.reveal-card {
+  position: relative;
+  background: #fff;
+  border: 1px solid rgba(242,107,31,.14);
+  border-radius: 18px; padding: 18px 20px 18px 22px;
+  box-shadow: 0 5px 14px rgba(180,110,60,.07);
+  /* HORIZONTAL: icon + text inline */
+  display: flex; flex-direction: row; align-items: center;
+  text-align: right;
+  gap: 16px;
+  transition: transform .25s cubic-bezier(.25,.65,.35,1), box-shadow .25s, border-color .25s;
+  overflow: hidden;
+}
+.reveal-card::before {
+  content: '';
+  position: absolute; top: 0; right: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--orange) 0%, #FBBA76 100%);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform .35s cubic-bezier(.25,.65,.35,1);
+}
+.reveal-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(180,110,60,.16);
+  border-color: rgba(242,107,31,.32);
+}
+.reveal-card:hover::before { transform: scaleX(1); }
+
+.rev-num {
+  position: absolute; top: 6px; left: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 600;
+  color: var(--orange-deep);
+  background: var(--orange-pale);
+  padding: 1px 6px; border-radius: 999px;
+  letter-spacing: .08em;
+}
+.reveal-card .ri {
+  width: 52px; height: 52px; border-radius: 14px;
+  background: linear-gradient(135deg, #FEF0E7 0%, #FDDDBD 100%);
+  color: var(--orange-deep);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  border: 1px solid rgba(242,107,31,.20);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.7),
+              0 2px 8px rgba(242,107,31,.12);
+  flex-shrink: 0;
+}
+.reveal-card .rev-content {
+  display: flex; flex-direction: column; gap: 4px;
+  flex: 1; min-width: 0;
+}
+.reveal-card h3 {
+  font-family: 'Rubik', sans-serif;
+  font-size: 16.5px; font-weight: 700;
+  color: var(--ink); line-height: 1.3; letter-spacing: -0.015em;
+}
+.reveal-card p {
+  font-size: 13px; color: #5a5550;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .reveal-grid { grid-template-columns: 1fr; gap: 10px; }
+  .reveal-card h3 { font-size: 14.5px; }
+  .reveal-card p { font-size: 12px; }
+}
+@media (max-width: 640px) {
+  .post-hero { padding: 16px 22px 22px; }
+  .post-hero-title { font-size: 20px; }
+  .post-hero-sub { font-size: 12px; margin-bottom: 14px; max-width: 100%; }
+
+  /* Smaller, cream-toned cards that match site aesthetic */
+  .reveal-grid { gap: 8px; }
+  .reveal-card {
+    padding: 10px 12px; gap: 11px;
+    border-radius: 12px;
+    background: linear-gradient(160deg, #FFFBF3 0%, #FBF4E6 100%);
+    border: 1px solid rgba(216,200,168,.45);
+    box-shadow: 0 2px 6px rgba(180,110,60,.05);
+  }
+  .reveal-card:hover { transform: none; box-shadow: 0 2px 6px rgba(180,110,60,.05); }
+  .reveal-card::before { display: none; }   /* no top accent line on mobile */
+  .reveal-card .ri {
+    width: 36px; height: 36px;
+    font-size: 17px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #FEF0E7 0%, #FDDDBD 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
+  }
+  .reveal-card h3 {
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+  .reveal-card p { display: none; }
+  .rev-num { display: none; }
+
+  /* Hide outro + footer on mobile - end cleanly on the cards */
+  .post-hero-outro { display: none; }
+  .footer-micro { display: none; }
+}
+
+/* footer micro */
+.footer-micro {
+  position: relative; z-index: 5;
+  text-align: center; font-size: 11px; color: var(--muted);
+  padding: 6px 28px 10px;
+}
+
+/* ── RESPONSIVE: intermediate widths - cards smaller + closer to edge ── */
+@media (max-width: 1000px) {
+  .visual { left: 8px; width: 175px; height: 270px; }
+  .chaos-card { width: 168px; padding: 8px 10px; }
+  .cc-head { gap: 7px; margin-bottom: 4px; }
+  .cc-icon { width: 24px; height: 24px; font-size: 13px; }
+  .cc-source { font-size: 10px; }
+  .cc-time { font-size: 9px; }
+  .cc-body { font-size: 12px; }
+  .stage { padding: 20px 22px 28px; min-height: 440px; }
+  .content { max-width: 460px; }
+  /* spacing for shorter cards on tablet */
+  .cc-1 { top:   0px; --x: -8px; --rot: -5deg; }
+  .cc-2 { top:  62px; --x:  6px; --rot:  6deg; }
+  .cc-3 { top: 124px; --x: -6px; --rot: -3deg; }
+  .cc-4 { top: 186px; --x:  8px; --rot:  4deg; }
+}
+
+/* ─── MOBILE: notes ABOVE headline, breathing room for the title ─── */
+@media (max-width: 640px) {
+  .top-nav { padding: 10px 16px 4px; }
+  .nav-badge { display: none; }
+  .stage { padding: 4px 14px 2px; min-height: auto; }
+
+  /* HEADLINE: dominant, slightly smaller than before (-10%) */
+  .main-msg {
+    font-size: 28px;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin-bottom: 10px;
+  }
+
+  .whisper { font-size: 16px; margin-bottom: 10px; }
+
+  .sub {
+    font-size: 12.5px;
+    line-height: 1.5;
+    margin-bottom: 14px;
+    max-width: 100%;
+  }
+
+  .cta-row { gap: 12px; margin-bottom: 10px; }
+  .btn-primary { font-size: 15px; padding: 13px 24px; }
+  .trust-row { font-size: 10px; gap: 6px; }
+
+  /* Chaos notes - hidden on mobile for now (clean layout first) */
+  .visual { display: none; }
+
+  .content {
+    max-width: 100%;
+    padding-left: 0;
+    z-index: 5;
+  }
+}
+
+/* ─── extra-narrow: very small phones (iPhone SE etc.) ─── */
+@media (max-width: 380px) {
+  .main-msg { font-size: 26px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── גלים זהים לדפי diagnose ── -->
+<svg class="wave-svg wave-svg-top" viewBox="0 0 1400 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="wg1" cx="85%" cy="35%" r="75%">
+      <stop offset="0%"   stop-color="#FBBA76" stop-opacity="0.85"/>
+      <stop offset="40%"  stop-color="#FDC481" stop-opacity="0.50"/>
+      <stop offset="100%" stop-color="#FDC481" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <path fill="url(#wg1)" d="M 450,0 C 580,70 750,150 900,210 C 1010,260 1110,330 1200,400 C 1280,460 1350,510 1400,540 L 1400,0 Z"/>
+</svg>
+<svg class="wave-svg wave-svg-bottom" viewBox="0 0 800 800" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="wg2" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#FBBA76" stop-opacity="0.75"/>
+      <stop offset="55%"  stop-color="#FDC481" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#FDC481" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#wg2)" d="M 0,800 L 0,200 C 70,210 150,260 220,330 C 300,410 360,360 440,420 C 530,490 510,580 600,640 C 680,690 740,720 800,750 L 800,800 Z"/>
+</svg>
+
+<nav class="top-nav">
+  <a href="#" class="flowli-logo">
+    <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 30 Q25 15 40 30 Q55 45 70 30" stroke="#2A2A2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M10 45 Q25 30 40 45 Q55 60 70 45" stroke="#2A2A2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M10 60 Q25 45 40 60 Q55 75 70 60" stroke="#F26B1F" stroke-width="6" fill="none" stroke-linecap="round"/>
+    </svg>
+    <span class="logo-text"><span class="logo-flow">flow</span><span class="logo-li">li</span></span>
+  </a>
+  <div class="nav-badge">אבחון עסקי חכם</div>
+</nav>
+
+<main class="stage">
+  <div class="hero-grid">
+
+    <!-- ── LEFT: VISUAL - vertical stack of chaos cards, no circle ── -->
+    <div class="visual">
+      <div class="chaos-card cc-1 urgent">
+        <div class="cc-head">
+          <span class="cc-icon" style="background:#E84D4D;">📞</span>
+          <span class="cc-source">שיחות שלא נענו</span>
+          <span class="cc-time">היום</span>
+        </div>
+        <div class="cc-body">8 שיחות ממתינות לחזרה</div>
+      </div>
+
+      <div class="chaos-card cc-2">
+        <div class="cc-head">
+          <span class="cc-icon" style="background:#25D366;">💬</span>
+          <span class="cc-source">הודעות חדשות</span>
+          <span class="cc-time">עכשיו</span>
+        </div>
+        <div class="cc-body">14 הודעות מהיום</div>
+      </div>
+
+      <div class="chaos-card cc-3 sticky">
+        <div class="cc-head">
+          <span class="cc-icon" style="background:#E8A030;">📝</span>
+          <span class="cc-source">משימה</span>
+          <span class="cc-time">דחוף</span>
+        </div>
+        <div class="cc-body">לשלוח הצעת מחיר</div>
+      </div>
+
+      <div class="chaos-card cc-4">
+        <div class="cc-head">
+          <span class="cc-icon" style="background:#7A5AF0;">📅</span>
+          <span class="cc-source">פגישה</span>
+          <span class="cc-time">מחר</span>
+        </div>
+        <div class="cc-body">"אפשר להזיז את הפגישה?"</div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT: CENTERED TEXT ── -->
+    <div class="content">
+      <h1 class="main-msg">
+        <span class="line">בלי בלאגן.</span>
+        <span class="line">בלי <span class="emphasis">פניות שנשכחות</span>.</span>
+        <span class="line">בלי לעבוד מסביב לשעון.</span>
+      </h1>
+
+      <div class="whisper">שקט. סדר. <span class="bold">פחות עומס.</span></div>
+
+      <p class="sub">
+        5 דקות שיגלו לך איפה אוטומציה יכולה לעשות <span class="sub-bold">את ההבדל הכי גדול</span> בעסק שלך.
+      </p>
+
+      <div class="cta-row">
+        <button class="btn-primary" onclick="startDiagnosis()">
+          <span>בוא.י נעשה סדר</span>
+          <span class="arrow">←</span>
+        </button>
+      </div>
+
+      <div class="trust-row">
+        <span class="item">⏱️ 5 דקות</span>
+        <span class="bullet">•</span>
+        <span class="item">🎯 מותאם לעסק שלך</span>
+        <span class="bullet">•</span>
+        <span class="item">🔒 ללא התחייבות</span>
+      </div>
+
+    </div>
+
+  </div>
+</main>
+
+<section class="post-hero">
+  <h2 class="post-hero-title">בסוף האבחון תדעו:</h2>
+  <p class="post-hero-sub">
+    <span class="ph-desktop">האתגר הוא בדרך כלל לא חוסר בכלים - האתגר הוא <span class="ph-bold">לדעת מאיפה להתחיל</span>.</span>
+    <span class="ph-mobile">האתגר הוא לא חוסר בכלים.<br>האתגר הוא <span class="ph-bold">לדעת מאיפה להתחיל</span>.</span>
+  </p>
+  <div class="reveal-grid">
+    <div class="reveal-card">
+      <span class="rev-num">01</span>
+      <div class="ri">🔧</div>
+      <div class="rev-content">
+        <h3>מה הכי דחוף לפתור?</h3>
+        <p>נגלה איפה צוואר הבקבוק שהכי משפיע על ההתנהלות היומיומית של העסק.</p>
+      </div>
+    </div>
+    <div class="reveal-card">
+      <span class="rev-num">02</span>
+      <div class="ri">⏱️</div>
+      <div class="rev-content">
+        <h3>איפה הזמן נשרף?</h3>
+        <p>נזהה אילו משימות ותהליכים גוזלים ממך הכי הרבה זמן ואנרגיה.</p>
+      </div>
+    </div>
+    <div class="reveal-card">
+      <span class="rev-num">03</span>
+      <div class="ri">⚡</div>
+      <div class="rev-content">
+        <h3>מאיפה כדאי להתחיל?</h3>
+        <p>תקבל.י המלצה ברורה על האוטומציה הראשונה שכדאי לבנות בעסק שלך.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-hero-outro">
+    <span class="outro-q">לא בטוחים מאיפה להתחיל?</span>
+    <span class="outro-a">בדיוק בשביל זה בנינו את האבחון.</span>
+  </div>
+</section>
+
+
+<div class="footer-micro">© 2026 Flowli</div>
+
+<script>
+function startDiagnosis() {
+  window.location.href = 'flowli-diagnose-step1.html';
+}
+</script>
+<script src="flowli-legal.js"></script>
+
+</body>
+</html>
