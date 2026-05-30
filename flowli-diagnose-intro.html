@@ -205,7 +205,7 @@ body {
 
 /* ── CLICK ANIMATION: cards exit upward (reverse of entry) + transition overlay ── */
 /* All longhand props explicit to override the .cc-N shorthand entirely
-   — otherwise animation-delay leaks (cc-1 had 0.4s, cc-4 had 1.9s entry delays) */
+   - otherwise animation-delay leaks (cc-1 had 0.4s, cc-4 had 1.9s entry delays) */
 .chaos-card.exiting {
   animation-name: card-fall-out;
   animation-duration: 0.42s;
@@ -296,7 +296,7 @@ body {
   padding: 4px 28px 12px;
 }
 
-/* No entry animations for post-hero — everything is visible on load */
+/* No entry animations for post-hero - everything is visible on load */
 .post-hero-eyebrow {
   text-align: center;
   font-family: 'JetBrains Mono', monospace;
@@ -694,7 +694,7 @@ function startDiagnosis() {
   const label = btn.querySelector('span:not(.arrow)');
   if (label) label.textContent = 'עושים סדר...';
 
-  /* 2. Cards EXIT upward — reverse of entry, ONE BY ONE via setTimeout
+  /* 2. Cards EXIT upward - reverse of entry, ONE BY ONE via setTimeout
         (more reliable than animation-delay because the existing shorthand
         on .cc-N can leak delay values into the override) */
   const cards = Array.from(document.querySelectorAll('.chaos-card'));

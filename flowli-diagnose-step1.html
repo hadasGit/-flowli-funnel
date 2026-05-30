@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flowli — אבחון עסקי</title>
+  <title>Flowli - אבחון עסקי</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&family=Rubik:ital,wght@0,300..900;1,300..900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -292,7 +292,7 @@ function svgIcon(name) {
 // ─── BLOCKS DATA ─────────────────────────────────────────────────────────────
 const blocks = [
 
-  // ════ BLOCK 1 — פתיחה ════
+  // ════ BLOCK 1 - פתיחה ════
   {
     id: 'intro',
     eyebrow: 'נתחיל',
@@ -336,7 +336,7 @@ const blocks = [
     ]
   },
 
-  // ════ BLOCK 2 — פניות ולקוחות ════
+  // ════ BLOCK 2 - פניות ולקוחות ════
   {
     id: 'leads',
     eyebrow: '💜 פניות ולקוחות',
@@ -398,7 +398,7 @@ const blocks = [
     ]
   },
 
-  // ════ BLOCK 3 — זמן ותפעול ════
+  // ════ BLOCK 3 - זמן ותפעול ════
   {
     id: 'ops',
     eyebrow: '🟠 זמן ותפעול',
@@ -436,7 +436,7 @@ const blocks = [
     ]
   },
 
-  // ════ BLOCK 4 — מידע ושליטה + לסיום ════
+  // ════ BLOCK 4 - מידע ושליטה + לסיום ════
   {
     id: 'control_and_end',
     eyebrow: '🔵 מידע ושליטה',
@@ -502,7 +502,7 @@ const blocks = [
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
 let currentBlock = 0;
-// תמיד מתחילים עם answers ריק — לא טוענים מ-localStorage
+// תמיד מתחילים עם answers ריק - לא טוענים מ-localStorage
 // (כל פתיחה של השאלון = סבב חדש)
 const answers = {};
 // נקה נתונים ישנים כדי שה-results לא יציג תשובות מסבב קודם
@@ -523,7 +523,7 @@ function render() {
   const isLast = currentBlock === blocks.length - 1;
   document.getElementById('btnNextLabel').textContent = isLast ? 'לאבחון שלי' : 'המשך';
 
-  // build HTML — eyebrow כבר מוצג בפס, לא מציגים שוב בcontect
+  // build HTML - eyebrow כבר מוצג בפס, לא מציגים שוב בcontect
   let html = `
     <div class="block-header">
       ${block.title ? `<div class="block-title">${block.title}</div>` : ''}
