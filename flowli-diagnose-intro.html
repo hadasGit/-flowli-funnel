@@ -215,6 +215,70 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ── CLICK ANIMATION: cards fly into button + "עושים סדר..." overlay ── */
+.chaos-card.flying {
+  animation: card-fly-to-btn 0.45s cubic-bezier(.55,0,.7,.5) forwards !important;
+  pointer-events: none;
+}
+@keyframes card-fly-to-btn {
+  to {
+    transform: translate(var(--fly-x, 0), var(--fly-y, 0))
+               translateX(-50%) translateX(var(--x))
+               rotate(var(--rot)) scale(0.1);
+    opacity: 0;
+  }
+}
+
+.btn-primary.btn-loading {
+  pointer-events: none;
+  background: linear-gradient(135deg, #D45A12, #B84B0E);
+}
+.btn-primary.btn-loading .arrow {
+  opacity: 0;
+  transform: scale(0.5) rotate(-90deg);
+  transition: opacity .2s, transform .25s;
+}
+
+.order-overlay {
+  position: fixed; inset: 0;
+  background: rgba(246, 241, 230, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.order-overlay.visible { opacity: 1; }
+.order-text {
+  font-family: 'Rubik', sans-serif;
+  font-size: clamp(22px, 3.2vw, 34px);
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.025em;
+  display: inline-flex; align-items: baseline; gap: 4px;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: order-text-in .35s .05s cubic-bezier(.25,.65,.35,1) forwards;
+}
+@keyframes order-text-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+.order-text .dots {
+  color: var(--orange);
+  font-weight: 800;
+}
+.order-text .dots span {
+  display: inline-block;
+  animation: dot-bounce 0.9s infinite;
+}
+.order-text .dots span:nth-child(2) { animation-delay: 0.15s; }
+.order-text .dots span:nth-child(3) { animation-delay: 0.30s; }
+@keyframes dot-bounce {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
+
 /* ── POST-HERO SECTION (compact horizontal cards - no scroll) ── */
 .post-hero {
   position: relative; z-index: 5;
@@ -340,9 +404,9 @@ body {
   .reveal-card p { font-size: 12px; }
 }
 @media (max-width: 640px) {
-  .post-hero { padding: 16px 22px 22px; }
-  .post-hero-title { font-size: 20px; }
-  .post-hero-sub { font-size: 12px; margin-bottom: 14px; max-width: 100%; }
+  .post-hero { padding: 10px 22px 16px; }
+  .post-hero-title { font-size: 20px; margin-bottom: 4px; }
+  .post-hero-sub { font-size: 12px; margin-bottom: 10px; max-width: 100%; line-height: 1.4; }
 
   /* Smaller, cream-toned cards that match site aesthetic */
   .reveal-grid { gap: 8px; }
@@ -401,31 +465,31 @@ body {
   .cc-4 { top: 186px; --x:  8px; --rot:  4deg; }
 }
 
-/* ─── MOBILE: notes ABOVE headline, breathing room for the title ─── */
+/* ─── MOBILE: tighter spacing throughout ─── */
 @media (max-width: 640px) {
-  .top-nav { padding: 10px 16px 4px; }
+  .top-nav { padding: 8px 16px 2px; }
   .nav-badge { display: none; }
-  .stage { padding: 4px 14px 2px; min-height: auto; }
+  .stage { padding: 2px 14px 0; min-height: auto; }
 
-  /* HEADLINE: dominant, slightly smaller than before (-10%) */
+  /* HEADLINE: dominant */
   .main-msg {
     font-size: 28px;
     line-height: 1.05;
     letter-spacing: -0.04em;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
   }
 
-  .whisper { font-size: 16px; margin-bottom: 10px; }
+  .whisper { font-size: 16px; margin-bottom: 6px; }
 
   .sub {
     font-size: 12.5px;
-    line-height: 1.5;
-    margin-bottom: 14px;
+    line-height: 1.45;
+    margin-bottom: 10px;
     max-width: 100%;
   }
 
-  .cta-row { gap: 12px; margin-bottom: 10px; }
-  .btn-primary { font-size: 15px; padding: 13px 24px; }
+  .cta-row { gap: 12px; margin-bottom: 8px; }
+  .btn-primary { font-size: 15px; padding: 12px 24px; }
   .trust-row { font-size: 10px; gap: 6px; }
 
   /* Chaos notes - hidden on mobile for now (clean layout first) */
@@ -600,7 +664,45 @@ body {
 
 <script>
 function startDiagnosis() {
-  window.location.href = 'flowli-diagnose-step1.html';
+  const btn = document.querySelector('.btn-primary');
+  if (!btn || btn.classList.contains('btn-loading')) return;
+
+  /* 1. Button → loading state */
+  btn.classList.add('btn-loading');
+  const label = btn.querySelector('span:not(.arrow)');
+  if (label) label.textContent = 'עושים סדר...';
+
+  /* 2. Cards fly into the button (only if visible — desktop) */
+  const btnRect = btn.getBoundingClientRect();
+  const btnCx = btnRect.left + btnRect.width / 2;
+  const btnCy = btnRect.top + btnRect.height / 2;
+
+  document.querySelectorAll('.chaos-card').forEach((card, i) => {
+    const r = card.getBoundingClientRect();
+    if (r.width === 0) return;          /* skip hidden (mobile) */
+    const cardCx = r.left + r.width / 2;
+    const cardCy = r.top + r.height / 2;
+    card.style.setProperty('--fly-x', (btnCx - cardCx) + 'px');
+    card.style.setProperty('--fly-y', (btnCy - cardCy) + 'px');
+    card.style.animationDelay = (i * 70) + 'ms';
+    card.classList.add('flying');
+  });
+
+  /* 3. Show "עושים סדר..." overlay after the cards start flying */
+  setTimeout(() => {
+    const overlay = document.createElement('div');
+    overlay.className = 'order-overlay';
+    overlay.innerHTML = '<div class="order-text">עושים סדר<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>';
+    document.body.appendChild(overlay);
+    /* force reflow so the transition triggers */
+    void overlay.offsetWidth;
+    setTimeout(() => overlay.classList.add('visible'), 20);
+  }, 450);
+
+  /* 4. Navigate to first question */
+  setTimeout(() => {
+    window.location.href = 'flowli-diagnose-step1.html';
+  }, 950);
 }
 </script>
 <script src="flowli-legal.js"></script>
