@@ -48,8 +48,8 @@ body {
 .stage {
   flex: 1; position: relative; z-index: 5;
   width: 100%; max-width: 1240px; margin: 0 auto;
-  padding: 20px 28px 60px;
-  display: flex; align-items: flex-start;
+  padding: 12px 28px 24px;
+  display: flex; align-items: center;
   min-height: 280px;
 }
 .hero-grid {
@@ -204,12 +204,15 @@ body {
 }
 
 /* ── CLICK ANIMATION: cards exit upward (reverse of entry) + transition overlay ── */
-/* longhand props so inline animation-delay can override per card (stagger) */
+/* All longhand props explicit to override the .cc-N shorthand entirely
+   — otherwise animation-delay leaks (cc-1 had 0.4s, cc-4 had 1.9s entry delays) */
 .chaos-card.exiting {
   animation-name: card-fall-out;
   animation-duration: 0.42s;
+  animation-delay: 0s;
   animation-timing-function: cubic-bezier(.55,0,.7,.5);
   animation-fill-mode: forwards;
+  animation-iteration-count: 1;
   pointer-events: none;
 }
 @keyframes card-fall-out {
@@ -412,14 +415,14 @@ body {
   .reveal-card p { font-size: 12px; }
 }
 @media (max-width: 640px) {
-  .post-hero { padding: 10px 22px 16px; }
-  .post-hero-title { font-size: 20px; margin-bottom: 4px; }
-  .post-hero-sub { font-size: 12px; margin-bottom: 10px; max-width: 100%; line-height: 1.4; }
+  .post-hero { padding: 6px 22px 12px; }
+  .post-hero-title { font-size: 20px; margin-bottom: 2px; }
+  .post-hero-sub { font-size: 12px; margin-bottom: 8px; max-width: 100%; line-height: 1.4; }
 
-  /* Smaller, cream-toned cards that match site aesthetic */
-  .reveal-grid { gap: 8px; }
+  /* Cream-toned cards with short description (one line) */
+  .reveal-grid { gap: 6px; }
   .reveal-card {
-    padding: 10px 12px; gap: 11px;
+    padding: 8px 11px; gap: 10px;
     border-radius: 12px;
     background: linear-gradient(160deg, #FFFBF3 0%, #FBF4E6 100%);
     border: 1px solid rgba(216,200,168,.45);
@@ -428,19 +431,25 @@ body {
   .reveal-card:hover { transform: none; box-shadow: 0 2px 6px rgba(180,110,60,.05); }
   .reveal-card::before { display: none; }   /* no top accent line on mobile */
   .reveal-card .ri {
-    width: 36px; height: 36px;
-    font-size: 17px;
-    border-radius: 10px;
+    width: 34px; height: 34px;
+    font-size: 16px;
+    border-radius: 9px;
     background: linear-gradient(135deg, #FEF0E7 0%, #FDDDBD 100%);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
   }
+  .reveal-card .rev-content { gap: 1px; }
   .reveal-card h3 {
     font-size: 13.5px;
     font-weight: 700;
-    line-height: 1.3;
+    line-height: 1.25;
     letter-spacing: -0.01em;
   }
-  .reveal-card p { display: none; }
+  .reveal-card p {
+    display: block;
+    font-size: 11px;
+    line-height: 1.3;
+    color: #6a6560;
+  }
   .rev-num { display: none; }
 
   /* Hide outro + footer on mobile - end cleanly on the cards */
@@ -475,24 +484,29 @@ body {
 
 /* ─── MOBILE: tighter spacing throughout ─── */
 @media (max-width: 640px) {
-  .top-nav { padding: 8px 16px 2px; }
-  .nav-badge { display: none; }
-  .stage { padding: 2px 14px 0; min-height: auto; }
+  .top-nav { padding: 10px 14px 6px; }
+  /* badge stays visible on mobile, top-left (LTR end in RTL flex) */
+  .nav-badge {
+    font-size: 10px;
+    padding: 5px 10px;
+    letter-spacing: .03em;
+  }
+  .stage { padding: 8px 14px 4px; min-height: auto; }
 
-  /* HEADLINE: dominant */
+  /* HEADLINE: dominant, breathing line-height */
   .main-msg {
-    font-size: 28px;
-    line-height: 1.05;
+    font-size: 35px;
+    line-height: 1.38;
     letter-spacing: -0.04em;
     margin-bottom: 6px;
   }
 
-  .whisper { font-size: 16px; margin-bottom: 6px; }
+  .whisper { font-size: 16px; margin-bottom: 4px; }
 
   .sub {
     font-size: 12.5px;
     line-height: 1.45;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     max-width: 100%;
   }
 
@@ -512,7 +526,7 @@ body {
 
 /* ─── extra-narrow: very small phones (iPhone SE etc.) ─── */
 @media (max-width: 380px) {
-  .main-msg { font-size: 26px; }
+  .main-msg { font-size: 30px; }
 }
 </style>
 </head>
@@ -640,7 +654,7 @@ body {
       <div class="ri">🔧</div>
       <div class="rev-content">
         <h3>מה הכי דחוף לפתור?</h3>
-        <p>נגלה איפה צוואר הבקבוק שהכי משפיע על ההתנהלות היומיומית של העסק.</p>
+        <p>מה הכי מעכב אותך כרגע.</p>
       </div>
     </div>
     <div class="reveal-card">
@@ -648,7 +662,7 @@ body {
       <div class="ri">⏱️</div>
       <div class="rev-content">
         <h3>איפה הזמן נשרף?</h3>
-        <p>נזהה אילו משימות ותהליכים גוזלים ממך הכי הרבה זמן ואנרגיה.</p>
+        <p>מה גוזל לך הכי הרבה זמן ביום־יום.</p>
       </div>
     </div>
     <div class="reveal-card">
@@ -656,7 +670,7 @@ body {
       <div class="ri">⚡</div>
       <div class="rev-content">
         <h3>מאיפה כדאי להתחיל?</h3>
-        <p>תקבל.י המלצה ברורה על האוטומציה הראשונה שכדאי לבנות בעסק שלך.</p>
+        <p>הצעד הראשון שיעשה את ההבדל הכי גדול.</p>
       </div>
     </div>
   </div>
@@ -680,17 +694,18 @@ function startDiagnosis() {
   const label = btn.querySelector('span:not(.arrow)');
   if (label) label.textContent = 'עושים סדר...';
 
-  /* 2. Cards EXIT upward — reverse of entry, ONE BY ONE (cc-4 first, cc-1 last) */
-  const cards = document.querySelectorAll('.chaos-card');
-  const total = cards.length;
-  const STAGGER = 160;  /* ms between each card exit start */
-  cards.forEach((card, i) => {
-    if (card.getBoundingClientRect().width === 0) return;  /* skip hidden (mobile) */
-    /* reverse order: last card in DOM (cc-4) exits first */
-    card.style.animationDelay = ((total - 1 - i) * STAGGER) + 'ms';
-    card.classList.add('exiting');
+  /* 2. Cards EXIT upward — reverse of entry, ONE BY ONE via setTimeout
+        (more reliable than animation-delay because the existing shorthand
+        on .cc-N can leak delay values into the override) */
+  const cards = Array.from(document.querySelectorAll('.chaos-card'));
+  const visibleCards = cards.filter(c => c.getBoundingClientRect().width > 0);
+  const STAGGER = 220;  /* ms between each card */
+  visibleCards.reverse().forEach((card, i) => {
+    /* reversed: cc-4 (was last in DOM) exits FIRST at i=0, cc-1 exits LAST */
+    setTimeout(() => card.classList.add('exiting'), i * STAGGER);
   });
-  /* last card starts exiting at: (4-1) * 160 = 480ms, finishes at 480 + 420 = 900ms */
+  /* last card starts at: (n-1) * 220ms; with 4 cards that's 660ms,
+     animation 420ms → last finishes at ~1080ms */
 
   /* 3. Transition overlay appears right after all cards are gone */
   setTimeout(() => {
@@ -704,7 +719,7 @@ function startDiagnosis() {
     document.body.appendChild(overlay);
     void overlay.offsetWidth;
     setTimeout(() => overlay.classList.add('visible'), 20);
-  }, 950);
+  }, 1150);
 
   /* 4. Fade out the overlay text before navigation - smooth handoff */
   setTimeout(() => {
@@ -714,12 +729,12 @@ function startDiagnosis() {
       text.style.opacity = '0';
       text.style.transform = 'translateY(-6px)';
     }
-  }, 2100);
+  }, 2300);
 
   /* 5. Navigate to first question (overlay cream bg = step1 cream bg = no flash) */
   setTimeout(() => {
     window.location.href = 'flowli-diagnose-step1.html';
-  }, 2400);
+  }, 2600);
 }
 </script>
 <script src="flowli-legal.js"></script>
