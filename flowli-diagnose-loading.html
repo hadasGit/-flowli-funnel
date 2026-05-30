@@ -324,14 +324,14 @@
     <!-- ── Section 1: ניתוח ── -->
     <section class="loading-section" id="loadingSection">
 
-      <div class="thank-you-badge"><span class="badge-star">✨</span><span id="leadName">רגע אחד</span> — תודה שמילאת את השאלון</div>
+      <div class="thank-you-badge"><span class="badge-star">✨</span> בונה עבורך אבחון אישי</div>
 
       <div>
         <h1 class="loading-headline">
           מנתחת את הנתונים שלך
         </h1>
         <p class="loading-sub">
-          אני בונה לך תמונה מדויקת של המצב ומה אפשר לשפר כבר עכשיו
+          אני בונה לך תמונה ברורה של מה מעכב את העסק שלך - ואיפה הכי נכון להתחיל.
         </p>
       </div>
 
@@ -447,18 +447,7 @@
   </main>
 
   <script>
-    // ── שם מ-localStorage (תואם גם לפורמט הישן וגם לחדש) ──
-    let firstName = '';
-    try {
-      const saved = localStorage.getItem('flowli_lead');
-      if (saved) {
-        const d = JSON.parse(saved);
-        if (d.name) firstName = d.name.split(' ')[0];
-      }
-      if (!firstName) firstName = localStorage.getItem('flowliName') || '';
-    } catch(e) {}
-    const nameEl = document.getElementById('leadName');
-    if (firstName) nameEl.textContent = firstName;
+    /* שם הליד עוד לא נאסף בשלב הזה - הוא יבוא אחרי עמוד המנתחת */
 
     // ── רצף ניתוח ──
     const steps = [

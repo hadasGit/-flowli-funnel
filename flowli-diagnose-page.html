@@ -71,6 +71,29 @@
     }
     .hero p strong { color:var(--ink); font-weight:700; }
 
+    .pre-form-perks {
+      list-style:none; padding:0; margin:22px auto 0;
+      display:inline-flex; flex-direction:column; gap:9px;
+      max-width:340px; text-align:right; direction:rtl;
+    }
+    .pre-form-perks li {
+      display:flex; align-items:center; gap:10px;
+      font-size:14.5px; color:#2A2A2A; font-weight:500;
+      line-height:1.4;
+    }
+    .pre-form-perks .perk-check {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:20px; height:20px; flex-shrink:0;
+      background:var(--orange); color:#fff;
+      border-radius:50%; font-size:11px; font-weight:800;
+      box-shadow:0 2px 6px rgba(242,107,31,.28);
+    }
+    @media (max-width: 600px) {
+      .pre-form-perks { margin-top:18px; gap:8px; max-width:300px; }
+      .pre-form-perks li { font-size:13.5px; }
+      .pre-form-perks .perk-check { width:18px; height:18px; font-size:10px; }
+    }
+
     .form-card {
       position:relative;
       background:linear-gradient(to left,
@@ -222,7 +245,7 @@
         <span class="logo-flow">flow</span><span class="logo-li">li</span>
       </span>
     </a>
-    <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--orange);letter-spacing:.04em;">התחל.י אבחון ↓</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--orange);letter-spacing:.04em;">האבחון שלך כמעט מוכן</span>
   </nav>
 
   <main class="page-wrap">
@@ -236,6 +259,11 @@
         עוד רגע נציג את <strong>התוצאות האישיות שלך</strong>.<br>
         השאירי פרטים כדי לשמור את האבחון ולקבל עותק למייל.
       </p>
+      <ul class="pre-form-perks">
+        <li><span class="perk-check">✓</span> האבחון נשמר עבורך</li>
+        <li><span class="perk-check">✓</span> עותק יישלח למייל</li>
+        <li><span class="perk-check">✓</span> ללא התחייבות</li>
+      </ul>
     </section>
 
     <div class="form-card">
