@@ -48,8 +48,8 @@ body {
 .stage {
   flex: 1; position: relative; z-index: 5;
   width: 100%; max-width: 1240px; margin: 0 auto;
-  padding: 4px 28px 0;
-  display: flex; align-items: center;
+  padding: 20px 28px 60px;
+  display: flex; align-items: flex-start;
   min-height: 280px;
 }
 .hero-grid {
@@ -71,20 +71,16 @@ body {
   color: var(--orange-deep); background: var(--orange-pale);
   border: 1px solid var(--orange-mid); border-radius: 20px; padding: 6px 14px;
   margin-bottom: 14px; letter-spacing: .04em;
-  opacity: 0; transform: translateY(8px);
-  animation: fadeUp .8s .1s forwards;
 }
 
 .main-msg {
   font-family: 'Rubik', sans-serif; font-weight: 800;
-  font-size: clamp(36px, 5.2vw, 60px); line-height: 1.08; letter-spacing: -0.04em;
+  font-size: clamp(38px, 5.4vw, 64px); line-height: 1.38; letter-spacing: -0.04em;
   color: var(--ink); margin-bottom: 8px;
-  opacity: 0; transform: translateY(14px);
-  animation: fadeUp .9s .2s forwards;
 }
 .main-msg .line { display: block; }
 .emphasis {
-  position: relative; display: inline-block;
+  position: relative; /* display: inline-block; */
   font-style: italic; font-weight: 800;
   color: var(--orange-deep);
 }
@@ -100,16 +96,12 @@ body {
   font-family: 'Rubik', sans-serif; font-weight: 500; font-style: italic;
   font-size: clamp(18px, 2.2vw, 24px); line-height: 1.35; letter-spacing: -0.015em;
   color: var(--orange-deep); margin-bottom: 14px;
-  opacity: 0; transform: translateY(8px);
-  animation: fadeUp 1s 1.0s forwards;
 }
 .whisper .bold { font-style: normal; font-weight: 800; color: var(--ink); }
 
 .sub {
   font-size: 13px; line-height: 1.55; color: #3a3a3a; max-width: 540px;
   margin: 0 auto 18px;
-  opacity: 0; transform: translateY(8px);
-  animation: fadeUp 1s 1.6s forwards;
 }
 .sub .sub-bold {
   font-weight: 700; color: var(--ink);
@@ -118,8 +110,6 @@ body {
 .cta-row {
   display: flex; align-items: center; justify-content: center; gap: 22px; flex-wrap: wrap;
   margin-bottom: 12px;
-  opacity: 0; transform: translateY(8px);
-  animation: fadeUp 1s 2.0s forwards;
 }
 .btn-primary {
   display: inline-flex; align-items: center; gap: 10px;
@@ -145,8 +135,6 @@ body {
   display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 16px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: .03em;
-  opacity: 0; transform: translateY(8px);
-  animation: fadeUp 1s 2.3s forwards;
 }
 .trust-row .item { display: inline-flex; align-items: center; gap: 6px; }
 .trust-row .bullet { color: #DBC9A9; font-weight: 400; }
@@ -215,17 +203,20 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ── CLICK ANIMATION: cards fly into button + "עושים סדר..." overlay ── */
-.chaos-card.flying {
-  animation: card-fly-to-btn 0.45s cubic-bezier(.55,0,.7,.5) forwards !important;
+/* ── CLICK ANIMATION: cards exit upward (reverse of entry) + transition overlay ── */
+/* longhand props so inline animation-delay can override per card (stagger) */
+.chaos-card.exiting {
+  animation-name: card-fall-out;
+  animation-duration: 0.42s;
+  animation-timing-function: cubic-bezier(.55,0,.7,.5);
+  animation-fill-mode: forwards;
   pointer-events: none;
 }
-@keyframes card-fly-to-btn {
+@keyframes card-fall-out {
   to {
-    transform: translate(var(--fly-x, 0), var(--fly-y, 0))
-               translateX(-50%) translateX(var(--x))
-               rotate(var(--rot)) scale(0.1);
     opacity: 0;
+    transform: translateX(-50%) translateX(var(--x))
+               translateY(-50px) rotate(var(--rot)) scale(.92);
   }
 }
 
@@ -241,51 +232,68 @@ body {
 
 .order-overlay {
   position: fixed; inset: 0;
-  background: rgba(246, 241, 230, 0.94);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 9999;
+  background: #F6F1E6;
+  display: flex; align-items: flex-start; justify-content: center;
+  padding-top: 32vh;     /* text sits in upper third, not dead-center */
+  z-index: 99999;
   opacity: 0;
-  transition: opacity .25s ease;
+  transition: opacity .3s ease;
 }
 .order-overlay.visible { opacity: 1; }
 .order-text {
   font-family: 'Rubik', sans-serif;
-  font-size: clamp(22px, 3.2vw, 34px);
+  font-size: clamp(24px, 3.6vw, 40px);
   font-weight: 700;
   color: var(--ink);
   letter-spacing: -0.025em;
-  display: inline-flex; align-items: baseline; gap: 4px;
+  display: inline-flex; align-items: baseline; gap: 8px;
+  direction: rtl;
   opacity: 0;
-  transform: translateY(8px);
-  animation: order-text-in .35s .05s cubic-bezier(.25,.65,.35,1) forwards;
+  transform: translateY(10px);
+  animation: order-text-in .5s .15s cubic-bezier(.25,.65,.35,1) forwards;
 }
 @keyframes order-text-in {
   to { opacity: 1; transform: translateY(0); }
 }
-.order-text .dots {
-  color: var(--orange);
+/* flowli inline brand mark - matches the nav logo style (lowercase) */
+.order-text .brand-name {
+  font-family: 'Inter', sans-serif;
   font-weight: 800;
+  letter-spacing: -0.035em;
+  direction: ltr;
+  display: inline-block;
+}
+.order-text .brand-flow { color: #2A2A2A; }
+.order-text .brand-li   { color: var(--orange); }
+
+.order-text .dots {
+  font-weight: 800;
+  display: inline-block;
 }
 .order-text .dots span {
   display: inline-block;
   animation: dot-bounce 0.9s infinite;
 }
+/* 2 dark dots + 1 orange */
+.order-text .dots span:nth-child(1),
+.order-text .dots span:nth-child(2) { color: var(--ink); }
+.order-text .dots span:nth-child(3) { color: var(--orange); }
 .order-text .dots span:nth-child(2) { animation-delay: 0.15s; }
 .order-text .dots span:nth-child(3) { animation-delay: 0.30s; }
 @keyframes dot-bounce {
-  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
-  30% { opacity: 1; transform: translateY(-3px); }
+  0%, 60%, 100% { opacity: 0.35; transform: translateY(0); }
+  30%           { opacity: 1;    transform: translateY(-4px); }
 }
 
-/* ── POST-HERO SECTION (compact horizontal cards - no scroll) ── */
+/* ── POST-HERO SECTION (animates in AFTER hero finishes) ── */
 .post-hero {
   position: relative; z-index: 5;
   width: 100%;
   max-width: 1080px; margin: 0 auto;
   padding: 4px 28px 12px;
 }
+
+/* No entry animations for post-hero — everything is visible on load */
 .post-hero-eyebrow {
   text-align: center;
   font-family: 'JetBrains Mono', monospace;
@@ -667,42 +675,51 @@ function startDiagnosis() {
   const btn = document.querySelector('.btn-primary');
   if (!btn || btn.classList.contains('btn-loading')) return;
 
-  /* 1. Button → loading state */
+  /* 1. Button → loading state + text change */
   btn.classList.add('btn-loading');
   const label = btn.querySelector('span:not(.arrow)');
   if (label) label.textContent = 'עושים סדר...';
 
-  /* 2. Cards fly into the button (only if visible — desktop) */
-  const btnRect = btn.getBoundingClientRect();
-  const btnCx = btnRect.left + btnRect.width / 2;
-  const btnCy = btnRect.top + btnRect.height / 2;
-
-  document.querySelectorAll('.chaos-card').forEach((card, i) => {
-    const r = card.getBoundingClientRect();
-    if (r.width === 0) return;          /* skip hidden (mobile) */
-    const cardCx = r.left + r.width / 2;
-    const cardCy = r.top + r.height / 2;
-    card.style.setProperty('--fly-x', (btnCx - cardCx) + 'px');
-    card.style.setProperty('--fly-y', (btnCy - cardCy) + 'px');
-    card.style.animationDelay = (i * 70) + 'ms';
-    card.classList.add('flying');
+  /* 2. Cards EXIT upward — reverse of entry, ONE BY ONE (cc-4 first, cc-1 last) */
+  const cards = document.querySelectorAll('.chaos-card');
+  const total = cards.length;
+  const STAGGER = 160;  /* ms between each card exit start */
+  cards.forEach((card, i) => {
+    if (card.getBoundingClientRect().width === 0) return;  /* skip hidden (mobile) */
+    /* reverse order: last card in DOM (cc-4) exits first */
+    card.style.animationDelay = ((total - 1 - i) * STAGGER) + 'ms';
+    card.classList.add('exiting');
   });
+  /* last card starts exiting at: (4-1) * 160 = 480ms, finishes at 480 + 420 = 900ms */
 
-  /* 3. Show "עושים סדר..." overlay after the cards start flying */
+  /* 3. Transition overlay appears right after all cards are gone */
   setTimeout(() => {
     const overlay = document.createElement('div');
     overlay.className = 'order-overlay';
-    overlay.innerHTML = '<div class="order-text">עושים סדר<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>';
+    overlay.innerHTML = '<div class="order-text">' +
+      '<span>עושים סדר עם</span>' +
+      '<span class="brand-name"><span class="brand-flow">flow</span><span class="brand-li">li</span></span>' +
+      '<span class="dots"><span>.</span><span>.</span><span>.</span></span>' +
+      '</div>';
     document.body.appendChild(overlay);
-    /* force reflow so the transition triggers */
     void overlay.offsetWidth;
     setTimeout(() => overlay.classList.add('visible'), 20);
-  }, 450);
+  }, 950);
 
-  /* 4. Navigate to first question */
+  /* 4. Fade out the overlay text before navigation - smooth handoff */
+  setTimeout(() => {
+    const text = document.querySelector('.order-text');
+    if (text) {
+      text.style.transition = 'opacity .35s ease, transform .35s ease';
+      text.style.opacity = '0';
+      text.style.transform = 'translateY(-6px)';
+    }
+  }, 2100);
+
+  /* 5. Navigate to first question (overlay cream bg = step1 cream bg = no flash) */
   setTimeout(() => {
     window.location.href = 'flowli-diagnose-step1.html';
-  }, 950);
+  }, 2400);
 }
 </script>
 <script src="flowli-legal.js"></script>
