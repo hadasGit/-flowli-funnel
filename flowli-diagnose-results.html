@@ -448,8 +448,8 @@ body {
         <svg viewBox="0 0 24 24" fill="none" stroke="#2D7A3A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         האבחון הושלם
       </div>
-      <div class="hero-name" id="heroName">מפת האוטומציה שלך <span class="hl">מוכנה</span> 🎉</div>
-      <div class="hero-sub" id="heroSub">זיהינו את ההזדמנות הגדולה ביותר לאוטומציה בעסק שלך.</div>
+      <div class="hero-name" id="heroName">עברתי על התשובות שלך <span class="hl">🎉</span></div>
+      <div class="hero-sub" id="heroSub">הנה מה שקפץ לי לעין.</div>
     </div>
     <div class="impact-bubble">
       <div class="impact-icon">💸</div>
@@ -507,11 +507,11 @@ body {
     <div class="cta-overlay">
       <div class="cta-box">
         <div class="cta-lock-icon"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
-        <div class="cta-title">רוצה לראות איך זה עובד אצלך בעסק?</div>
-        <div class="cta-body">נשב לשיחת אבחון ממוקדת של 20 דקות (בזום, בלי התחייבות) ונמפה את התהליך הראשון שנסגור אצלך באוטומציה.</div>
-        <div class="cta-scarcity">💛 מספר המקומות לפרויקטים מוגבל בכל חודש כדי להבטיח מעורבות אישית מלאה שלי.</div>
+        <div class="cta-title">רוצה שאעבור איתך על זה?</div>
+        <div class="cta-body">מה שהופיע כאן מבוסס רק על התשובות שסימנת. בשיחה קצרה אוכל להבין איך הדברים נראים בפועל אצלך, להסביר למה קיבלת את התוצאה הזו, ולהראות איפה הייתי מתחילה אם זה היה העסק שלי. בלי מחויבות ובלי מצגת מכירה. רק לעשות קצת סדר.</div>
+        <div class="cta-scarcity">💛 מספר המקומות מוגבל בכל חודש כדי להבטיח מעורבות אישית מלאה שלי.</div>
         <button class="btn-cta" onclick="openContact()">
-          <span>קביעת שיחת אבחון ממוקדת ביומן 🗓️</span>
+          <span>בואי נדבר 🗓️</span>
         </button>
 
         <div class="callback-block">
@@ -671,7 +671,7 @@ const base = {
   LEADS: {
     gaugeSubVariants:  [`הרבה זמן הולך על פניות שלא מקבלות מענה מהיר`, `יש פניות - אבל לא לכולן מספיקים להגיב בזמן`, `פניות נכנסות - אבל המסלול שלהן לא תמיד מסודר`],
     titleVariants:     [`פניות יוצאות מהמשפך ללא מעקב מסודר`, `פניות שלא זוכות למענה מהיר נופלות בין הכיסאות`, `יש פניות - אבל המעקב אחריהן לא מסודר`],
-    bodyVariants:      [`נראה שיש פניות שמגיעות - אבל לא כולן זוכות למענה ותזכורת בזמן.`, `נראה שחלק מהפניות מקבלות מענה, אבל אחרות פשוט נופלות בין ההודעות.`, `נראה שהפניות שלך פזורות בין כמה ערוצים - וקשה לעקוב אחרי כולן.`],
+    bodyVariants:      [`מהתשובות שלך עולה שפניות מגיעות - אבל לא כולן זוכות למענה בזמן. זה לא בעיה של רצון טוב, זה בעיה של תהליך.`, `מה שראיתי בתשובות שלך: חלק מהפניות נופלות בין ההודעות. לא בגלל שאת לא רוצה לחזור - אלא בגלל שאין מקום אחד שמחזיק הכל.`, `הפניות שלך מגיעות ממספר ערוצים במקביל. בלי תהליך קבוע - חלק מהן פשוט נעלמות.`],
     insightFallbacks:  [`כשאין מנגנון אוטומטי שתופס כל פנייה ומחזיר מענה ראשוני מיידי, פניות נוטות "להיתקע" באוויר ולעבור למתחרים.`, `מי שלא מקבל תגובה תוך דקות - בדרך כלל פונה למישהו אחר. זה ענין של זמן, לא של עניין.`],
     tool1NameVariants: [`ריכוז פניות ומענה ראשוני אוטומטי`, `מערכת קבלת לקוחות חכמה`, `מרכז פניות עם מענה אוטומטי`],
     tool1Body:         `כל הפניות מתרכזות למקום אחד, עם מענה ראשוני מיידי ומעקב שלא משאיר אף פנייה באוויר.`,
@@ -683,9 +683,9 @@ const base = {
     ]
   },
   OPS: {
-    gaugeSubVariants:  [`העסק עובד - אבל הרבה זמן הולך על משימות שחוזרות על עצמן`, `נראה שחלק לא קטן מהשבוע הולך על פעולות ידניות חוזרות`, `יש שעות שיכולות לחזור אליך - אם נסיר את המשימות הקטנות מהשבוע`],
+    gaugeSubVariants:  [`העסק עובד - אבל שעות רבות נשרפות על דברים שחוזרים כל שבוע`, `הרבה זמן יוצא על משימות קטנות שמצטברות לעומס גדול`, `יש שעות שיכולות לחזור אליך - אם נוציא אותן מהיומן שלך`],
     titleVariants:     [`שעות יקרות בשבוע מתבזבזות על משימות ידניות`, `הרבה זמן הולך על משימות קטנות שחוזרות שוב ושוב`, `העומס מצטבר ממשימות חוזרות - לא ממשימה אחת גדולה`],
-    bodyVariants:      [`נראה שחלק משמעותי מהזמן שלך הולך על פעולות ידניות שחוזרות שוב ושוב לאורך השבוע.`, `נראה שמשימות קטנות וחוזרות - מענה, תזכורות, מסמכים - מצטברות לעומס שמרגיש גדול יותר ממה שהוא באמת.`, `נראה שהיום-יום נשבר ליותר מדי משימות קטנות שלא דורשות החלטה אבל גוזלות זמן.`],
+    bodyVariants:      [`מהתשובות שלך עולה שהעומס לא מגיע ממשימה אחת גדולה, אלא מהרבה פעולות קטנות שחוזרות על עצמן. כל אחת לוקחת כמה דקות, אבל יחד הן גוזלות שעות בכל שבוע.`, `מה שראיתי: מענה, תזכורות, מסמכים - כל אחד בפני עצמו לא נראה גדול. אבל ביחד הם שוברים את היום לרסיסים.`, `הזמן לא בורח ממשימה אחת - הוא בורח ממאה משימות של דקה אחת. זה בדיוק המקום שתהליך קבוע יכול לשנות.`],
     insightFallbacks:  [`תיאומים, עדכונים, מסמכים ומשימות קטנות מצטברים לעומס שמרגיש גדול יותר ממה שהוא באמת.`, `כל פעולה לבד נראית קטנה - אבל יחד הן יוצרות שעות שלמות של עבודה ידנית בשבוע.`],
     tool1NameVariants: [`תבניות ואוטומציות למשימות חוזרות`, `מערך אוטומציות לפעולות יומיומיות`, `תהליכים מובנים שמורידים את העומס הידני`],
     tool1Body:         `פעולות שחוזרות על עצמן מקבלות תהליך קבוע - כדי שלא תצטרכי להתחיל כל פעם מחדש.`,
@@ -713,7 +713,7 @@ const base = {
   FLOW: {
     gaugeSubVariants:  [`יש כאן הזדמנות אמיתית לייצר יותר סדר ושליטה ביום-יום`, `נראה שהיום שלך מתחלק להרבה משימות קטנות שגורמות לתחושת בלאגן`, `הזרימה ביום קצת שבורה - אבל זה ניתן לסדר`],
     titleVariants:     [`יום העבודה מפוצל ומלא בהפרעות קטנות לאורך היום`, `היום שבור בין משימות, הודעות ודברים דחופים`, `אין עדיין תהליך קבוע שמחזיק את העבודה לאורך היום`],
-    bodyVariants:      [`נראה שחלק גדול מהעומס לא מגיע ממשימה אחת גדולה - אלא מהרבה דברים קטנים שמפוזרים לאורך היום.`, `נראה שהיום שבור בין משימות, תיאומים והודעות שמושכים אותך לכיוונים שונים.`, `נראה שאת מתפזרת בין דברים - וזה לא בגלל חוסר ארגון, אלא בגלל חוסר תהליך.`],
+    bodyVariants:      [`מהתשובות שלך עולה שהיום מתפרק בין הרבה כיוונים - לא בגלל חוסר ארגון, אלא בגלל שאין תהליך שמחזיק הכל ביחד.`, `תיאומים, הודעות, משימות שלא נסגרות - כל אחד מהם מקטע את הריכוז. ביחד הם מרגישים כמו ים.`, `ראיתי את זה בתשובות שלך: הזמן לא הולך על דבר אחד גדול. הוא מתפורר ברגעים קטנים לאורך היום.`],
     insightFallbacks:  [`כשאין תהליך קבוע לדברים שחוזרים על עצמם, העבודה נהיית תגובתית - וכל דבר קטן מרגיש דחוף.`, `בלי תהליך מובנה, אין רגע ל"לקחת אוויר" - כל היום הוא תגובה לדבר הבא.`],
     tool1NameVariants: [`תהליך עבודה מובנה לאורך כל המסע`, `מערך תהליכים שמחזיק את היום-יום`, `תהליך קליטת לקוח אוטומטי`],
     tool1Body:         `במקום לרדוף אחרי מסמכים, הודעות ומשימות - כל שלב קורה בצורה מסודרת וברורה.`,
@@ -773,7 +773,7 @@ const compositions = {
   OPS_creative: {
     gaugeSub:  `הרבה זמן הולך על הצעות מחיר ותקשורת - לפני שהפרויקט בכלל מתחיל`,
     title:     `הצעות מחיר וניהול פרויקטים גוזלים יותר מדי זמן ידני`,
-    body:      `נראה שחלק מהזמן שלך הולך לא על העבודה היצירתית עצמה - אלא על מסמכים, הצעות מחיר ותיאומים שמסביב.`,
+    body:      `מהתשובות שלך עולה שחלק לא קטן מהזמן הולך על מסמכים, הצעות מחיר ותיאומים - לא על העבודה עצמה. זה המקום שכדאי לפנות קודם.`,
     insight:   `כששעות יקרות הולכות על מילוי מסמכים ומעקב אחר אישורים, נשאר פחות זמן לדבר שבאמת מבדל אותך.`,
     tool1Name: `תבניות והפקה אוטומטית של מסמכים`,
     tool1Body: `הצעות מחיר ומסמכים מתמלאים אוטומטית לפי פרטי הפרויקט, עם מעקב על מי אישר ומי עוד לא.`,
@@ -801,7 +801,7 @@ const compositions = {
   OPS_vet: {
     gaugeSub:  `העסק עובד בקצב גבוה - אבל הרבה אנרגיה הולכת על תפעול מסביב`,
     title:     `המעבר המתמיד בין הודעות, תיאומים ואדמיניסטרציה שובר את היום`,
-    body:      `נראה שחלק גדול מהעומס מגיע מהצורך לעצור שוב ושוב באמצע העבודה כדי לענות, לתאם ולעדכן.`,
+    body:      `מהתשובות שלך עולה שהעבודה האמיתית מתקטעת שוב ושוב - כי צריך לעצור, לענות, לתאם, לעדכן. זה מתיש יותר מהעבודה עצמה.`,
     insight:   `בעסק כמו מרפאה וטרינרית, כל עצירה קטנה באמצע טיפול שוברת ריכוז ומייצרת עומס מצטבר.`,
     tool1Name: `ניהול תורים ותזכורות בצורה אוטומטית`,
     tool1Body: `במקום לעבור ידנית בין וואטסאפ, שיחות ותזכורות - תיאומים, תורים ועדכונים מתנהלים בצורה מסודרת וברורה.`,
@@ -878,8 +878,9 @@ document.getElementById('impactMoney').textContent = `~ ${fmtMoney(moneyLow)}–
 
 // hero name
 document.getElementById('heroName').innerHTML = firstName
-  ? `${firstName}, מפת האוטומציה שלך <span class="hl">מוכנה</span> 🎉`
-  : `מפת האוטומציה שלך <span class="hl">מוכנה</span> 🎉`;
+  ? `${firstName}, עברתי על התשובות שלך <span class="hl">🎉</span>`
+  : `עברתי על התשובות שלך <span class="hl">🎉</span>`;
+document.getElementById('heroSub').textContent = `הנה מה שקפץ לי לעין.`;
 
 // gauge animation
 setTimeout(() => {
@@ -929,7 +930,7 @@ const demoFlowHTML = reco.steps.map((s, i) => `
 document.getElementById('mainInsightCard').innerHTML = `
   <div style="background:linear-gradient(145deg,#FEF5E7 0%,#F9EDDE 100%);border:1px solid rgba(255,255,255,.92);border-radius:20px;padding:22px;box-shadow:0 2px 16px rgba(180,110,60,.08);display:flex;flex-direction:column;gap:14px;">
     <div>
-      <div style="font-size:11px;font-weight:700;color:var(--orange-deep);letter-spacing:.06em;margin-bottom:4px;">🔥 הממצא המרכזי:</div>
+      <div style="font-size:11px;font-weight:700;color:var(--orange-deep);letter-spacing:.06em;margin-bottom:4px;">🔥 הדבר הראשון שהייתי מטפלת בו:</div>
       <div style="font-family:'Rubik',sans-serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;letter-spacing:-0.01em;">${reco.priorityTitle}</div>
       <div style="font-size:14px;color:#444;line-height:1.65;">${reco.priorityBody}</div>
       ${customPain ? `<div style="margin-top:10px;padding:10px 14px;background:rgba(255,255,255,.55);border-right:3px solid var(--orange);border-radius:8px;"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px;">ציינת גם:</div><div style="font-size:14px;font-style:italic;color:var(--ink);">"${customPain}"</div></div>` : ''}
@@ -948,7 +949,7 @@ document.getElementById('recoToolBox').innerHTML = `
   <div style="background:linear-gradient(135deg,#FFF4E6,#FDE3C4);border:1.5px solid rgba(242,107,31,.35);border-radius:18px;padding:20px 22px;margin-top:6px;display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;box-shadow:0 8px 24px rgba(242,107,31,.13);">
     <div style="width:46px;height:46px;border-radius:12px;background:var(--ink);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;">⚡</div>
     <div style="flex:1;min-width:220px;">
-      <div style="font-size:11px;font-weight:700;color:var(--orange-deep);letter-spacing:.04em;margin-bottom:3px;">האוטומציה הראשונה שהייתי בונה לך</div>
+      <div style="font-size:11px;font-weight:700;color:var(--orange-deep);letter-spacing:.04em;margin-bottom:3px;">התהליך הראשון שהייתי מסדרת</div>
       <div style="font-family:'Rubik',sans-serif;font-size:17px;font-weight:700;color:var(--ink);margin-bottom:6px;">${reco.tool1Name || tool1}</div>
       <div style="font-size:13px;color:#555;line-height:1.65;margin-bottom:12px;">${reco.tool1Body}</div>
       <div style="display:flex;flex-direction:column;gap:5px;padding-top:10px;border-top:1px solid rgba(0,0,0,.06);">
