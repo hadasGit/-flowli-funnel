@@ -358,6 +358,39 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndodXVldmpvcWl0d3NsbnlrdmdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTk3NDQsImV4cCI6MjA5NDY5NTc0NH0.r_lxvPFY275H7ODxYGHs0-NvqfQd8_e3fKHYy4sgq34';
 
     document.addEventListener('DOMContentLoaded', function() {
+      /* Pre-fill from URL params (כשמגיעים ממייל עם ?name=...&email=...) */
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlName  = urlParams.get('name')  || sessionStorage.getItem('flowli_prefill_name');
+      const urlEmail = urlParams.get('email') || sessionStorage.getItem('flowli_prefill_email');
+      if (urlParams.get('name'))  sessionStorage.setItem('flowli_prefill_name',  urlParams.get('name'));
+      if (urlParams.get('email')) sessionStorage.setItem('flowli_prefill_email', urlParams.get('email'));
+
+      /* Pre-fill from localStorage if user is editing details */
+      try {
+        const u = localStorage.getItem('flowli_user') || localStorage.getItem('flowli_lead');
+        if (u) {
+          const d = JSON.parse(u);
+          if (d.name)  document.getElementById('fullname').value = d.name;
+          if (d.email) document.getElementById('email').value = d.email;
+          if (d.phone) document.getElementById('phone').value = d.phone;
+          /* If editing - assume consent was already given */
+          if (d.name && d.email && d.phone) {
+            const c = document.getElementById('consent');
+            c.checked = true;
+            document.getElementById('btnStart').disabled = false;
+          }
+        }
+      } catch(e){}
+
+      /* URL params override localStorage (המייל הוא המקור הסמכותי) */
+      if (urlName)  document.getElementById('fullname').value = urlName;
+      if (urlEmail) document.getElementById('email').value = urlEmail;
+      /* אם שם ומייל מולאו מה-URL - סמן consent אוטומטית */
+      if (urlName && urlEmail) {
+        document.getElementById('consent').checked = true;
+        document.getElementById('btnStart').disabled = false;
+      }
+
       document.getElementById('consent').addEventListener('change', function() {
         document.getElementById('btnStart').disabled = !this.checked;
       });
@@ -385,7 +418,7 @@
       const payload = Object.assign({}, diagnose, {
         name, email, phone,
         consent: true,
-        source: 'flowli-funnel',
+        source: sessionStorage.getItem('flowli_source') || 'flowli-funnel',
       });
       localStorage.setItem('flowli_diagnose', JSON.stringify(payload));
 
