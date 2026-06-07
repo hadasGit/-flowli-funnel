@@ -846,10 +846,18 @@ function buildPersonalBody(worst, answers) {
   const energyLabels       = ['מענה לפניות', 'מעקב אחרי לקוחות', 'הצעות מחיר', 'תיאומים ותזכורות', 'ניהול מידע', 'אדמיניסטרציה'];
   const energyText         = energyAreas.map(i => energyLabels[i]).filter(Boolean);
 
-  // pain_point - לצטט את התוכן האמיתי, לא לתרגם לגנרי
+  // pain_point - לנסח אנושי, לא להדביק ציטוט
   const hasPain = painPoint.length > 3;
+  function humanizePain(pp) {
+    // מנסה לנסח מחדש בצורה טבעית
+    const p = pp.trim().replace(/[."']+$/, '');
+    // אם קצר מספיק - לנסח סביבו
+    if (p.length < 80) return `כתבת ש${p.charAt(0) === p.charAt(0).toUpperCase() ? p.charAt(0).toLowerCase() + p.slice(1) : p}`;
+    // אם ארוך - לתמצת
+    return `כתבת שיש עומס בניהול השוטף של העסק`;
+  }
   const painSentence = hasPain
-    ? `כתבת ש${painPoint.endsWith('.') ? painPoint.slice(0,-1) : painPoint} - מעניין לראות שהתוצאה מצביעה בדיוק על אותו אזור.`
+    ? `${humanizePain(painPoint)} - מעניין לראות שהתוצאה מצביעה בדיוק על אותו אזור.`
     : '';
 
   // business_desc - לחלץ קונטקסט בלי AI מורכב
@@ -965,13 +973,41 @@ function buildPersonalBody(worst, answers) {
   return parts.join(' ');
 }
 
+// ─── DOMAIN TOUCH (20% - נגיעות קטנות בכותרת והפתרון) ──────────────────────
+function buildDomainTouch(worst, answers) {
+  const bd = (answers?.business_desc || '').toLowerCase();
+  const ep = (answers?.energy_areas  || []);
+  const energyLabels = ['מענה לפניות','מעקב אחרי לקוחות','הצעות מחיר','תיאומים ותזכורות','ניהול מידע','אדמיניסטרציה'];
+  const topEnergy = ep.slice(0,2).map(i => energyLabels[i]).filter(Boolean).join(' ו');
+
+  const isParents  = /הורים|קלינ|תקשורת/i.test(bd);
+  const isTherapy  = /פסיכולוג|מטפל|דיאט|תזונ|נטורופת/i.test(bd);
+  const isBeauty   = /קוסמט|סלון|תור|מניקור|פדיקור/i.test(bd);
+  const isCreative = /עיצוב|מעצב|סטודיו|גרפי|אדריכל/i.test(bd);
+
+  if (worst === 'OPS') {
+    if (isParents)  return { tool1Name: `לצמצם את הזמן שהולך על ניירת ותיאומים עם הורים`,    tool1Body: `מסמכים, תזכורות ועדכונים להורים שחוזרים שוב ושוב לא צריכים להתחיל מאפס בכל פעם.`, impact: [`⬆ פחות זמן על ניירת`, `⬆ יותר זמן ללקוחות`, `⬆ פחות עומס יומיומי`] };
+    if (isTherapy)  return { tool1Name: `לצמצם את הניירת סביב הפגישות`,                        tool1Body: `תזכורות, אישורים ומסמכים שמלווים כל פגישה - מסודרים ואוטומטיים.`,                    impact: [`⬆ פחות ניירת`, `⬆ יותר זמן למטופלים`, `⬆ פחות עומס אדמיניסטרטיבי`] };
+    if (isBeauty)   return { tool1Name: `לסדר את ניהול התורים וההתכתבויות`,                    tool1Body: `תיאומים, תזכורות לתורים ועדכונים ללקוחות - בלי לעשות הכל ידנית.`,                    impact: [`⬆ פחות ביטולים ברגע האחרון`, `⬆ יותר זמן לעבודה עצמה`, `⬆ פחות ניהול ידני`] };
+    if (isCreative) return { tool1Name: `לצמצם את הזמן האדמיניסטרטיבי בין פרויקטים`,          tool1Body: `הצעות מחיר, חוזים ועדכוני סטטוס לא צריכים לקחת זמן יצירתי.`,                        impact: [`⬆ יותר זמן ליצירה`, `⬆ פחות ניירת בין פרויקטים`, `⬆ תהליך מקצועי יותר`] };
+    if (topEnergy)  return { tool1Name: `לצמצם את הזמן שהולך על ${topEnergy}`,                 tool1Body: `פעולות שחוזרות שוב ושוב לא צריכות להתחיל מאפס בכל פעם.`,                            impact: [`⬆ פחות עבודה ידנית`, `⬆ פחות עומס יומיומי`, `⬆ יותר זמן לדברים החשובים`] };
+  }
+
+  if (worst === 'LEADS') {
+    if (isParents)  return { tool1Name: `ריכוז פניות הורים ומענה מסודר`,          tool1Body: `כל פנייה של הורה מקבלת מענה ראשוני מהיר ומעקב - בלי שדברים ייפלו בין הכיסאות.`, impact: [`⬆ פחות פניות שנשכחות`, `⬆ מענה מהיר יותר להורים`, `⬆ יותר סגירות`] };
+    if (isTherapy)  return { tool1Name: `ריכוז פניות ומעקב עד לקביעת פגישה`,      tool1Body: `כל פנייה עוברת תהליך מסודר - מהמענה הראשון ועד קביעת הפגישה.`,                  impact: [`⬆ פחות פספוסים`, `⬆ מעקב מסודר`, `⬆ יותר פגישות נקבעות`] };
+    if (isBeauty)   return { tool1Name: `ריכוז פניות ותיאום תורים חכם`,           tool1Body: `כל פנייה מקבלת מענה מהיר ותיאום תור - בלי לאבד לקוחות בדרך.`,                    impact: [`⬆ פחות לקוחות שנאבדים`, `⬆ תורים מתמלאים מהר יותר`, `⬆ פחות ביטולים`] };
+  }
+
+  return null;
+}
+
 function buildReco(worst, answers, seed) {
   const scenario = detectScenario(answers);
   const wa = usesWhatsApp(answers);
   const b = base[worst] || base.LEADS;
 
   let comp = null;
-  // priority order: WA-specific first (more concrete), then scenario-based
   if (worst === 'CONTROL' && wa) comp = compositions.CONTROL_wa;
   else if (worst === 'CONTROL' && (scenario === 'beauty' || scenario === 'therapy')) comp = compositions.CONTROL_beauty;
   else if (worst === 'LEADS' && wa) comp = compositions.LEADS_wa;
@@ -981,15 +1017,16 @@ function buildReco(worst, answers, seed) {
   else if (worst === 'FLOW') comp = compositions.FLOW_general;
 
   const personalBody = buildPersonalBody(worst, answers);
+  const domainTouch  = buildDomainTouch(worst, answers);
 
   return {
     gaugeSub:        comp?.gaugeSub  || pick(b.gaugeSubVariants, seed),
     priorityTitle:   comp?.title     || pick(b.titleVariants, seed),
     priorityBody:    personalBody    || comp?.body || pick(b.bodyVariants, seed),
     priorityInsight: comp?.insight   || pick(b.insightFallbacks, seed),
-    tool1Name:       comp?.tool1Name || pick(b.tool1NameVariants, seed),
-    tool1Body:       comp?.tool1Body || b.tool1Body,
-    impact:          comp?.impact    || b.impact,
+    tool1Name:       domainTouch?.tool1Name || comp?.tool1Name || pick(b.tool1NameVariants, seed),
+    tool1Body:       domainTouch?.tool1Body || comp?.tool1Body || b.tool1Body,
+    impact:          domainTouch?.impact    || comp?.impact    || b.impact,
     steps:           comp?.flow      || flowExamples[scenario] || b.defaultSteps,
     planCards:       comp?.plan      || b.plan
   };
