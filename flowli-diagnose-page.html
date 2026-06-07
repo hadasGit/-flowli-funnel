@@ -357,6 +357,9 @@
     const SUPABASE_URL = 'https://whuuevjoqitwslnykvgd.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndodXVldmpvcWl0d3NsbnlrdmdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTk3NDQsImV4cCI6MjA5NDY5NTc0NH0.r_lxvPFY275H7ODxYGHs0-NvqfQd8_e3fKHYy4sgq34';
 
+    /* סימון שהגיעו למסך 4 - מונע כתיבת abandoned_at_step מהמסך הקודם */
+    localStorage.setItem('flowli_reached_lead_form', '1');
+
     document.addEventListener('DOMContentLoaded', function() {
       /* Pre-fill from URL params (כשמגיעים ממייל עם ?name=...&email=...) */
       const urlParams = new URLSearchParams(window.location.search);
@@ -475,6 +478,7 @@
         console.warn('Supabase save failed:', e);
       }
 
+      localStorage.removeItem('flowli_reached_lead_form');
       /* Continue to results */
       window.location.href = 'flowli-diagnose-results.html';
     }
