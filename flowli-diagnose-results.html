@@ -356,23 +356,25 @@ body {
 }
 .btn-callback {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  background: transparent;
-  border: 1.5px solid var(--orange);
-  color: var(--orange-deep);
+  background: #25d366;
+  border: none;
+  color: #fff;
   font-family: 'Assistant', sans-serif;
-  font-size: 13.5px; font-weight: 700;
-  padding: 9px 28px;
-  border-radius: 10px;
+  font-size: 14px; font-weight: 800;
+  padding: 10px 28px;
+  border-radius: 999px;
   cursor: pointer;
-  transition: background .2s, border-color .2s, color .2s;
+  transition: background .2s, transform .1s;
   white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(37,211,102,.3);
 }
-.btn-callback:hover { background: var(--orange-pale); }
+.btn-callback:hover { background: #1ebe5d; transform: translateY(-1px); }
 .btn-callback.requested {
   background: #E6F4EA;
-  border-color: rgba(45,122,58,.45);
-  color: var(--green);
+  border: 1.5px solid rgba(45,122,58,.45);
+  color: #2d7a3a;
   pointer-events: none;
+  box-shadow: none;
 }
 @media (max-width: 620px) {
   .callback-block { margin-top: 14px; padding-top: 14px; }
@@ -511,6 +513,7 @@ body {
           <div class="callback-q">📞 רוצה שנחשוב יחד מה הכי נכון לעסק שלך?</div>
           <div class="callback-bottom-row">
             <span class="callback-info">
+              <span class="callback-email" id="callbackEmail" style="font-size:12px;color:var(--muted);display:block;margin-bottom:2px;"></span>
               <span class="callback-phone" id="callbackPhone">052-8966998</span>
               <button class="callback-edit-btn" onclick="openEditModal()" aria-label="עריכת פרטים" title="עריכת פרטים">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.21a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
@@ -995,6 +998,10 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     if (d.phone) {
       const phoneEl = document.getElementById('callbackPhone');
       if (phoneEl) phoneEl.textContent = d.phone;
+    }
+    if (d.email) {
+      const emailEl = document.getElementById('callbackEmail');
+      if (emailEl) emailEl.textContent = d.email;
     }
   } catch(e){}
 })();
