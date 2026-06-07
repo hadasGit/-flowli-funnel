@@ -828,6 +828,78 @@ const compositions = {
 };
 
 // ─── BUILD RECO (Layer 5: composition + framing) ───────────────────
+// ─── DYNAMIC PERSONAL TEXT BUILDER ────────────────────────────────────────────
+function buildPersonalBody(worst, answers) {
+  const a = answers || {};
+
+  // מיפוי תשובות לטקסט
+  const responseTime    = ['תוך כמה דקות', 'תוך שעה-שעתיים', 'באותו יום', 'יום או יותר'][a.response_time ?? -1] || null;
+  const leadsHandling   = ['יש תהליך קבוע ומסודר', 'יש רישום, לא תמיד עוקבת', 'חלק מהפניות מתפספסות', 'אין תהליך קבוע'][a.leads_handling ?? -1] || null;
+  const leadsPerMonth   = ['עד 10', '10-30', '30-80', 'מעל 80'][a.monthly_leads ?? -1] || null;
+  const closeRate       = ['7-10 מתוך 10', '4-6 מתוך 10', '2-3 מתוך 10', '0-1 מתוך 10'][a.close_rate ?? -1] || null;
+  const repTime         = ['פחות מ-3 שעות', '3-8 שעות', '8-15 שעות', 'יותר מ-15 שעות'][a.repetitive_time ?? -1] || null;
+  const clientHistory   = ['מיד', 'תוך כמה דקות', 'צריכה לחפש בכמה מקומות', 'אין מקום מסודר'][a.client_history ?? -1] || null;
+  const painPoint       = (a.pain_point || '').trim();
+  const energyAreas     = a.energy_areas || [];
+
+  // תרגום energy_areas לטקסט
+  const energyLabels    = ['מענה לפניות', 'מעקב אחרי לקוחות', 'הצעות מחיר', 'תיאומים ותזכורות', 'ניהול מידע', 'אדמיניסטרציה'];
+  const energyText      = energyAreas.map(i => energyLabels[i]).filter(Boolean);
+
+  let parts = [];
+
+  if (worst === 'LEADS') {
+    if (responseTime && a.response_time >= 2)
+      parts.push(`ענית שזמן התגובה לפניות הוא ${responseTime}.`);
+    if (leadsHandling && a.leads_handling >= 1)
+      parts.push(`בנוסף סימנת ש${leadsHandling.toLowerCase()}.`);
+    if (leadsPerMonth && a.monthly_leads >= 1)
+      parts.push(`עם ${leadsPerMonth} פניות חדשות בחודש, גם פספוס קטן מצטבר להרבה הזדמנויות שלא מקבלות טיפול בזמן.`);
+    if (parts.length === 0)
+      parts.push('מהתשובות שלך עולה שתהליך קבלת הפניות עדיין לא מסודר לגמרי.');
+  }
+
+  if (worst === 'OPS') {
+    if (repTime && a.repetitive_time >= 1)
+      parts.push(`סימנת שאת משקיעה ${repTime} בשבוע במשימות שחוזרות על עצמן.`);
+    if (energyText.length > 0)
+      parts.push(`בנוסף בחרת ש${energyText.slice(0,2).join(' ו')} הם התחומים שגוזלים ממך הכי הרבה אנרגיה.`);
+    if (parts.length === 0)
+      parts.push('מהתשובות שלך עולה שחלק משמעותי מהזמן הולך על עבודה תפעולית שאפשר לצמצם.');
+    else
+      parts.push('זה אומר שחלק משמעותי מהזמן שלך הולך על עבודה שאפשר לסדר בצורה אחרת.');
+  }
+
+  if (worst === 'CONTROL') {
+    if (clientHistory && a.client_history >= 2)
+      parts.push(`לפי התשובות שלך, כשצריך לבדוק היסטוריה של לקוח את ${clientHistory.toLowerCase()}.`);
+    if (energyText.includes('ניהול מידע'))
+      parts.push('בנוסף סימנת שניהול מידע הוא אחד התחומים שגוזלים ממך הכי הרבה אנרגיה.');
+    if (parts.length === 0)
+      parts.push('מהתשובות שלך עולה שהמידע קיים - אבל לא יושב במקום אחד שקל לעבוד איתו.');
+    else
+      parts.push('זה בדרך כלל סימן שהמידע קיים - אבל לא יושב במקום אחד שקל לעבוד איתו.');
+  }
+
+  if (worst === 'FLOW') {
+    if (repTime && a.repetitive_time >= 1)
+      parts.push(`סימנת שאת משקיעה ${repTime} בשבוע במשימות שחוזרות.`);
+    if (energyText.length > 0)
+      parts.push(`בנוסף, ${energyText.slice(0,2).join(' ו')} גוזלים ממך הרבה אנרגיה לאורך היום.`);
+    if (parts.length === 0)
+      parts.push('מהתשובות שלך עולה שהיום מתפרק בין הרבה כיוונים ואין תהליך שמחזיק הכל ביחד.');
+    else
+      parts.push('בלי תהליך קבוע, היום מרגיש שבור - גם כשאין "דבר גדול אחד" שאפשר להצביע עליו.');
+  }
+
+  // שכבה 3 - pain_point
+  if (painPoint) {
+    parts.push(`כתבת שהדבר שהכי מתסכל אותך כרגע: "${painPoint}" - מעניין לראות שהתוצאה מצביעה בדיוק על אותו אזור.`);
+  }
+
+  return parts.join(' ');
+}
+
 function buildReco(worst, answers, seed) {
   const scenario = detectScenario(answers);
   const wa = usesWhatsApp(answers);
@@ -843,10 +915,12 @@ function buildReco(worst, answers, seed) {
   else if (worst === 'OPS' && scenario === 'creative') comp = compositions.OPS_creative;
   else if (worst === 'FLOW') comp = compositions.FLOW_general;
 
+  const personalBody = buildPersonalBody(worst, answers);
+
   return {
     gaugeSub:        comp?.gaugeSub  || pick(b.gaugeSubVariants, seed),
     priorityTitle:   comp?.title     || pick(b.titleVariants, seed),
-    priorityBody:    comp?.body      || pick(b.bodyVariants, seed),
+    priorityBody:    personalBody    || comp?.body || pick(b.bodyVariants, seed),
     priorityInsight: comp?.insight   || pick(b.insightFallbacks, seed),
     tool1Name:       comp?.tool1Name || pick(b.tool1NameVariants, seed),
     tool1Body:       comp?.tool1Body || b.tool1Body,
