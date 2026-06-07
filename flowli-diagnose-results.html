@@ -448,8 +448,8 @@ body {
         <svg viewBox="0 0 24 24" fill="none" stroke="#2D7A3A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         האבחון הושלם
       </div>
-      <div class="hero-name" id="heroName">הנה מה שקפץ לי לעין <span class="hl">🎉</span></div>
-      <div class="hero-sub" id="heroSub"></div>
+      <div class="hero-name" id="heroName">לפי התשובות שלך - הייתי מתחילה כאן</div>
+      <div class="hero-sub" id="heroSub">הנה מה שקפץ לי לעין.</div>
     </div>
     <div class="impact-bubble">
       <div class="impact-icon">💸</div>
@@ -508,12 +508,10 @@ body {
       <div class="cta-box">
         <div class="cta-lock-icon"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
         <div class="cta-title">רוצה שאעבור איתך על זה?</div>
-        <div class="cta-body">לפעמים שני עסקים מקבלים את אותה תוצאה, אבל הסיפור מאחוריה שונה לגמרי. אם בא לך, נשב ל-20 דקות, נעבור על התוצאה יחד ונראה איפה באמת כדאי להתחיל.</div>
-        <div class="cta-body" style="margin-top:8px;font-style:italic;color:var(--muted);">הרבה פעמים לא צריך לשנות את כל העסק. מספיק לזהות את המקום שבו הולך הכי הרבה זמן - ולהתחיל משם.</div>
+        <div class="cta-body">הרבה פעמים לא צריך לשנות את כל העסק.<br>מספיק להתחיל במקום הנכון.</div>
         <button class="btn-cta" onclick="openContact()">
-          <span>בואי נדבר 🗓️</span>
+          <span>📅 נקבע שיחה קצרה</span>
         </button>
-        <div style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;">בלי מחויבות. בלי מצגת מכירה. פשוט לעשות סדר.</div>
 
         <div class="callback-block">
           <div class="callback-q">📞 רוצה שנחשוב יחד מה הכי נכון לעסק שלך?</div>
@@ -879,8 +877,9 @@ document.getElementById('impactMoney').textContent = `~ ${fmtMoney(moneyLow)}–
 
 // hero name
 document.getElementById('heroName').innerHTML = firstName
-  ? `${firstName}, הנה מה שקפץ לי לעין <span class="hl">🎉</span>`
-  : `הנה מה שקפץ לי לעין <span class="hl">🎉</span>`;
+  ? `${firstName}, לפי התשובות שלך - הייתי מתחילה כאן`
+  : `לפי התשובות שלך - הייתי מתחילה כאן`;
+document.getElementById('heroSub').textContent = `הנה מה שקפץ לי לעין.`;
 
 // gauge animation
 setTimeout(() => {

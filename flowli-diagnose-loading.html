@@ -324,14 +324,14 @@
     <!-- ── Section 1: ניתוח ── -->
     <section class="loading-section" id="loadingSection">
 
-      <div class="thank-you-badge"><span class="badge-star">✨</span> בונה עבורך אבחון אישי</div>
+      <div class="thank-you-badge"><span class="badge-star">✨</span><span id="leadName">רגע אחד</span> — תודה שמילאת את השאלון</div>
 
       <div>
         <h1 class="loading-headline">
           מנתחת את הנתונים שלך
         </h1>
         <p class="loading-sub">
-          אני בונה לך תמונה ברורה של מה מעכב את העסק שלך - ואיפה הכי נכון להתחיל.
+          אני בונה לך תמונה מדויקת של המצב ומה אפשר לשפר כבר עכשיו
         </p>
       </div>
 
@@ -424,11 +424,10 @@
 
         <div class="about-text">
           <p>נעים להכיר, אני הדס.</p>
-          <p>אני עוזרת לעסקים לחסוך זמן, לצמצם עבודה ידנית ולבנות תהליכים שעובדים גם כשלא יושבים עליהם כל היום.</p>
-          <p>אחרי שנים בעולם מערכות המידע בארגונים גדולים, הבנתי משהו שחוזר על עצמו שוב ושוב:<br>עסקים קטנים ובינוניים מתמודדים עם אותם האתגרים - רק בלי צוותים, בלי זמן ובלי מקום לפרויקטים מסורבלים.</p>
-          <p>לכן אני לוקחת את עולמות האוטומציה וה-AI ומתרגמת אותם לפתרונות פשוטים, מדויקים ובגובה העיניים.</p>
-          <p>בלי להחליף את כל העסק. בלי להעמיס מערכות. פשוט לבנות תהליכים שמפנים זמן, מייצרים יותר שליטה ועוזרים לעסק לעבוד טוב יותר.</p>
-          <p>בואו נראה מה יהיה השלב הכי נכון לעסק שלכם »</p>
+          <p>אחרי שנים בעולם מערכות המידע, גיליתי שמשהו חוזר על עצמו כמעט בכל עסק:<br>יש המון דברים שאפשר לשפר, אבל לא תמיד ברור מאיפה כדאי להתחיל.</p>
+          <p>בדיוק בשביל זה בניתי את האבחון הזה.<br>כדי לזהות איפה נמצא צוואר הבקבוק המרכזי, ומה יהיה הצעד הראשון שיכול לחסוך זמן, לייצר יותר סדר או פשוט להפוך את העבודה לקלה יותר.</p>
+          <p>משם אפשר להבין אם הפתרון הוא אוטומציה, כלי חדש או פשוט תהליך מסודר יותר.</p>
+          <p>כי בדרך כלל לא צריך לשנות את הכול.<br>מספיק להתחיל במקום הנכון.</p>
         </div>
 
 
@@ -438,8 +437,8 @@
     <!-- ── Section 3: CTA ── -->
     <section class="cta-section" id="ctaSection">
       <p class="results-hint">הניתוח שלך מוכן 🎉</p>
-      <a href="flowli-diagnose-page.html" class="btn-primary pulse" id="resultsBtn">
-        האבחון שלי
+      <a href="flowli-diagnose-results.html" class="btn-primary pulse" id="resultsBtn">
+        לתוצאות שלי
         <span class="btn-arrow">←</span>
       </a>
     </section>
@@ -447,7 +446,18 @@
   </main>
 
   <script>
-    /* שם הליד עוד לא נאסף בשלב הזה - הוא יבוא אחרי עמוד המנתחת */
+    // ── שם מ-localStorage (תואם גם לפורמט הישן וגם לחדש) ──
+    let firstName = '';
+    try {
+      const saved = localStorage.getItem('flowli_lead');
+      if (saved) {
+        const d = JSON.parse(saved);
+        if (d.name) firstName = d.name.split(' ')[0];
+      }
+      if (!firstName) firstName = localStorage.getItem('flowliName') || '';
+    } catch(e) {}
+    const nameEl = document.getElementById('leadName');
+    if (firstName) nameEl.textContent = firstName;
 
     // ── רצף ניתוח ──
     const steps = [
