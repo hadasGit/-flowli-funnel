@@ -448,8 +448,8 @@ body {
         <svg viewBox="0 0 24 24" fill="none" stroke="#2D7A3A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         האבחון הושלם
       </div>
-      <div class="hero-name" id="heroName">עברתי על התשובות שלך <span class="hl">🎉</span></div>
-      <div class="hero-sub" id="heroSub">הנה מה שקפץ לי לעין.</div>
+      <div class="hero-name" id="heroName">הנה מה שקפץ לי לעין <span class="hl">🎉</span></div>
+      <div class="hero-sub" id="heroSub"></div>
     </div>
     <div class="impact-bubble">
       <div class="impact-icon">💸</div>
@@ -460,7 +460,7 @@ body {
     </div>
   </div>
 
-  <div class="section-title">מצב האוטומציה בעסק</div>
+  <div class="section-title">תמונת מצב כללית</div>
   <div class="two-col">
 
     <div class="gauge-card">
@@ -508,11 +508,12 @@ body {
       <div class="cta-box">
         <div class="cta-lock-icon"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
         <div class="cta-title">רוצה שאעבור איתך על זה?</div>
-        <div class="cta-body">מה שהופיע כאן מבוסס רק על התשובות שסימנת. בשיחה קצרה אוכל להבין איך הדברים נראים בפועל אצלך, להסביר למה קיבלת את התוצאה הזו, ולהראות איפה הייתי מתחילה אם זה היה העסק שלי. בלי מחויבות ובלי מצגת מכירה. רק לעשות קצת סדר.</div>
-        <div class="cta-scarcity">💛 מספר המקומות מוגבל בכל חודש כדי להבטיח מעורבות אישית מלאה שלי.</div>
+        <div class="cta-body">לפעמים שני עסקים מקבלים את אותה תוצאה, אבל הסיפור מאחוריה שונה לגמרי. אם בא לך, נשב ל-20 דקות, נעבור על התוצאה יחד ונראה איפה באמת כדאי להתחיל.</div>
+        <div class="cta-body" style="margin-top:8px;font-style:italic;color:var(--muted);">הרבה פעמים לא צריך לשנות את כל העסק. מספיק לזהות את המקום שבו הולך הכי הרבה זמן - ולהתחיל משם.</div>
         <button class="btn-cta" onclick="openContact()">
           <span>בואי נדבר 🗓️</span>
         </button>
+        <div style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;">בלי מחויבות. בלי מצגת מכירה. פשוט לעשות סדר.</div>
 
         <div class="callback-block">
           <div class="callback-q">📞 רוצה שנחשוב יחד מה הכי נכון לעסק שלך?</div>
@@ -699,7 +700,7 @@ const base = {
   CONTROL: {
     gaugeSubVariants:  [`העסק רץ - אבל המידע מפוזר וקשה לקבל תמונת מצב אחת ברורה`, `נראה שמה שצריך בשליפה - לא תמיד נמצא במקום אחד`, `יש מידע - אבל הוא פזור ולא תמיד נגיש כשצריכים אותו`],
     titleVariants:     [`המידע בעסק מפוזר בכמה מקומות במקביל`, `תמונת מצב מלאה לוקחת זמן - כי המידע לא במקום אחד`, `אין עדיין מקום אחד שמרכז את כל מה שצריך`],
-    bodyVariants:      [`המידע בעסק כנראה קיים - אבל מפוזר בין שיחות, מסמכים וכלים שונים.`, `המידע על לקוחות יושב בכמה מקומות - חלקו בוואטסאפ, חלקו במיילים, חלקו במחברת.`, `כדי לדעת מה סוכם עם לקוח או איפה עומדת משימה - צריך לחפש בין כמה ערוצים.`],
+    bodyVariants:      [`לפי התשובות שלך, לא נראה שחסר מידע - הוא פשוט יושב בכמה מקומות שונים. כשצריך לבדוק מה סוכם עם לקוח או למצוא מסמך, מתחיל חיפוש קטן. החיפושים הקטנים האלה מצטברים לאורך השבוע וגוזלים הרבה יותר זמן ממה שנדמה.`, `לפי מה שסימנת, המידע קיים - הוא פשוט לא במקום אחד. חלקו בוואטסאפ, חלקו במייל, חלקו בזיכרון. ואז כשצריך אותו - מתחיל לחפש.`, `כשצריך לבדוק מה סוכם עם לקוח, איפה עומדת משימה, או למצוא הצעת מחיר - מתחיל חיפוש. הבעיה היא לא שהמידע לא קיים. הבעיה היא שאין לו בית.`],
     insightFallbacks:  [`כשצריך לבדוק מה סוכם עם לקוח, איפה עומדת משימה או מה הסטטוס של פרויקט - מתחיל חיפוש מיותר שמבזבז זמן ופוגע בתחושת השליטה.`, `בלי מקום אחד שמרכז את הכל - כל החלטה מתחילה בחיפוש, וכל חיפוש גוזל זמן.`],
     tool1NameVariants: [`תיק לקוח דיגיטלי מלא`, `מרכז מידע אחד לכל לקוח`, `תיק לקוח דיגיטלי מרוכז`],
     tool1Body:         `כל הנתונים, השיחות והקבצים של הלקוחות יושבים תחת מסך אחד נגיש - בלי לחפש.`,
@@ -878,9 +879,8 @@ document.getElementById('impactMoney').textContent = `~ ${fmtMoney(moneyLow)}–
 
 // hero name
 document.getElementById('heroName').innerHTML = firstName
-  ? `${firstName}, עברתי על התשובות שלך <span class="hl">🎉</span>`
-  : `עברתי על התשובות שלך <span class="hl">🎉</span>`;
-document.getElementById('heroSub').textContent = `הנה מה שקפץ לי לעין.`;
+  ? `${firstName}, הנה מה שקפץ לי לעין <span class="hl">🎉</span>`
+  : `הנה מה שקפץ לי לעין <span class="hl">🎉</span>`;
 
 // gauge animation
 setTimeout(() => {
@@ -938,7 +938,7 @@ document.getElementById('mainInsightCard').innerHTML = `
     </div>
 
     <div style="background:rgba(255,255,255,.5);border-radius:14px;padding:14px;">
-      <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:8px;">🎯 ככה זה ייראה באוטומציה:</div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:8px;">🎯 אחרי שמסדרים את התהליך:</div>
       <div class="demo-container">${demoFlowHTML}</div>
     </div>
   </div>
