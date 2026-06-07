@@ -448,8 +448,8 @@ body {
         <svg viewBox="0 0 24 24" fill="none" stroke="#2D7A3A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         האבחון הושלם
       </div>
-      <div class="hero-name" id="heroName">לפי התשובות שלך - הייתי מתחילה כאן</div>
-      <div class="hero-sub" id="heroSub">הנה מה שקפץ לי לעין.</div>
+      <div class="hero-name" id="heroName">הנה תמונת המצב שלך 🎉</div>
+      <div class="hero-sub" id="heroSub">הנה התחום שבו יש לך הכי הרבה פוטנציאל לחסוך זמן ולייצר יותר סדר.</div>
     </div>
     <div class="impact-bubble">
       <div class="impact-icon">💸</div>
@@ -877,9 +877,9 @@ document.getElementById('impactMoney').textContent = `~ ${fmtMoney(moneyLow)}–
 
 // hero name
 document.getElementById('heroName').innerHTML = firstName
-  ? `${firstName}, לפי התשובות שלך - הייתי מתחילה כאן`
-  : `לפי התשובות שלך - הייתי מתחילה כאן`;
-document.getElementById('heroSub').textContent = `הנה מה שקפץ לי לעין.`;
+  ? `${firstName}, הנה תמונת המצב שלך 🎉`
+  : `הנה תמונת המצב שלך 🎉`;
+document.getElementById('heroSub').textContent = `הנה התחום שבו יש לך הכי הרבה פוטנציאל לחסוך זמן ולייצר יותר סדר.`;
 
 // gauge animation
 setTimeout(() => {
