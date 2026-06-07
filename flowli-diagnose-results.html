@@ -1061,22 +1061,31 @@ async function saveEditedDetails() {
   if (!phone) { errEl.textContent = 'נא להזין טלפון'; document.getElementById('editPhone').focus(); return; }
   errEl.textContent = '';
 
+  /* Save original email BEFORE updating localStorage */
+  let originalEmail = email;
+  try {
+    const prev = localStorage.getItem('flowli_user') || localStorage.getItem('flowli_lead');
+    if (prev) originalEmail = (JSON.parse(prev).email) || email;
+  } catch(e){}
+
   /* Update localStorage */
   const data = { name, email, phone };
   localStorage.setItem('flowli_user', JSON.stringify(data));
   localStorage.setItem('flowli_lead', JSON.stringify(data));
 
-  /* Update visible phone in callback block */
+  /* Update visible phone + email in callback block */
   const phoneEl = document.getElementById('callbackPhone');
   if (phoneEl) phoneEl.textContent = phone;
+  const emailEl = document.getElementById('callbackEmail');
+  if (emailEl) emailEl.textContent = email;
 
   /* Visual feedback */
   saveBtn.classList.add('saved');
   saveBtn.textContent = '✓ נשמר';
 
-  /* Save to Supabase */
+  /* Save to Supabase - use original email to find the record */
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/leads?email=eq.${encodeURIComponent(email)}`, {
+    await fetch(`${SUPABASE_URL}/rest/v1/leads?email=eq.${encodeURIComponent(originalEmail)}`, {
       method: 'PATCH',
       headers: {
         'apikey': SUPABASE_KEY,
@@ -1084,7 +1093,7 @@ async function saveEditedDetails() {
         'Content-Type': 'application/json',
         'Prefer': 'return=minimal'
       },
-      body: JSON.stringify({ name, phone })
+      body: JSON.stringify({ name, email, phone })  /* original_email לא מתעדכן בכוונה */
     });
   } catch(err) { console.warn('edit save failed', err); }
 

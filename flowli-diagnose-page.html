@@ -419,6 +419,7 @@
         name, email, phone,
         consent: true,
         source: sessionStorage.getItem('flowli_source') || 'flowli-funnel',
+        original_email: email,
       });
       localStorage.setItem('flowli_diagnose', JSON.stringify(payload));
 
