@@ -659,7 +659,7 @@ function pick(arr, seed) {
 const flowExamples = {
   beauty:   [`לקוחה פונה בהודעה`, `הפרטים נשמרים בכרטיס לקוחה`, `נשלחת תזכורת לתור`, `סיכום אחרי הביקור`],
   creative: [`לקוח מבקש הצעת מחיר`, `נוצר מסמך אוטומטי`, `נשלח מעקב אישור`, `התחלת פרויקט מסודרת`],
-  therapy:  [`פנייה חדשה מגיעה`, `נשלח שאלון קליטה`, `נפתחת פגישה ביומן`, `תיעוד אחרי הפגישה`],
+  therapy:  [`הורה / לקוח פונה`, `מתקבל מענה ראשוני אוטומטי`, `כל הפרטים נשמרים במקום אחד`, `נקבעת שיחת היכרות`],
   vet:      [`לקוח שולח הודעה`, `נקבעת פגישה אוטומטית`, `נשלחת תזכורת לבדיקה`, `הצוות רואה הכל במקום אחד`],
   signage:  [`לקוח שולח בקשה לשלט`, `נוצרת הצעת מחיר אוטומטית`, `הביצוע נפתח לצוות`, `הלקוח מקבל עדכון סטטוס`],
   commerce: [`הזמנה נכנסת`, `אישור אוטומטי`, `עדכון סטטוס`, `סגירה ומעקב חוזר`]
@@ -832,78 +832,119 @@ const compositions = {
 function buildPersonalBody(worst, answers) {
   const a = answers || {};
 
-  // מיפוי תשובות לערכים
-  const responseTimeIdx   = a.response_time  ?? -1;
-  const leadsHandlingIdx  = a.leads_handling ?? -1;
-  const monthlyLeadsIdx   = a.monthly_leads  ?? -1;
-  const repTimeIdx        = a.repetitive_time ?? -1;
-  const clientHistoryIdx  = a.client_history  ?? -1;
-  const energyAreas       = a.energy_areas || [];
-  const painPoint         = (a.pain_point || '').trim();
+  const responseTimeIdx  = a.response_time   ?? -1;
+  const leadsHandlingIdx = a.leads_handling  ?? -1;
+  const monthlyLeadsIdx  = a.monthly_leads   ?? -1;
+  const repTimeIdx       = a.repetitive_time ?? -1;
+  const clientHistoryIdx = a.client_history  ?? -1;
+  const energyAreas      = a.energy_areas || [];
+  const painPoint        = (a.pain_point || '').trim();
+  const bizDesc          = (a.business_desc || '').trim();
 
-  const leadsPerMonth   = ['עד 10', '10-30', '30-80', 'מעל 80'][monthlyLeadsIdx] || null;
-  const energyLabels    = ['מענה לפניות', 'מעקב אחרי לקוחות', 'הצעות מחיר', 'תיאומים ותזכורות', 'ניהול מידע', 'אדמיניסטרציה'];
-  const energyText      = energyAreas.map(i => energyLabels[i]).filter(Boolean);
-  const repTimeLabel    = ['פחות מ-3 שעות', '3-8 שעות', '8-15 שעות', 'יותר מ-15 שעות'][repTimeIdx] || null;
+  const leadsPerMonthLabel = ['עד 10', '10-30', '30-80', 'מעל 80'][monthlyLeadsIdx] || null;
+  const repTimeLabel       = ['פחות מ-3 שעות', '3-8 שעות', '8-15 שעות', 'יותר מ-15 שעות'][repTimeIdx] || null;
+  const energyLabels       = ['מענה לפניות', 'מעקב אחרי לקוחות', 'הצעות מחיר', 'תיאומים ותזכורות', 'ניהול מידע', 'אדמיניסטרציה'];
+  const energyText         = energyAreas.map(i => energyLabels[i]).filter(Boolean);
 
-  // pain_point - לתשמיש פנימי, לא לציטוט ישיר
+  // pain_point - לצטט את התוכן האמיתי, לא לתרגם לגנרי
   const hasPain = painPoint.length > 3;
-  const painRef = hasPain
-    ? `כתבת שאחד הדברים שהכי מתסכלים אותך הוא ${painPoint.length < 60 ? painPoint : 'העומס בניהול העסק'}.`
+  const painSentence = hasPain
+    ? `כתבת ש${painPoint.endsWith('.') ? painPoint.slice(0,-1) : painPoint} - מעניין לראות שהתוצאה מצביעה בדיוק על אותו אזור.`
     : '';
 
-  let body = '';
+  // business_desc - לחלץ קונטקסט בלי AI מורכב
+  function bizContext(worstArea) {
+    if (!bizDesc) return '';
+    const bd = bizDesc.toLowerCase();
+    const isParents   = /הורים|ילד|ילדים|תקשורת|קלינ/i.test(bd);
+    const isTherapy   = /פסיכולוג|טיפול|קליני|מטפל|דיאט|תזונ|נטורופת/i.test(bd);
+    const isBeauty    = /קוסמט|סלון|תור|מניקור|פדיקור|ספא|איפור/i.test(bd);
+    const isCreative  = /עיצוב|מעצב|סטודיו|גרפי|אדריכל/i.test(bd);
+    const isB2B       = /עורך דין|רו"ח|רואה חשבון|יועץ|משרד/i.test(bd);
+
+    if (worstArea === 'LEADS') {
+      if (isParents)  return `בעסק שמבוסס על קשר עם הורים ותיאום פגישות, כל פנייה שלא מקבלת מענה בזמן עלולה להתפספס.`;
+      if (isTherapy)  return `בעסק שמבוסס על פגישות ואמון, כל שעה שהולכת על תיאומים היא שעה שלא מושקעת בטיפול עצמו.`;
+      if (isBeauty)   return `בעסק שעובד לפי תורים, פנייה שלא מקבלת מענה מהיר - בדרך כלל הולכת למקום אחר.`;
+      if (isCreative) return `בעסק יצירתי, פניות שנכנסות בלי תהליך מסודר מצטברות לעומס שמפריע לעבודה האמיתית.`;
+      if (isB2B)      return `בעסק שמטפל בכמה לקוחות במקביל, מעקב מסודר אחרי פניות הוא קריטי.`;
+    }
+    if (worstArea === 'OPS') {
+      if (isParents || isTherapy) return `בעסק שמבוסס על פגישות, כל דקה שהולכת על ניירת היא דקה שלא מושקעת בלקוח.`;
+      if (isBeauty)   return `בסלון, תיאומים וניהול תורים יכולים לגזול יותר זמן מהעבודה עצמה.`;
+      if (isCreative) return `בעסק יצירתי, עבודה אדמיניסטרטיבית שחוזרת על עצמה מקטעת את הריכוז ומעכבת פרויקטים.`;
+    }
+    if (worstArea === 'CONTROL') {
+      if (isB2B)      return `בעסק שמטפל בכמה לקוחות במקביל, שליטה במידע הופכת מהר מאוד לקריטית.`;
+      if (isTherapy || isParents) return `כשמידע על מטופלים/לקוחות מפוזר, קשה לתת מענה מסודר ולשמור על רצף.`;
+    }
+    return '';
+  }
+
+  let parts = [];
 
   if (worst === 'LEADS') {
-    const slowResponse  = responseTimeIdx >= 2;
-    const leaksLeads    = leadsHandlingIdx >= 2;
-    const highVolume    = monthlyLeadsIdx  >= 2;
+    const slowResponse = responseTimeIdx >= 2;
+    const leaksLeads   = leadsHandlingIdx >= 2;
+    const hasVolume    = monthlyLeadsIdx  >= 1;
 
-    if (slowResponse && leaksLeads && highVolume)
-      body = `לפי התשובות שלך, פניות מגיעות בקצב גבוה - אבל חלק מהן לא מקבלות מענה בזמן ואין תהליך שמוודא שאף פנייה לא נופלת בין הכיסאות. כשמספר הפניות גדול, העלות של כל פספוס עולה.`;
+    // שכבה 1 - תשובות מספריות משולבות כמסקנה
+    if (slowResponse && leaksLeads && hasVolume)
+      parts.push(`לפי התשובות שלך, זמן התגובה לפניות הוא בדרך כלל יום או יותר, וחלק מהפניות גם מתפספסות בדרך. כשמצטרפות לזה ${leadsPerMonthLabel} פניות בחודש, קל להבין למה נוצר עומס ולמה קשה לחזור לכולם בזמן.`);
     else if (slowResponse && leaksLeads)
-      body = `מהתשובות שלך עולה שזמן התגובה לפניות ארוך יחסית וחלק מהפניות לא מקבלות מעקב קבוע. בלי תהליך שתופס כל פנייה ומחזיר מענה מהיר - חלק מהן פשוט נעלמות.`;
+      parts.push(`לפי התשובות שלך, זמן התגובה לפניות ארוך יחסית וחלק מהפניות לא מקבלות מעקב קבוע. בלי תהליך שתופס כל פנייה - חלק מהן פשוט נעלמות.`);
     else if (slowResponse)
-      body = `מהתשובות שלך עולה שזמן התגובה לפניות ארוך יחסית. ברוב המקרים, מי שלא מקבל תגובה מהירה פונה הלאה - וזה לא שאלה של כוונה טובה, אלא של תהליך שחסר.`;
+      parts.push(`לפי התשובות שלך, זמן התגובה לפניות הוא יום או יותר. ברוב המקרים, מי שלא מקבל תגובה מהירה - פונה הלאה.`);
     else if (leaksLeads)
-      body = `לפי התשובות שלך, חלק מהפניות לא מקבלות מעקב קבוע. בלי מקום אחד שמרכז את כל הפניות - קל לאבד רצף, גם כשאת בהחלט רוצה לחזור לכולם.`;
+      parts.push(`לפי התשובות שלך, חלק מהפניות לא מקבלות מעקב קבוע. בלי מקום שמחזיק את כל הפניות - קל לאבד רצף.`);
     else
-      body = `מהתשובות שלך עולה שתהליך קבלת הפניות עדיין לא מסודר לגמרי. זה התחום שבו מעט סדר יכול לעשות הבדל גדול מהר.`;
+      parts.push(`מהתשובות שלך עולה שתהליך קבלת הפניות עדיין לא מסודר לגמרי.`);
 
-    if (hasPain) body += ` ${painRef}`;
+    // שכבה 2 - pain_point בציטוט אמיתי
+    if (hasPain) parts.push(painSentence);
+
+    // שכבה 3 - קונטקסט עסקי
+    const biz = bizContext('LEADS');
+    if (biz) parts.push(biz);
+
+    parts.push(`בלי תהליך שתופס כל פנייה מהרגע שנכנסה ועד שנקבעה פגישה, חלק מהפניות פשוט נופלות בין הכיסאות.`);
   }
 
   if (worst === 'OPS') {
-    const heavyLoad   = repTimeIdx >= 2;
-    const hasEnergy   = energyText.length > 0;
-    const topEnergy   = energyText.slice(0,2).join(' ו');
+    const heavyLoad = repTimeIdx >= 2;
+    const hasEnergy = energyText.length > 0;
+    const topEnergy = energyText.slice(0,2).join(' ו');
 
     if (heavyLoad && hasEnergy)
-      body = `מהתשובות שלך עולה ש${repTimeLabel} בשבוע הולכים על משימות שחוזרות על עצמן, ובמיוחד על ${topEnergy}. העומס לא מגיע ממשימה אחת גדולה - הוא מצטבר מהרבה פעולות קטנות שאפשר לסדר בצורה אחרת.`;
+      parts.push(`לפי התשובות שלך, ${repTimeLabel} בשבוע הולכים על משימות שחוזרות על עצמן - בעיקר ${topEnergy}. העומס לא מגיע ממשימה אחת גדולה, הוא מצטבר מהרבה פעולות קטנות.`);
     else if (heavyLoad)
-      body = `מהתשובות שלך עולה שחלק משמעותי מהשבוע הולך על משימות שחוזרות שוב ושוב. כל אחת מהן לבד נראית קטנה - אבל יחד הן יוצרות עומס שמקשה לפנות זמן לדברים החשובים באמת.`;
+      parts.push(`לפי התשובות שלך, ${repTimeLabel} בשבוע הולכים על משימות שחוזרות. כל אחת מהן לבד נראית קטנה - אבל יחד הן יוצרות עומס שמקשה לפנות זמן לדברים החשובים.`);
     else if (hasEnergy)
-      body = `מהתשובות שלך עולה ש${topEnergy} גוזלים ממך הרבה אנרגיה. זה בדרך כלל סימן שיש משימות שחוזרות על עצמן ועדיין לא קיבלו תהליך קבוע.`;
+      parts.push(`לפי התשובות שלך, ${topEnergy} גוזלים ממך הרבה אנרגיה - זה בדרך כלל סימן למשימות שחוזרות ועדיין לא קיבלו תהליך קבוע.`);
     else
-      body = `מהתשובות שלך עולה שחלק משמעותי מהזמן הולך על עבודה תפעולית שאפשר לצמצם עם תהליך קבוע.`;
+      parts.push(`מהתשובות שלך עולה שחלק משמעותי מהזמן הולך על עבודה תפעולית שאפשר לצמצם.`);
 
-    if (hasPain) body += ` ${painRef}`;
+    if (hasPain) parts.push(painSentence);
+    const biz = bizContext('OPS');
+    if (biz) parts.push(biz);
   }
 
   if (worst === 'CONTROL') {
-    const hardToFind  = clientHistoryIdx >= 2;
-    const infoEnergy  = energyText.includes('ניהול מידע');
+    const hardToFind = clientHistoryIdx >= 2;
+    const infoEnergy = energyText.includes('ניהול מידע');
 
     if (hardToFind && infoEnergy)
-      body = `לפי התשובות שלך, אין היום מקום אחד שמרכז את כל המידע על הלקוחות בצורה מסודרת. כשמסמכים, שיחות ומידע מפוזרים בין כמה מקומות, כל בדיקה קטנה הופכת לחיפוש - והחיפושים האלה מצטברים לאורך היום לעוד ועוד עומס.`;
+      parts.push(`לפי התשובות שלך, אין היום מקום אחד שמרכז את המידע על הלקוחות. כשמסמכים ושיחות מפוזרים בין כמה מקומות, כל בדיקה קטנה הופכת לחיפוש - והחיפושים האלה מצטברים לאורך היום.`);
     else if (hardToFind)
-      body = `לפי התשובות שלך, כשצריך לבדוק את ההיסטוריה של לקוח - את צריכה לחפש בכמה מקומות שונים. בלי מקום אחד שמרכז הכל, קשה לקבל תמונת מצב ברורה וקל יותר לפספס דברים בדרך.`;
+      parts.push(`לפי התשובות שלך, כדי לבדוק היסטוריה של לקוח צריך לחפש בכמה מקומות שונים. בלי מרכז אחד - קשה לקבל תמונת מצב ברורה.`);
     else if (infoEnergy)
-      body = `מהתשובות שלך עולה שניהול מידע גוזל ממך הרבה אנרגיה. זה בדרך כלל סימן שהמידע קיים - אבל לא יושב במקום אחד שקל לעבוד איתו.`;
+      parts.push(`לפי התשובות שלך, ניהול מידע גוזל ממך הרבה אנרגיה - זה בדרך כלל סימן שהמידע קיים אבל לא יושב במקום אחד שקל לעבוד איתו.`);
     else
-      body = `מהתשובות שלך עולה שהמידע בעסק מפוזר בכמה מקומות. בלי מרכז אחד - כל שאלה קטנה הופכת לחיפוש, וזה מצטבר.`;
+      parts.push(`מהתשובות שלך עולה שהמידע בעסק מפוזר. בלי מרכז אחד - כל שאלה קטנה הופכת לחיפוש.`);
 
-    if (hasPain) body += ` ${painRef}`;
+    if (hasPain) parts.push(painSentence);
+    const biz = bizContext('CONTROL');
+    if (biz) parts.push(biz);
   }
 
   if (worst === 'FLOW') {
@@ -912,16 +953,16 @@ function buildPersonalBody(worst, answers) {
     const topEnergy = energyText.slice(0,2).join(' ו');
 
     if (heavyLoad && hasEnergy)
-      body = `מהתשובות שלך עולה שהיום מתחלק בין הרבה כיוונים - בעיקר ${topEnergy} - ואין עדיין תהליך שמחזיק הכל ביחד. הבעיה היא לא חוסר ארגון, אלא שכל דבר מגיע בנפרד ודורש תגובה בנפרד.`;
+      parts.push(`לפי התשובות שלך, היום מתחלק בין הרבה כיוונים - בעיקר ${topEnergy} - ואין עדיין תהליך שמחזיק הכל ביחד. הבעיה היא לא חוסר ארגון, אלא שכל דבר מגיע בנפרד ודורש תגובה בנפרד.`);
     else if (heavyLoad)
-      body = `מהתשובות שלך עולה שהזמן לא הולך על דבר אחד גדול - הוא מתפורר בין הרבה משימות קטנות לאורך היום. בלי תהליך קבוע, היום מרגיש שבור גם כשאין "אסון" שאפשר להצביע עליו.`;
+      parts.push(`לפי התשובות שלך, הזמן לא הולך על דבר אחד גדול - הוא מתפורר בין הרבה משימות קטנות לאורך היום. בלי תהליך קבוע, היום מרגיש שבור גם בלי "אסון" שאפשר להצביע עליו.`);
     else
-      body = `מהתשובות שלך עולה שהיום מתפרק בין הרבה כיוונים ואין תהליך שמחזיק הכל ביחד. זה מה שגורם לתחושה שהיום "עף" בלי שהספקת את מה שרצית.`;
+      parts.push(`מהתשובות שלך עולה שהיום מתפרק בין הרבה כיוונים ואין תהליך שמחזיק הכל ביחד.`);
 
-    if (hasPain) body += ` ${painRef}`;
+    if (hasPain) parts.push(painSentence);
   }
 
-  return body;
+  return parts.join(' ');
 }
 
 function buildReco(worst, answers, seed) {
