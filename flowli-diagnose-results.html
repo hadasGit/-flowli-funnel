@@ -832,72 +832,96 @@ const compositions = {
 function buildPersonalBody(worst, answers) {
   const a = answers || {};
 
-  // מיפוי תשובות לטקסט
-  const responseTime    = ['תוך כמה דקות', 'תוך שעה-שעתיים', 'באותו יום', 'יום או יותר'][a.response_time ?? -1] || null;
-  const leadsHandling   = ['יש תהליך קבוע ומסודר', 'יש רישום, לא תמיד עוקבת', 'חלק מהפניות מתפספסות', 'אין תהליך קבוע'][a.leads_handling ?? -1] || null;
-  const leadsPerMonth   = ['עד 10', '10-30', '30-80', 'מעל 80'][a.monthly_leads ?? -1] || null;
-  const closeRate       = ['7-10 מתוך 10', '4-6 מתוך 10', '2-3 מתוך 10', '0-1 מתוך 10'][a.close_rate ?? -1] || null;
-  const repTime         = ['פחות מ-3 שעות', '3-8 שעות', '8-15 שעות', 'יותר מ-15 שעות'][a.repetitive_time ?? -1] || null;
-  const clientHistory   = ['מיד', 'תוך כמה דקות', 'צריכה לחפש בכמה מקומות', 'אין מקום מסודר'][a.client_history ?? -1] || null;
-  const painPoint       = (a.pain_point || '').trim();
-  const energyAreas     = a.energy_areas || [];
+  // מיפוי תשובות לערכים
+  const responseTimeIdx   = a.response_time  ?? -1;
+  const leadsHandlingIdx  = a.leads_handling ?? -1;
+  const monthlyLeadsIdx   = a.monthly_leads  ?? -1;
+  const repTimeIdx        = a.repetitive_time ?? -1;
+  const clientHistoryIdx  = a.client_history  ?? -1;
+  const energyAreas       = a.energy_areas || [];
+  const painPoint         = (a.pain_point || '').trim();
 
-  // תרגום energy_areas לטקסט
+  const leadsPerMonth   = ['עד 10', '10-30', '30-80', 'מעל 80'][monthlyLeadsIdx] || null;
   const energyLabels    = ['מענה לפניות', 'מעקב אחרי לקוחות', 'הצעות מחיר', 'תיאומים ותזכורות', 'ניהול מידע', 'אדמיניסטרציה'];
   const energyText      = energyAreas.map(i => energyLabels[i]).filter(Boolean);
+  const repTimeLabel    = ['פחות מ-3 שעות', '3-8 שעות', '8-15 שעות', 'יותר מ-15 שעות'][repTimeIdx] || null;
 
-  let parts = [];
+  // pain_point - לתשמיש פנימי, לא לציטוט ישיר
+  const hasPain = painPoint.length > 3;
+  const painRef = hasPain
+    ? `כתבת שאחד הדברים שהכי מתסכלים אותך הוא ${painPoint.length < 60 ? painPoint : 'העומס בניהול העסק'}.`
+    : '';
+
+  let body = '';
 
   if (worst === 'LEADS') {
-    if (responseTime && a.response_time >= 2)
-      parts.push(`ענית שזמן התגובה לפניות הוא ${responseTime}.`);
-    if (leadsHandling && a.leads_handling >= 1)
-      parts.push(`בנוסף סימנת ש${leadsHandling.toLowerCase()}.`);
-    if (leadsPerMonth && a.monthly_leads >= 1)
-      parts.push(`עם ${leadsPerMonth} פניות חדשות בחודש, גם פספוס קטן מצטבר להרבה הזדמנויות שלא מקבלות טיפול בזמן.`);
-    if (parts.length === 0)
-      parts.push('מהתשובות שלך עולה שתהליך קבלת הפניות עדיין לא מסודר לגמרי.');
+    const slowResponse  = responseTimeIdx >= 2;
+    const leaksLeads    = leadsHandlingIdx >= 2;
+    const highVolume    = monthlyLeadsIdx  >= 2;
+
+    if (slowResponse && leaksLeads && highVolume)
+      body = `לפי התשובות שלך, פניות מגיעות בקצב גבוה - אבל חלק מהן לא מקבלות מענה בזמן ואין תהליך שמוודא שאף פנייה לא נופלת בין הכיסאות. כשמספר הפניות גדול, העלות של כל פספוס עולה.`;
+    else if (slowResponse && leaksLeads)
+      body = `מהתשובות שלך עולה שזמן התגובה לפניות ארוך יחסית וחלק מהפניות לא מקבלות מעקב קבוע. בלי תהליך שתופס כל פנייה ומחזיר מענה מהיר - חלק מהן פשוט נעלמות.`;
+    else if (slowResponse)
+      body = `מהתשובות שלך עולה שזמן התגובה לפניות ארוך יחסית. ברוב המקרים, מי שלא מקבל תגובה מהירה פונה הלאה - וזה לא שאלה של כוונה טובה, אלא של תהליך שחסר.`;
+    else if (leaksLeads)
+      body = `לפי התשובות שלך, חלק מהפניות לא מקבלות מעקב קבוע. בלי מקום אחד שמרכז את כל הפניות - קל לאבד רצף, גם כשאת בהחלט רוצה לחזור לכולם.`;
+    else
+      body = `מהתשובות שלך עולה שתהליך קבלת הפניות עדיין לא מסודר לגמרי. זה התחום שבו מעט סדר יכול לעשות הבדל גדול מהר.`;
+
+    if (hasPain) body += ` ${painRef}`;
   }
 
   if (worst === 'OPS') {
-    if (repTime && a.repetitive_time >= 1)
-      parts.push(`סימנת שאת משקיעה ${repTime} בשבוע במשימות שחוזרות על עצמן.`);
-    if (energyText.length > 0)
-      parts.push(`בנוסף בחרת ש${energyText.slice(0,2).join(' ו')} הם התחומים שגוזלים ממך הכי הרבה אנרגיה.`);
-    if (parts.length === 0)
-      parts.push('מהתשובות שלך עולה שחלק משמעותי מהזמן הולך על עבודה תפעולית שאפשר לצמצם.');
+    const heavyLoad   = repTimeIdx >= 2;
+    const hasEnergy   = energyText.length > 0;
+    const topEnergy   = energyText.slice(0,2).join(' ו');
+
+    if (heavyLoad && hasEnergy)
+      body = `מהתשובות שלך עולה ש${repTimeLabel} בשבוע הולכים על משימות שחוזרות על עצמן, ובמיוחד על ${topEnergy}. העומס לא מגיע ממשימה אחת גדולה - הוא מצטבר מהרבה פעולות קטנות שאפשר לסדר בצורה אחרת.`;
+    else if (heavyLoad)
+      body = `מהתשובות שלך עולה שחלק משמעותי מהשבוע הולך על משימות שחוזרות שוב ושוב. כל אחת מהן לבד נראית קטנה - אבל יחד הן יוצרות עומס שמקשה לפנות זמן לדברים החשובים באמת.`;
+    else if (hasEnergy)
+      body = `מהתשובות שלך עולה ש${topEnergy} גוזלים ממך הרבה אנרגיה. זה בדרך כלל סימן שיש משימות שחוזרות על עצמן ועדיין לא קיבלו תהליך קבוע.`;
     else
-      parts.push('זה אומר שחלק משמעותי מהזמן שלך הולך על עבודה שאפשר לסדר בצורה אחרת.');
+      body = `מהתשובות שלך עולה שחלק משמעותי מהזמן הולך על עבודה תפעולית שאפשר לצמצם עם תהליך קבוע.`;
+
+    if (hasPain) body += ` ${painRef}`;
   }
 
   if (worst === 'CONTROL') {
-    if (clientHistory && a.client_history >= 2)
-      parts.push(`לפי התשובות שלך, כשצריך לבדוק היסטוריה של לקוח את ${clientHistory.toLowerCase()}.`);
-    if (energyText.includes('ניהול מידע'))
-      parts.push('בנוסף סימנת שניהול מידע הוא אחד התחומים שגוזלים ממך הכי הרבה אנרגיה.');
-    if (parts.length === 0)
-      parts.push('מהתשובות שלך עולה שהמידע קיים - אבל לא יושב במקום אחד שקל לעבוד איתו.');
+    const hardToFind  = clientHistoryIdx >= 2;
+    const infoEnergy  = energyText.includes('ניהול מידע');
+
+    if (hardToFind && infoEnergy)
+      body = `לפי התשובות שלך, אין היום מקום אחד שמרכז את כל המידע על הלקוחות בצורה מסודרת. כשמסמכים, שיחות ומידע מפוזרים בין כמה מקומות, כל בדיקה קטנה הופכת לחיפוש - והחיפושים האלה מצטברים לאורך היום לעוד ועוד עומס.`;
+    else if (hardToFind)
+      body = `לפי התשובות שלך, כשצריך לבדוק את ההיסטוריה של לקוח - את צריכה לחפש בכמה מקומות שונים. בלי מקום אחד שמרכז הכל, קשה לקבל תמונת מצב ברורה וקל יותר לפספס דברים בדרך.`;
+    else if (infoEnergy)
+      body = `מהתשובות שלך עולה שניהול מידע גוזל ממך הרבה אנרגיה. זה בדרך כלל סימן שהמידע קיים - אבל לא יושב במקום אחד שקל לעבוד איתו.`;
     else
-      parts.push('זה בדרך כלל סימן שהמידע קיים - אבל לא יושב במקום אחד שקל לעבוד איתו.');
+      body = `מהתשובות שלך עולה שהמידע בעסק מפוזר בכמה מקומות. בלי מרכז אחד - כל שאלה קטנה הופכת לחיפוש, וזה מצטבר.`;
+
+    if (hasPain) body += ` ${painRef}`;
   }
 
   if (worst === 'FLOW') {
-    if (repTime && a.repetitive_time >= 1)
-      parts.push(`סימנת שאת משקיעה ${repTime} בשבוע במשימות שחוזרות.`);
-    if (energyText.length > 0)
-      parts.push(`בנוסף, ${energyText.slice(0,2).join(' ו')} גוזלים ממך הרבה אנרגיה לאורך היום.`);
-    if (parts.length === 0)
-      parts.push('מהתשובות שלך עולה שהיום מתפרק בין הרבה כיוונים ואין תהליך שמחזיק הכל ביחד.');
+    const heavyLoad = repTimeIdx >= 1;
+    const hasEnergy = energyText.length > 0;
+    const topEnergy = energyText.slice(0,2).join(' ו');
+
+    if (heavyLoad && hasEnergy)
+      body = `מהתשובות שלך עולה שהיום מתחלק בין הרבה כיוונים - בעיקר ${topEnergy} - ואין עדיין תהליך שמחזיק הכל ביחד. הבעיה היא לא חוסר ארגון, אלא שכל דבר מגיע בנפרד ודורש תגובה בנפרד.`;
+    else if (heavyLoad)
+      body = `מהתשובות שלך עולה שהזמן לא הולך על דבר אחד גדול - הוא מתפורר בין הרבה משימות קטנות לאורך היום. בלי תהליך קבוע, היום מרגיש שבור גם כשאין "אסון" שאפשר להצביע עליו.`;
     else
-      parts.push('בלי תהליך קבוע, היום מרגיש שבור - גם כשאין "דבר גדול אחד" שאפשר להצביע עליו.');
+      body = `מהתשובות שלך עולה שהיום מתפרק בין הרבה כיוונים ואין תהליך שמחזיק הכל ביחד. זה מה שגורם לתחושה שהיום "עף" בלי שהספקת את מה שרצית.`;
+
+    if (hasPain) body += ` ${painRef}`;
   }
 
-  // שכבה 3 - pain_point
-  if (painPoint) {
-    parts.push(`כתבת שהדבר שהכי מתסכל אותך כרגע: "${painPoint}" - מעניין לראות שהתוצאה מצביעה בדיוק על אותו אזור.`);
-  }
-
-  return parts.join(' ');
+  return body;
 }
 
 function buildReco(worst, answers, seed) {
@@ -1006,8 +1030,6 @@ document.getElementById('mainInsightCard').innerHTML = `
       <div style="font-size:11px;font-weight:700;color:var(--orange-deep);letter-spacing:.06em;margin-bottom:4px;">🔥 הדבר הראשון שהייתי מטפלת בו:</div>
       <div style="font-family:'Rubik',sans-serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;letter-spacing:-0.01em;">${reco.priorityTitle}</div>
       <div style="font-size:14px;color:#444;line-height:1.65;">${reco.priorityBody}</div>
-      ${customPain ? `<div style="margin-top:10px;padding:10px 14px;background:rgba(255,255,255,.55);border-right:3px solid var(--orange);border-radius:8px;"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px;">ציינת גם:</div><div style="font-size:14px;font-style:italic;color:var(--ink);">"${customPain}"</div></div>` : ''}
-      ${reco.priorityInsight ? `<div style="font-size:14px;color:#444;line-height:1.65;margin-top:10px;">${reco.priorityInsight}</div>` : ''}
     </div>
 
     <div style="background:rgba(255,255,255,.5);border-radius:14px;padding:14px;">
