@@ -198,6 +198,196 @@ body {
 }
 .btn-cta:hover { transform: translateY(-2px); }
 
+/* ── CALLBACK BLOCK (secondary CTA - integrated, not a separate card) ── */
+.callback-block {
+  margin-top: 16px; padding-top: 16px;
+  /* thicker divider - clear separation from the main CTA */
+  border-top: 3px solid rgba(216,200,168,.55);
+}
+.callback-q {
+  font-family: 'Rubik', sans-serif;
+  font-size: 14px; font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  text-align: center;
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+.callback-bottom-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 14px; flex-wrap: wrap;
+}
+.callback-info {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12.5px; color: var(--muted);
+}
+.callback-phone {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400; color: var(--muted);
+  direction: ltr; display: inline-block;
+  letter-spacing: 0.02em;
+}
+.callback-edit-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; padding: 0;
+  background: transparent;
+  border: 1px solid rgba(212,90,18,.28);
+  color: var(--orange-deep);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, transform .15s;
+}
+.callback-edit-btn svg { width: 12px; height: 12px; fill: currentColor; }
+.callback-edit-btn:hover {
+  background: var(--orange-pale);
+  border-color: var(--orange);
+  transform: translateY(-1px);
+}
+
+/* ── EDIT MODAL ── */
+.edit-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(26,26,26,.5);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  display: none;
+  align-items: center; justify-content: center;
+  z-index: 10000;
+  opacity: 0;
+  transition: opacity .25s ease;
+  padding: 16px;
+}
+.edit-modal-overlay.visible { display: flex; opacity: 1; }
+.edit-modal {
+  background: linear-gradient(145deg, #FEF5E7 0%, #F9EDDE 100%);
+  border: 1px solid rgba(255,255,255,.92);
+  border-radius: 22px;
+  padding: 28px 26px 24px;
+  width: 100%; max-width: 420px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.28), 0 1px 1px rgba(255,255,255,.9) inset;
+  position: relative;
+  direction: rtl;
+  transform: translateY(10px) scale(0.98);
+  transition: transform .3s cubic-bezier(.2,.7,.2,1);
+}
+.edit-modal-overlay.visible .edit-modal { transform: translateY(0) scale(1); }
+.edit-modal-close {
+  position: absolute; top: 14px; left: 14px;
+  width: 32px; height: 32px;
+  background: rgba(0,0,0,.06); border: none;
+  border-radius: 50%; color: var(--ink);
+  font-size: 22px; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.edit-modal-close:hover { background: rgba(0,0,0,.12); }
+.edit-modal-icon {
+  width: 44px; height: 44px; margin-bottom: 12px;
+  background: linear-gradient(135deg, #FEF0E7 0%, #FDDDBD 100%);
+  border: 1px solid rgba(242,107,31,.2);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--orange-deep);
+}
+.edit-modal-icon svg { width: 20px; height: 20px; fill: currentColor; }
+.edit-modal-title {
+  font-family: 'Rubik', sans-serif; font-weight: 800;
+  font-size: 19px; color: var(--ink);
+  margin-bottom: 4px; text-align: right;
+  letter-spacing: -0.02em;
+}
+.edit-modal-sub {
+  font-size: 13px; color: var(--muted);
+  margin-bottom: 18px; text-align: right;
+}
+.edit-modal-field { margin-bottom: 12px; }
+.edit-modal-field label {
+  display: block; font-size: 12.5px; font-weight: 600;
+  color: var(--ink); margin-bottom: 5px;
+  text-align: right;
+}
+.edit-modal-field input {
+  width: 100%; padding: 11px 14px;
+  border: 1px solid var(--border); border-radius: 10px;
+  background: #fff; font-family: 'Assistant', sans-serif;
+  font-size: 14.5px; color: var(--ink);
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  text-align: right;
+}
+.edit-modal-field input:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(242,107,31,.13);
+}
+.edit-modal-field input[type="tel"],
+.edit-modal-field input[type="email"] {
+  direction: ltr; text-align: left;
+}
+.edit-modal-error {
+  font-size: 12.5px; color: #b91c1c;
+  min-height: 18px; margin-bottom: 4px;
+  text-align: right;
+}
+.edit-modal-save {
+  width: 100%; margin-top: 4px;
+  background: linear-gradient(135deg, #F47C2F, #D45A12);
+  color: #fff; border: none; border-radius: 12px;
+  padding: 13px 18px;
+  font-family: 'Rubik', sans-serif;
+  font-weight: 700; font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(242,107,31,.35);
+  transition: transform .15s, box-shadow .15s;
+}
+.edit-modal-save:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(242,107,31,.45);
+}
+.edit-modal-save.saved {
+  background: #2D7A3A;
+  pointer-events: none;
+  box-shadow: none;
+}
+@media (max-width: 480px) {
+  .edit-modal { padding: 22px 20px 20px; border-radius: 18px; }
+  .edit-modal-title { font-size: 17px; }
+  .edit-modal-sub { font-size: 12px; margin-bottom: 14px; }
+  .edit-modal-field input { font-size: 14px; padding: 10px 12px; }
+  .edit-modal-save { font-size: 14.5px; padding: 12px 16px; }
+}
+.btn-callback {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  background: transparent;
+  border: 1.5px solid var(--orange);
+  color: var(--orange-deep);
+  font-family: 'Assistant', sans-serif;
+  font-size: 13.5px; font-weight: 700;
+  padding: 9px 28px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .2s, border-color .2s, color .2s;
+  white-space: nowrap;
+}
+.btn-callback:hover { background: var(--orange-pale); }
+.btn-callback.requested {
+  background: #E6F4EA;
+  border-color: rgba(45,122,58,.45);
+  color: var(--green);
+  pointer-events: none;
+}
+@media (max-width: 620px) {
+  .callback-block { margin-top: 14px; padding-top: 14px; }
+  .callback-q { font-size: 13px; margin-bottom: 12px; }
+  .callback-bottom-row { gap: 10px; }
+  .callback-info { font-size: 11.5px; gap: 6px; }
+  .btn-callback { font-size: 13px; padding: 8px 22px; }
+  .callback-edit-btn { width: 22px; height: 22px; }
+  .callback-edit-btn svg { width: 11px; height: 11px; }
+}
+@media (max-width: 380px) {
+  .callback-bottom-row { flex-direction: column; gap: 10px; }
+  .btn-callback { width: 100%; max-width: 240px; }
+}
+
 .footer-note { text-align: center; font-size: 13px; color: var(--muted); padding-bottom: 40px; }
 
 @media (max-width: 600px) {
@@ -316,11 +506,53 @@ body {
         <button class="btn-cta" onclick="openContact()">
           <span>קביעת שיחת אבחון ממוקדת ביומן 🗓️</span>
         </button>
+
+        <div class="callback-block">
+          <div class="callback-q">📞 רוצה שנחשוב יחד מה הכי נכון לעסק שלך?</div>
+          <div class="callback-bottom-row">
+            <span class="callback-info">
+              <span class="callback-phone" id="callbackPhone">052-8966998</span>
+              <button class="callback-edit-btn" onclick="openEditModal()" aria-label="עריכת פרטים" title="עריכת פרטים">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.21a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+              </button>
+            </span>
+            <button class="btn-callback" id="btnCallback" onclick="requestCallback()">
+              אשמח שתחזרי אלי
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 
   <div class="footer-note">© 2026 Flowli · כל הזכויות שמורות</div>
+</div>
+
+<!-- ── EDIT DETAILS MODAL ── -->
+<div class="edit-modal-overlay" id="editModal" onclick="closeEditModal(event)">
+  <div class="edit-modal" onclick="event.stopPropagation()">
+    <button class="edit-modal-close" onclick="closeEditModal()" aria-label="סגור">×</button>
+    <div class="edit-modal-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.21a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+    </div>
+    <h3 class="edit-modal-title">עריכת פרטים</h3>
+    <p class="edit-modal-sub">עדכון השם, המייל או הטלפון</p>
+    <div class="edit-modal-field">
+      <label for="editName">שם מלא</label>
+      <input id="editName" type="text" autocomplete="name">
+    </div>
+    <div class="edit-modal-field">
+      <label for="editEmail">אימייל</label>
+      <input id="editEmail" type="email" autocomplete="email" inputmode="email">
+    </div>
+    <div class="edit-modal-field">
+      <label for="editPhone">טלפון</label>
+      <input id="editPhone" type="tel" autocomplete="tel" inputmode="tel">
+    </div>
+    <div class="edit-modal-error" id="editError"></div>
+    <button class="edit-modal-save" id="editSaveBtn" onclick="saveEditedDetails()">שמירה</button>
+  </div>
 </div>
 
 <script>
@@ -748,6 +980,146 @@ document.getElementById('planSteps34').innerHTML = `
 // ─── CTA - קישור לקלנדלי ──────────────────────────────────────────────────────
 function openContact() {
   window.location.href = 'https://calendly.com/hadas-flowli/20min';
+}
+
+// ─── CALLBACK BLOCK ─────────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://whuuevjoqitwslnykvgd.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndodXVldmpvcWl0d3NsbnlrdmdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTk3NDQsImV4cCI6MjA5NDY5NTc0NH0.r_lxvPFY275H7ODxYGHs0-NvqfQd8_e3fKHYy4sgq34';
+
+/* Show actual phone from localStorage */
+(function loadCallbackPhone() {
+  try {
+    const u = localStorage.getItem('flowli_user') || localStorage.getItem('flowli_lead');
+    if (!u) return;
+    const d = JSON.parse(u);
+    if (d.phone) {
+      const phoneEl = document.getElementById('callbackPhone');
+      if (phoneEl) phoneEl.textContent = d.phone;
+    }
+  } catch(e){}
+})();
+
+function openEditModal() {
+  const overlay = document.getElementById('editModal');
+  if (!overlay) return;
+  /* Pre-fill from localStorage */
+  try {
+    const u = localStorage.getItem('flowli_user') || localStorage.getItem('flowli_lead');
+    if (u) {
+      const d = JSON.parse(u);
+      document.getElementById('editName').value  = d.name  || '';
+      document.getElementById('editEmail').value = d.email || '';
+      document.getElementById('editPhone').value = d.phone || '';
+    }
+  } catch(e){}
+  document.getElementById('editError').textContent = '';
+  const saveBtn = document.getElementById('editSaveBtn');
+  saveBtn.classList.remove('saved');
+  saveBtn.textContent = 'שמירה';
+  overlay.classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeEditModal(e) {
+  /* Only close on overlay click (not modal content click) */
+  if (e && e.target && !e.target.classList.contains('edit-modal-overlay') && e.type === 'click') {
+    if (!e.currentTarget.classList.contains('edit-modal-overlay')) return;
+  }
+  const overlay = document.getElementById('editModal');
+  if (overlay) overlay.classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+async function saveEditedDetails() {
+  const name  = document.getElementById('editName').value.trim();
+  const email = document.getElementById('editEmail').value.trim();
+  const phone = document.getElementById('editPhone').value.trim();
+  const errEl = document.getElementById('editError');
+  const saveBtn = document.getElementById('editSaveBtn');
+
+  /* Validate */
+  if (!name)  { errEl.textContent = 'נא להזין שם';   document.getElementById('editName').focus();  return; }
+  if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+    errEl.textContent = 'נא להזין אימייל תקין';
+    document.getElementById('editEmail').focus();
+    return;
+  }
+  if (!phone) { errEl.textContent = 'נא להזין טלפון'; document.getElementById('editPhone').focus(); return; }
+  errEl.textContent = '';
+
+  /* Update localStorage */
+  const data = { name, email, phone };
+  localStorage.setItem('flowli_user', JSON.stringify(data));
+  localStorage.setItem('flowli_lead', JSON.stringify(data));
+
+  /* Update visible phone in callback block */
+  const phoneEl = document.getElementById('callbackPhone');
+  if (phoneEl) phoneEl.textContent = phone;
+
+  /* Visual feedback */
+  saveBtn.classList.add('saved');
+  saveBtn.textContent = '✓ נשמר';
+
+  /* Save to Supabase */
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/leads?email=eq.${encodeURIComponent(email)}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ name, phone })
+    });
+  } catch(err) { console.warn('edit save failed', err); }
+
+  /* Close after brief delay so user sees the success */
+  setTimeout(() => {
+    const overlay = document.getElementById('editModal');
+    if (overlay) overlay.classList.remove('visible');
+    document.body.style.overflow = '';
+  }, 700);
+}
+
+/* ESC closes modal */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const overlay = document.getElementById('editModal');
+    if (overlay && overlay.classList.contains('visible')) {
+      overlay.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+  }
+});
+
+async function requestCallback() {
+  const btn = document.getElementById('btnCallback');
+  if (!btn || btn.classList.contains('requested')) return;
+
+  /* Visual feedback first - feels instant */
+  btn.classList.add('requested');
+  btn.innerHTML = '✅ נחזור אליך בהקדם';
+
+  /* Save callback request to Supabase */
+  try {
+    const u = localStorage.getItem('flowli_user') || localStorage.getItem('flowli_lead');
+    if (!u) return;
+    const d = JSON.parse(u);
+    if (!d.email) return;
+    await fetch(`${SUPABASE_URL}/rest/v1/leads?email=eq.${encodeURIComponent(d.email)}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ callback_requested: true })
+    });
+  } catch(err) {
+    console.warn('Callback save failed:', err);
+  }
 }
 </script>
 
