@@ -733,4 +733,20 @@ function startDiagnosis() {
   setTimeout(() => {
     const text = document.querySelector('.order-text');
     if (text) {
-      text.style.tra
+      text.style.transition = 'opacity .35s ease, transform .35s ease';
+      text.style.opacity = '0';
+      text.style.transform = 'translateY(-6px)';
+    }
+  }, 2300);
+
+  /* 5. Navigate to first question */
+  setTimeout(() => {
+    window.location.href = 'flowli-diagnose-step1.html';
+  }, 2600);
+}
+</script>
+<script src="https://negishot.co.il/cdn/widget.php?code=NGS_BB3A4C90A679"></script>
+<script src="flowli-legal.js"></script>
+
+</body>
+</html>
