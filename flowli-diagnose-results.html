@@ -646,6 +646,36 @@ const metaMeta = {
   FLOW:    { label: 'תהליכים שוטפים',  emoji: '🟢' },
 };
 
+/* ─── SEVERITY (חומרת המצב) ────────────────────────────────────────
+   HIGH   = ציון worst_area גבוה + תשובות קיצוניות
+   MEDIUM = ציון בינוני
+   LOW    = ציון נמוך יחסית
+──────────────────────────────────────────────────────────────────── */
+function calcSeverity(worstArea, answers, worstScore) {
+  const a = answers || {};
+  let extremeCount = 0;
+
+  // תשובות קיצוניות - הכי גרוע בכל שאלה (index 3 = גרוע)
+  if (a.mood           >= 3) extremeCount++;
+  if (a.response_time  >= 3) extremeCount++;
+  if (a.leads_handling >= 2) extremeCount++;
+  if (a.close_rate     >= 2) extremeCount++;
+  if (a.client_history >= 3) extremeCount++;
+  if (a.repetitive_time >= 3) extremeCount++;
+
+  // כמה תחומי אנרגיה סימנו (הרבה = יותר חמור)
+  const energyCount = (a.energy_drain || a.energy_areas || []).length;
+  if (energyCount >= 4) extremeCount++;
+
+  const pct = problemPct(worstScore, worstArea);
+
+  if (pct >= 70 || extremeCount >= 4) return 'HIGH';
+  if (pct >= 40 || extremeCount >= 2) return 'MEDIUM';
+  return 'LOW';
+}
+
+const severity = calcSeverity(worst, raw.answers, rawScores[worst]);
+
 // ─── RECOMMENDATIONS MAP (צמצום משמעותי - ניטרלי מגדרית וישר לתכלס) ───
 // ─── DETECTION HELPERS ─────────────────────────────────────────────
 function detectScenario(answers) {
@@ -917,27 +947,28 @@ function buildPersonalBody(worst, answers) {
     const slowResponse = responseTimeIdx >= 2;
     const leaksLeads   = leadsHandlingIdx >= 2;
     const hasVolume    = monthlyLeadsIdx  >= 1;
+    const badClose     = (raw.answers?.close_rate ?? 0) >= 2;
 
-    // שכבה 1 - תשובות מספריות משולבות כמסקנה
-    if (slowResponse && leaksLeads && hasVolume)
-      parts.push(`לפי התשובות שלך, זמן התגובה לפניות הוא בדרך כלל יום או יותר, וחלק מהפניות גם מתפספסות בדרך. כשמצטרפות לזה ${leadsPerMonthLabel} פניות בחודש, קל להבין למה נוצר עומס ולמה קשה לחזור לכולם בזמן.`);
-    else if (slowResponse && leaksLeads)
-      parts.push(`לפי התשובות שלך, זמן התגובה לפניות ארוך יחסית וחלק מהפניות לא מקבלות מעקב קבוע. בלי תהליך שתופס כל פנייה - חלק מהן פשוט נעלמות.`);
-    else if (slowResponse)
-      parts.push(`לפי התשובות שלך, זמן התגובה לפניות הוא יום או יותר. ברוב המקרים, מי שלא מקבל תגובה מהירה - פונה הלאה.`);
-    else if (leaksLeads)
-      parts.push(`לפי התשובות שלך, חלק מהפניות לא מקבלות מעקב קבוע. בלי מקום שמחזיק את כל הפניות - קל לאבד רצף.`);
-    else
-      parts.push(`מהתשובות שלך עולה שתהליך קבלת הפניות עדיין לא מסודר לגמרי.`);
+    if (severity === 'HIGH') {
+      let p = `לפי התשובות שלך, זמן התגובה לפניות הוא יום או יותר, אין תהליך קבוע שתופס אותן, ושיעור הסגירה נמוך. `;
+      if (hasVolume) p += `עם ${leadsPerMonthLabel} פניות בחודש - זה אומר שכל שבוע יש פניות שנכנסות ופשוט לא מקבלות טיפול. `;
+      if (raw.answers?.mood >= 3) p += `התחושה של כיבוי שריפות יומיומי מתחברת בדיוק לזה - כשאין תהליך, כל פנייה מרגישה דחופה.`;
+      parts.push(p.trim());
+    } else if (severity === 'MEDIUM') {
+      if (slowResponse && leaksLeads && hasVolume)
+        parts.push(`לפי התשובות שלך, זמן התגובה לפניות ארוך יחסית וחלק מהפניות לא מקבלות מעקב קבוע. כשמצטרפות לזה ${leadsPerMonthLabel} פניות בחודש, קל להבין למה נוצר עומס.`);
+      else if (slowResponse)
+        parts.push(`לפי התשובות שלך, זמן התגובה לפניות ארוך יחסית. ברוב המקרים, מי שלא מקבל תגובה מהירה - פונה הלאה.`);
+      else
+        parts.push(`לפי התשובות שלך, חלק מהפניות לא מקבלות מעקב קבוע. בלי מקום שמחזיק את כל הפניות - קל לאבד רצף.`);
+    } else {
+      parts.push(`מהתשובות שלך עולה שתהליך קבלת הפניות עדיין לא מסודר לגמרי - יש מקום לשיפור קטן שיכול לעשות הבדל.`);
+    }
 
-    // שכבה 2 - pain_point בציטוט אמיתי
     if (hasPain) parts.push(painSentence);
-
-    // שכבה 3 - קונטקסט עסקי
     const biz = bizContext('LEADS');
     if (biz) parts.push(biz);
-
-    parts.push(`בלי תהליך שתופס כל פנייה מהרגע שנכנסה ועד שנקבעה פגישה, חלק מהפניות פשוט נופלות בין הכיסאות.`);
+    if (severity !== 'LOW') parts.push(`בלי תהליך שתופס כל פנייה מהרגע שנכנסה ועד שנקבעה פגישה, חלק מהפניות פשוט נופלות בין הכיסאות.`);
   }
 
   if (worst === 'OPS') {
@@ -946,18 +977,26 @@ function buildPersonalBody(worst, answers) {
     const topEnergy = energyText.slice(0,2).join(' ו');
     const hasMagic  = magicTaskLabel !== null;
 
-    if (heavyLoad && hasMagic)
-      parts.push(`לפי התשובות שלך, ${repTimeLabel} בשבוע הולכות על משימות שחוזרות על עצמן. מבין כל המשימות, בחרת ב${magicTaskLabel} כמשהו שהיית שמחה להשקיע בו פחות זמן - זה בדרך כלל סימן שיש שם הזדמנות לחסוך זמן בלי לשנות הרבה.`);
-    else if (heavyLoad && hasEnergy)
-      parts.push(`לפי התשובות שלך, ${repTimeLabel} בשבוע הולכים על משימות שחוזרות על עצמן - בעיקר ${topEnergy}. העומס לא מגיע ממשימה אחת גדולה, הוא מצטבר מהרבה פעולות קטנות.`);
-    else if (heavyLoad)
-      parts.push(`לפי התשובות שלך, ${repTimeLabel} בשבוע הולכים על משימות שחוזרות. כל אחת מהן לבד נראית קטנה - אבל יחד הן יוצרות עומס שמקשה לפנות זמן לדברים החשובים.`);
-    else if (hasMagic)
-      parts.push(`מבין כל המשימות, בחרת ב${magicTaskLabel} כמשהו שהיית שמחה להשקיע בו פחות זמן. זה בדרך כלל סימן שיש שם הזדמנות לחסוך זמן בלי לשנות הרבה.`);
-    else if (hasEnergy)
-      parts.push(`לפי התשובות שלך, ${topEnergy} גוזלים ממך הרבה אנרגיה - זה בדרך כלל סימן למשימות שחוזרות ועדיין לא קיבלו תהליך קבוע.`);
-    else
-      parts.push(`מהתשובות שלך עולה שחלק משמעותי מהזמן הולך על עבודה תפעולית שאפשר לצמצם.`);
+    if (severity === 'HIGH') {
+      let p = `לפי התשובות שלך, יותר מ-15 שעות בשבוע הולכות על משימות שחוזרות על עצמן`;
+      if (hasEnergy) p += ` - בעיקר ${topEnergy}`;
+      p += `. `;
+      if ((raw.answers?.mood ?? 0) >= 3) p += `התחושה של כיבוי שריפות יומיומי מתחברת ישירות לזה. `;
+      if (hasMagic) p += `מבין כל המשימות, בחרת ב${magicTaskLabel} כמשהו שהיית שמחה להעלים - וזה בדיוק המקום שכדאי להתחיל ממנו.`;
+      parts.push(p.trim());
+    } else if (severity === 'MEDIUM') {
+      if (heavyLoad && hasMagic)
+        parts.push(`לפי התשובות שלך, ${repTimeLabel} בשבוע הולכות על משימות שחוזרות. מבין כל המשימות, בחרת ב${magicTaskLabel} כמשהו שהיית שמחה להשקיע בו פחות זמן - זה בדרך כלל המקום שכדאי להתחיל ממנו.`);
+      else if (heavyLoad && hasEnergy)
+        parts.push(`לפי התשובות שלך, ${repTimeLabel} בשבוע הולכים על משימות שחוזרות - בעיקר ${topEnergy}. העומס לא מגיע ממשימה אחת גדולה, הוא מצטבר מהרבה פעולות קטנות.`);
+      else
+        parts.push(`לפי התשובות שלך, חלק משמעותי מהשבוע הולך על עבודה שחוזרת על עצמה. שם יש הזדמנות אמיתית לחסוך זמן.`);
+    } else {
+      if (hasMagic)
+        parts.push(`מבין כל המשימות, בחרת ב${magicTaskLabel} כמשהו שהיית שמחה להשקיע בו פחות זמן. זה בדרך כלל סימן לקטן שאפשר לשפר בלי מאמץ גדול.`);
+      else
+        parts.push(`מהתשובות שלך עולה שיש כמה משימות חוזרות שאפשר לסדר - לא שינוי גדול, אבל יחסוך זמן לאורך זמן.`);
+    }
 
     if (hasPain) parts.push(painSentence);
     const biz = bizContext('OPS');
@@ -966,9 +1005,14 @@ function buildPersonalBody(worst, answers) {
 
   if (worst === 'CONTROL') {
     const hardToFind = clientHistoryIdx >= 2;
+    const noOrderAtAll = (raw.answers?.client_history ?? 0) >= 3;
     const infoEnergy = energyText.includes('ניהול מידע');
 
-    if (hardToFind && infoEnergy)
+    if (severity === 'HIGH') {
+      let p = `לפי התשובות שלך, אין היום מקום אחד שמרכז את המידע על הלקוחות והפעילות בעסק. כשצריך לבדוק מה סוכם, איפה עומד לקוח או מה המשימה הבאה - מתחיל חיפוש. `;
+      if ((raw.answers?.mood ?? 0) >= 3) p += `בשילוב עם התחושה היומיומית של כיבוי שריפות, זה יוצר עומס שמתמשך ומקשה לקבל החלטות בזמן.`;
+      parts.push(p.trim());
+    } else if (hardToFind && infoEnergy)
       parts.push(`לפי התשובות שלך, אין היום מקום אחד שמרכז את המידע על הלקוחות. כשמסמכים ושיחות מפוזרים בין כמה מקומות, כל בדיקה קטנה הופכת לחיפוש - והחיפושים האלה מצטברים לאורך היום.`);
     else if (hardToFind)
       parts.push(`לפי התשובות שלך, כדי לבדוק היסטוריה של לקוח צריך לחפש בכמה מקומות שונים. בלי מרכז אחד - קשה לקבל תמונת מצב ברורה.`);
@@ -987,12 +1031,18 @@ function buildPersonalBody(worst, answers) {
     const hasEnergy = energyText.length > 0;
     const topEnergy = energyText.slice(0,2).join(' ו');
 
-    if (heavyLoad && hasEnergy)
+    if (severity === 'HIGH') {
+      let p = `לפי התשובות שלך, היום שלך שבור לגמרי בין כיוונים - `;
+      if (hasEnergy) p += `בעיקר ${topEnergy}`;
+      p += `. אין תהליך שמחזיק את העבודה ביחד, וכל דבר חדש שנכנס מפריע לרצף. `;
+      if ((raw.answers?.mood ?? 0) >= 3) p += `התחושה של כיבוי שריפות יומיומי היא בדיוק מה שקורה כשאין מסגרת שמחזיקה את היום.`;
+      parts.push(p.trim());
+    } else if (heavyLoad && hasEnergy)
       parts.push(`לפי התשובות שלך, היום מתחלק בין הרבה כיוונים - בעיקר ${topEnergy} - ואין עדיין תהליך שמחזיק הכל ביחד. הבעיה היא לא חוסר ארגון, אלא שכל דבר מגיע בנפרד ודורש תגובה בנפרד.`);
     else if (heavyLoad)
       parts.push(`לפי התשובות שלך, הזמן לא הולך על דבר אחד גדול - הוא מתפורר בין הרבה משימות קטנות לאורך היום. בלי תהליך קבוע, היום מרגיש שבור גם בלי "אסון" שאפשר להצביע עליו.`);
     else
-      parts.push(`מהתשובות שלך עולה שהיום מתפרק בין הרבה כיוונים ואין תהליך שמחזיק הכל ביחד.`);
+      parts.push(`מהתשובות שלך עולה שיש מקום לתהליך קבוע שיחזיק את היום ביחד.`);
 
     if (hasPain) parts.push(painSentence);
   }
@@ -1322,59 +1372,4 @@ async function saveEditedDetails() {
         'Prefer': 'return=minimal'
       },
       body: JSON.stringify({ name, email, phone })  /* original_email לא מתעדכן בכוונה */
-    });
-  } catch(err) { console.warn('edit save failed', err); }
-
-  /* Close after brief delay so user sees the success */
-  setTimeout(() => {
-    const overlay = document.getElementById('editModal');
-    if (overlay) overlay.classList.remove('visible');
-    document.body.style.overflow = '';
-  }, 700);
-}
-
-/* ESC closes modal */
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    const overlay = document.getElementById('editModal');
-    if (overlay && overlay.classList.contains('visible')) {
-      overlay.classList.remove('visible');
-      document.body.style.overflow = '';
-    }
-  }
-});
-
-async function requestCallback() {
-  const btn = document.getElementById('btnCallback');
-  if (!btn || btn.classList.contains('requested')) return;
-
-  /* Visual feedback first - feels instant */
-  btn.classList.add('requested');
-  btn.innerHTML = '👍 אחזור אליך בהקדם';
-
-  /* Save callback request to Supabase */
-  try {
-    const u = localStorage.getItem('flowli_user') || localStorage.getItem('flowli_lead');
-    if (!u) return;
-    const d = JSON.parse(u);
-    if (!d.email) return;
-    await fetch(`${SUPABASE_URL}/rest/v1/leads?email=eq.${encodeURIComponent(d.email)}`, {
-      method: 'PATCH',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({ callback_requested: true })
-    });
-  } catch(err) {
-    console.warn('Callback save failed:', err);
-  }
-}
-</script>
-
-<script src="flowli-legal.js"></script>
-<script src="https://negishot.co.il/cdn/widget.php?code=NGS_BB3A4C90A679"></script>
-</body>
-</html>
+   
