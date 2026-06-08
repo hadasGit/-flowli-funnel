@@ -10,25 +10,6 @@
   /* ── CSS ── */
   const style = document.createElement('style');
   style.textContent = `
-    /* ── כפתור נגישות ── */
-    #flowli-a11y-btn {
-      position: fixed;
-      bottom: 24px;
-      left: 24px;
-      z-index: 9000;
-      width: 48px; height: 48px;
-      border-radius: 50%;
-      background: #7A5C38;
-      border: none;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 16px rgba(0,0,0,.22);
-      transition: transform .2s, box-shadow .2s;
-    }
-    #flowli-a11y-btn:hover { transform: scale(1.08); box-shadow: 0 6px 22px rgba(0,0,0,.3); }
-    #flowli-a11y-btn svg { width: 24px; height: 24px; fill: #fff; }
-    #flowli-a11y-btn:focus-visible { outline: 3px solid #F26B1F; outline-offset: 3px; }
-
     /* ── מודל בסיס ── */
     .flowli-modal-overlay {
       position: fixed; inset: 0; z-index: 9100;
@@ -311,16 +292,7 @@
   `;
   document.body.appendChild(privOverlay);
 
-  /* ════════════════════════════════════
-     כפתור נגישות
-  ════════════════════════════════════ */
-  const a11yBtn = document.createElement('button');
-  a11yBtn.id = 'flowli-a11y-btn';
-  a11yBtn.setAttribute('aria-label', 'הצהרת נגישות');
-  a11yBtn.title = 'נגישות';
-  a11yBtn.innerHTML = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm0 6c1.1 0 2 .9 2 2v4l1.5 3H16a1 1 0 1 1 0 2h-1.5l-1-2h-3l-1 2H8a1 1 0 1 1 0-2h.5L10 14v-4c0-1.1.9-2 2-2z"/></svg>`;
-  a11yBtn.onclick = () => flowliOpenModal('flowli-a11y-modal');
-  document.body.appendChild(a11yBtn);
+  /* כפתור נגישות - מוחלף ע"י negishot widget */
 
   /* ════════════════════════════════════
      פופאפ עוגיות

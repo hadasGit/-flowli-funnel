@@ -733,19 +733,4 @@ function startDiagnosis() {
   setTimeout(() => {
     const text = document.querySelector('.order-text');
     if (text) {
-      text.style.transition = 'opacity .35s ease, transform .35s ease';
-      text.style.opacity = '0';
-      text.style.transform = 'translateY(-6px)';
-    }
-  }, 2300);
-
-  /* 5. Navigate to first question (overlay cream bg = step1 cream bg = no flash) */
-  setTimeout(() => {
-    window.location.href = 'flowli-diagnose-step1.html';
-  }, 2600);
-}
-</script>
-<script src="flowli-legal.js"></script>
-
-</body>
-</html>
+      text.style.tra

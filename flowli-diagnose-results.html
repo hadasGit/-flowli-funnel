@@ -627,6 +627,18 @@ const sorted = Object.entries(problems).sort((a,b) => b[1]-a[1]);
 const top2   = sorted.slice(0,2);
 const worst  = raw.worst_area || sorted[0][0];
 
+/* ─── מצב העסק לפי ציון ───────────────────────────────────────────
+   A = בעיה אמיתית  (healthScore < 45)  → 🔥 הדבר הראשון שהייתי מטפלת בו
+   B = מקום לשיפור  (45 ≤ score < 70)   → ⚡ הייתי מתחילה כאן
+   C = עסק מסודר    (score ≥ 70)         → 💡 המקום הבא שהייתי משפרת
+──────────────────────────────────────────────────────────────────── */
+const bizState = healthScore < 45 ? 'A' : healthScore < 70 ? 'B' : 'C';
+const priorityLabel = {
+  A: { icon: '🔥', text: 'הדבר הראשון שהייתי מטפלת בו:' },
+  B: { icon: '⚡', text: 'הייתי מתחילה כאן:' },
+  C: { icon: '💡', text: 'המקום הבא שהייתי משפרת:' }
+}[bizState];
+
 const metaMeta = {
   LEADS:   { label: 'פניות',    emoji: '💜' },
   OPS:      { label: 'זמן ותפעול',      emoji: '🟠' },
@@ -935,13 +947,13 @@ function buildPersonalBody(worst, answers) {
     const hasMagic  = magicTaskLabel !== null;
 
     if (heavyLoad && hasMagic)
-      parts.push(`לפי התשובות שלך, ${repTimeLabel} בשבוע הולכות על משימות שחוזרות על עצמן. בנוסף סימנת שהדבר שהכי היית רוצה להעלים מהיום שלך הוא ${magicTaskLabel}. זה בדרך כלל סימן שהעומס לא מגיע ממשימה אחת גדולה, אלא מהמון פעולות קטנות שמצטברות לאורך השבוע.`);
+      parts.push(`לפי התשובות שלך, ${repTimeLabel} בשבוע הולכות על משימות שחוזרות על עצמן. מבין כל המשימות, בחרת ב${magicTaskLabel} כמשהו שהיית שמחה להשקיע בו פחות זמן - זה בדרך כלל סימן שיש שם הזדמנות לחסוך זמן בלי לשנות הרבה.`);
     else if (heavyLoad && hasEnergy)
       parts.push(`לפי התשובות שלך, ${repTimeLabel} בשבוע הולכים על משימות שחוזרות על עצמן - בעיקר ${topEnergy}. העומס לא מגיע ממשימה אחת גדולה, הוא מצטבר מהרבה פעולות קטנות.`);
     else if (heavyLoad)
       parts.push(`לפי התשובות שלך, ${repTimeLabel} בשבוע הולכים על משימות שחוזרות. כל אחת מהן לבד נראית קטנה - אבל יחד הן יוצרות עומס שמקשה לפנות זמן לדברים החשובים.`);
     else if (hasMagic)
-      parts.push(`סימנת שהדבר שהכי היית רוצה להעלים מהיום שלך הוא ${magicTaskLabel}. זה בדרך כלל סימן שיש משימות חוזרות שעדיין לא קיבלו תהליך קבוע.`);
+      parts.push(`מבין כל המשימות, בחרת ב${magicTaskLabel} כמשהו שהיית שמחה להשקיע בו פחות זמן. זה בדרך כלל סימן שיש שם הזדמנות לחסוך זמן בלי לשנות הרבה.`);
     else if (hasEnergy)
       parts.push(`לפי התשובות שלך, ${topEnergy} גוזלים ממך הרבה אנרגיה - זה בדרך כלל סימן למשימות שחוזרות ועדיין לא קיבלו תהליך קבוע.`);
     else
@@ -985,7 +997,15 @@ function buildPersonalBody(worst, answers) {
     if (hasPain) parts.push(painSentence);
   }
 
-  return parts.join(' ');
+  const body = parts.join(' ');
+
+  /* מצב C - עסק מסודר: טקסט עדין יותר */
+  if (bizState === 'C') {
+    const magicLabel = magicTaskLabel ? `כמו ${magicTaskLabel}` : 'כמו הצעות מחיר ועדכונים';
+    return `לפי התשובות שלך, נראה שהתהליכים הבסיסיים בעסק כבר עובדים בצורה מסודרת. אם הייתי מחפשת איפה אפשר לחסוך עוד קצת זמן, הייתי מסתכלת על משימות שחוזרות על עצמן ${magicLabel} - שם בדרך כלל יש הכי הרבה מה לשפר בלי לשנות הרבה.`;
+  }
+
+  return body;
 }
 
 // ─── DOMAIN TOUCH (20% - נגיעות קטנות בכותרת והפתרון) ──────────────────────
@@ -1120,7 +1140,7 @@ const demoFlowHTML = reco.steps.map((s, i) => `
 document.getElementById('mainInsightCard').innerHTML = `
   <div style="background:linear-gradient(145deg,#FEF5E7 0%,#F9EDDE 100%);border:1px solid rgba(255,255,255,.92);border-radius:20px;padding:22px;box-shadow:0 2px 16px rgba(180,110,60,.08);display:flex;flex-direction:column;gap:14px;">
     <div>
-      <div style="font-size:11px;font-weight:700;color:var(--orange-deep);letter-spacing:.06em;margin-bottom:4px;">🔥 הדבר הראשון שהייתי מטפלת בו:</div>
+      <div style="font-size:11px;font-weight:700;color:var(--orange-deep);letter-spacing:.06em;margin-bottom:4px;">${priorityLabel.icon} ${priorityLabel.text}</div>
       <div style="font-family:'Rubik',sans-serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;letter-spacing:-0.01em;">${reco.priorityTitle}</div>
       <div style="font-size:14px;color:#444;line-height:1.65;">${reco.priorityBody}</div>
     </div>
@@ -1355,5 +1375,6 @@ async function requestCallback() {
 </script>
 
 <script src="flowli-legal.js"></script>
+<script src="https://negishot.co.il/cdn/widget.php?code=NGS_BB3A4C90A679"></script>
 </body>
 </html>
