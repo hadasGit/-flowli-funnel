@@ -465,6 +465,7 @@ td.score { font-weight: 700; font-size: 15px; }
         <th data-col="rec">המלצה</th>
         <th data-col="roi">ROI</th>
         <th data-col="callback">חזרה</th>
+        <th data-col="source">מקור</th>
       </tr>
     </thead>
     <tbody id="tableBody"></tbody>
@@ -775,6 +776,7 @@ function renderTable(data) {
       <td><span class="rec-badge ${rec.cls}">${rec.icon} ${rec.label}</span></td>
       <td>${fmtRoi(lead.roi_estimate)}</td>
       <td>${lead.callback_requested ? '<span class="cb-yes">✓ ביקשה</span>' : '<span class="cb-no">—</span>'}</td>
+      <td>${lead.source === 'email' ? '<span style="background:#FEF0E7;color:#D45A12;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid rgba(242,107,31,.3);">📧 מייל</span>' : '<span style="color:#8A8378;font-size:12px;">אורגני</span>'}</td>
     </tr>`;
   }).join('');
 }

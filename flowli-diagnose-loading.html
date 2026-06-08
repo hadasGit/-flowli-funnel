@@ -324,7 +324,7 @@
     <!-- ── Section 1: ניתוח ── -->
     <section class="loading-section" id="loadingSection">
 
-      <div class="thank-you-badge"><span class="badge-star">✨</span><span id="leadName">רגע אחד</span> — תודה שמילאת את השאלון</div>
+      <div class="thank-you-badge"><span class="badge-star">✨</span><span id="leadName">בונה עבורך אבחון אישי</span></div>
 
       <div>
         <h1 class="loading-headline">
@@ -456,8 +456,7 @@
       }
       if (!firstName) firstName = localStorage.getItem('flowliName') || '';
     } catch(e) {}
-    const nameEl = document.getElementById('leadName');
-    if (firstName) nameEl.textContent = firstName;
+    /* הכיתוב 'בונה עבורך אבחון אישי' נשאר קבוע - לא מחליפים בשם */
 
     // ── רצף ניתוח ──
     const steps = [
