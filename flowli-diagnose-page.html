@@ -450,16 +450,22 @@
               name, phone,
               consent: true,
               visit_count: visitCount,
-              /* אפס שדות שאלון */
-              answers: null,
-              score: null,
-              worst_area: null,
+              source: sessionStorage.getItem('flowli_source') || payload.source,
+              /* תשובות חדשות מהשאלון */
+              answers:    payload.answers    || null,
+              score:      payload.score      || null,
+              worst_area: payload.worst_area || null,
+              leads_score:   payload.leads_score   || null,
+              ops_score:     payload.ops_score     || null,
+              control_score: payload.control_score || null,
+              flow_score:    payload.flow_score    || null,
+              tool1:         payload.tool1         || null,
+              tool2:         payload.tool2         || null,
+              completed_at:  payload.completed_at  || null,
               roi_estimate: null,
               callback_requested: false,
               meeting_requested: false,
               abandoned_at_step: null,
-              completed_at: null,
-              source: sessionStorage.getItem('flowli_source') || payload.source
             })
           });
         } else {
