@@ -879,7 +879,7 @@ function buildPersonalBody(worst, answers) {
   const monthlyLeadsIdx  = a.monthly_leads   ?? -1;
   const repTimeIdx       = a.repetitive_time ?? -1;
   const clientHistoryIdx = a.client_history  ?? -1;
-  const energyAreas      = a.energy_areas || [];
+  const energyAreas      = a.energy_drain || a.energy_areas || [];
   const painPoint        = (a.pain_point || '').trim();
   const bizDesc          = (a.business_desc || '').trim();
 
@@ -1358,7 +1358,7 @@ async function saveEditedDetails() {
   if (emailEl) emailEl.textContent = email;
 
   /* Visual feedback */
-  saveBtn.classList.add('saved');
+  saveBtn.classList.add('saved';
   saveBtn.textContent = '✓ נשמר';
 
   /* Save to Supabase - use original email to find the record */
@@ -1372,4 +1372,60 @@ async function saveEditedDetails() {
         'Prefer': 'return=minimal'
       },
       body: JSON.stringify({ name, email, phone })  /* original_email לא מתעדכן בכוונה */
-   
+    });
+  } catch(err) {
+    console.warn('edit save failed', err);
+  }
+
+  /* Close after brief delay so user sees the success */
+  setTimeout(() => {
+    const overlay = document.getElementById('editModal');
+    if (overlay) overlay.classList.remove('visible');
+    document.body.style.overflow = '';
+  }, 700);
+}
+
+/* ESC closes modal */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const overlay = document.getElementById('editModal');
+    if (overlay && overlay.classList.contains('visible')) {
+      overlay.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+  }
+});
+
+async function requestCallback() {
+  const btn = document.getElementById('btnCallback');
+  if (!btn || btn.classList.contains('requested')) return;
+
+  /* Visual feedback first - feels instant */
+  btn.classList.add('requested');
+  btn.innerHTML = '👍 אחזור אליך בהקדם';
+
+  /* Save callback request to Supabase */
+  try {
+    const u = localStorage.getItem('flowli_user') || localStorage.getItem('flowli_lead');
+    if (!u) return;
+    const d = JSON.parse(u);
+    if (!d.email) return;
+    await fetch(`${SUPABASE_URL}/rest/v1/leads?email=eq.${encodeURIComponent(d.email)}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ callback_requested: true })
+    });
+  } catch(err) {
+    console.warn('Callback save failed:', err);
+  }
+}
+</script>
+<script src="https://negishot.co.il/cdn/widget.php?code=NGS_BB3A4C90A679"></script>
+<script src="flowli-legal.js"></script>
+</body>
+</html>
