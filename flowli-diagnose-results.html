@@ -93,19 +93,20 @@ body {
 }
 .hero-sub  { font-size: 13.5px; color: var(--muted); font-weight: 500; line-height: 1.45; }
 
-/* impact bubble - מצומצם */
+/* impact bubble - מורחב */
 .impact-bubble {
-  text-align: center;
   background: linear-gradient(135deg, #FFF4E6, #FFDDB8);
   border: 1.5px solid #F0D4A8; border-radius: 14px;
-  padding: 10px 16px; flex-shrink: 0;
+  padding: 14px 28px; flex-shrink: 0;
   animation: float 5s ease-in-out infinite;
-  min-width: 140px;
+  min-width: 260px;
+  display: flex; align-items: center; gap: 20px;
 }
-.impact-icon  { font-size: 18px; line-height: 1; margin-bottom: 3px; }
-.impact-range { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 900; color: var(--orange); letter-spacing: -0.03em; line-height: 1.2; }
-.impact-label { font-size: 10.5px; font-weight: 700; color: var(--ink); margin-top: 4px; }
-.impact-sub   { font-size: 9.5px; color: var(--muted); margin-top: 2px; }
+.impact-icon  { font-size: 28px; line-height: 1; flex-shrink: 0; }
+.impact-body  { text-align: right; }
+.impact-range { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 900; color: var(--orange); letter-spacing: -0.03em; line-height: 1.2; }
+.impact-label { font-size: 11px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.impact-sub   { font-size: 10px; color: var(--muted); margin-top: 4px; }
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 
 /* ── SECTION TITLE ── */
@@ -406,13 +407,11 @@ body {
   .hero-badge svg { width: 10px; height: 10px; }
   .hero-name { font-size: 16px; margin-bottom: 3px; line-height: 1.2; }
   .hero-sub  { font-size: 12px; line-height: 1.4; }
-  .impact-bubble { padding: 8px 12px; min-width: 110px; border-radius: 12px; }
-  .impact-icon  { font-size: 16px; margin-bottom: 2px; }
-  .impact-range { font-size: 13px; }
-  .impact-label { font-size: 10px; margin-top: 3px; }
-  .impact-sub   { font-size: 9px; margin-top: 1px; }
-  .impact-bubble { min-width: 140px; padding: 12px; }
-  .impact-range { font-size: 13px; }
+  .impact-bubble { padding: 10px 14px; min-width: 0; border-radius: 12px; gap: 10px; }
+  .impact-icon  { font-size: 20px; }
+  .impact-range { font-size: 14px; }
+  .impact-label { font-size: 10px; margin-bottom: 3px; }
+  .impact-sub   { font-size: 9px; margin-top: 2px; }
 }
 </style>
 </head>
@@ -453,10 +452,12 @@ body {
     </div>
     <div class="impact-bubble">
       <div class="impact-icon">💸</div>
-      <div style="font-size:10px;font-weight:700;color:var(--ink);margin-bottom:4px;">פוטנציאל חיסכון חודשי</div>
-      <div class="impact-range" id="impactHours">~ 3–6 שעות/שבוע</div>
-      <div class="impact-range" id="impactMoney" style="font-size:13px;margin-top:2px;">~ 1,800–4,200 ₪</div>
-      <div class="impact-sub">הערכה לפי התשובות שלך</div>
+      <div class="impact-body">
+        <div class="impact-label">פוטנציאל חיסכון חודשי</div>
+        <div class="impact-range" id="impactHours">~ 3–6 שעות/שבוע</div>
+        <div class="impact-range" id="impactMoney" style="font-size:18px;color:var(--orange-deep);margin-top:2px;">~ 1,800–4,200 ₪</div>
+        <div class="impact-sub">הערכה לפי התשובות שלך</div>
+      </div>
     </div>
   </div>
 
@@ -1179,13 +1180,112 @@ setTimeout(() => {
   document.querySelectorAll('.metric-fill').forEach(el => el.style.width = el.dataset.pct + '%');
 }, 300);
 
-// ── כרטיס ראשי: תובנה ממוקדת + זרימה חזותית ───────────────────────────
-const demoFlowHTML = reco.steps.map((s, i) => `
-  <div class="demo-node" style="animation-delay:${i*0.1}s;">
-    <div style="width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0;"></div>
-    <div style="font-size:13px;font-weight:600;color:var(--ink);">${s}</div>
-  </div>
-`).join('');
+// ── כרטיס ראשי: וואטסאפ דמו דינמי לפי scenario + worst ─────────────────
+function buildWADemo(worstArea, scenario) {
+  const css = `
+    <style>
+    .wa-demo{background:#ECE5DD;border-radius:12px;overflow:hidden;max-width:280px;margin:0 auto;font-family:'Assistant',system-ui,sans-serif;direction:rtl;}
+    .wa-hdr{background:#075E54;padding:8px 12px;display:flex;align-items:center;gap:8px;}
+    .wa-av{width:28px;height:28px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+    .wa-nm{color:#fff;font-weight:700;font-size:12px;}
+    .wa-sb{color:rgba(255,255,255,.7);font-size:10px;}
+    .wa-bd{padding:8px;display:flex;flex-direction:column;gap:5px;}
+    .mo{display:flex;justify-content:flex-end;}
+    .mi{display:flex;justify-content:flex-start;}
+    .bo{background:#DCF8C6;border-radius:10px 10px 2px 10px;padding:6px 9px;max-width:78%;font-size:11px;color:#1A1A1A;}
+    .bi{background:#fff;border-radius:10px 10px 10px 2px;padding:6px 9px;max-width:78%;font-size:11px;color:#1A1A1A;}
+    .ts{font-size:9px;color:#8A8378;text-align:left;margin-top:1px;}
+    .tg{text-align:center;margin:1px 0;}
+    .tg span{font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;}
+    .tg-g span{background:#B2DFDB;color:#00695C;}
+    .tg-o span{background:#FFF3E0;color:#E65100;}
+    .tg-b span{background:#E3F2FD;color:#1565C0;}
+    </style>
+  `;
+
+  // therapy: קלינאית, פסיכולוג, מאמן, שיעורים
+  if (scenario === 'therapy' || (worst === 'LEADS' && scenario === 'therapy')) {
+    return css + `<div class="wa-demo">
+      <div class="wa-hdr"><div class="wa-av">📅</div><div><div class="wa-nm">מערכת תיאומים</div><div class="wa-sb">אוטומטי</div></div></div>
+      <div class="wa-bd">
+        <div class="mi"><div class="bi">שלום, אשמח לקבוע פגישה<div class="ts">09:10</div></div></div>
+        <div class="mo"><div class="bo">הנה המועדים הפנויים 📅<br>ב׳ 10:00 | ד׳ 14:00 | ה׳ 09:00<div class="ts">09:10 ✓✓</div></div></div>
+        <div class="mi"><div class="bi">ד׳ ב-14:00 בבקשה<div class="ts">09:11</div></div></div>
+        <div class="tg tg-g"><span>✅ פגישה נקבעה ביומן אוטומטית</span></div>
+        <div class="mo"><div class="bo">מאושר! תזכורת תישלח יום לפני 🎉<div class="ts">09:11 ✓✓</div></div></div>
+      </div>
+    </div>`;
+  }
+
+  // beauty: סלון, תורים
+  if (scenario === 'beauty') {
+    return css + `<div class="wa-demo">
+      <div class="wa-hdr"><div class="wa-av">💆</div><div><div class="wa-nm">הזמנת תור</div><div class="wa-sb">אוטומטי</div></div></div>
+      <div class="wa-bd">
+        <div class="mi"><div class="bi">אפשר תור לצבע ביום ראשון?<div class="ts">18:30</div></div></div>
+        <div class="mo"><div class="bo">יש מקום ב-10:00 או 13:00 😊<div class="ts">18:30 ✓✓</div></div></div>
+        <div class="mi"><div class="bi">10:00 מושלם!<div class="ts">18:31</div></div></div>
+        <div class="tg tg-g"><span>✅ תור נקבע + תזכורת אוטומטית</span></div>
+        <div class="tg tg-b"><span>📁 כרטיס לקוחה עודכן</span></div>
+      </div>
+    </div>`;
+  }
+
+  // creative: עיצוב, הצעות מחיר
+  if (scenario === 'creative') {
+    return css + `<div class="wa-demo">
+      <div class="wa-hdr"><div class="wa-av">📄</div><div><div class="wa-nm">הצעות מחיר</div><div class="wa-sb">אוטומטי</div></div></div>
+      <div class="wa-bd">
+        <div class="mi"><div class="bi">אפשר הצעת מחיר לעיצוב לוגו?<div class="ts">14:00</div></div></div>
+        <div class="tg tg-b"><span>⚡ הצעת מחיר נוצרה אוטומטית</span></div>
+        <div class="mo"><div class="bo">הנה הצעת המחיר 📎<br>תקפה 7 ימים<div class="ts">14:00 ✓✓</div></div></div>
+        <div class="tg tg-g"><span>📋 מעקב אישור נפתח</span></div>
+        <div class="mo"><div class="bo">⏰ לא אישרו עדיין - שולחים תזכורת<div class="ts">16:00 ✓✓</div></div></div>
+      </div>
+    </div>`;
+  }
+
+  // CONTROL: היסטוריית לקוח
+  if (worstArea === 'CONTROL') {
+    return css + `<div class="wa-demo">
+      <div class="wa-hdr"><div class="wa-av">🔍</div><div><div class="wa-nm">כרטיס לקוח</div><div class="wa-sb">הכל במקום אחד</div></div></div>
+      <div class="wa-bd">
+        <div class="mi"><div class="bi">שלום, דיברנו לפני כמה חודשים...<div class="ts">09:45</div></div></div>
+        <div class="tg tg-b"><span>🔍 נמצא כרטיס לקוח תוך שניה</span></div>
+        <div class="mo"><div class="bo">היי! זוכרים 😊 דיברנו על הפרויקט - נמשיך?<div class="ts">09:45 ✓✓</div></div></div>
+        <div class="tg tg-g"><span>📁 כל ההיסטוריה זמינה מיד</span></div>
+      </div>
+    </div>`;
+  }
+
+  // LEADS: פנייה שלא נופלת
+  if (worstArea === 'LEADS') {
+    return css + `<div class="wa-demo">
+      <div class="wa-hdr"><div class="wa-av">🤖</div><div><div class="wa-nm">מענה אוטומטי</div><div class="wa-sb">תוך שניות</div></div></div>
+      <div class="wa-bd">
+        <div class="mi"><div class="bi">היי, אשמח לשמוע על השירות<div class="ts">10:12</div></div></div>
+        <div class="mo"><div class="bo">היי! קיבלנו את פנייתך 👋<br>נחזור אליך תוך שעה!<div class="ts">10:12 ✓✓</div></div></div>
+        <div class="tg tg-g"><span>📋 פנייה נרשמה במערכת</span></div>
+        <div class="mo"><div class="bo">⏰ תזכורת: עדיין לא חזרנו - שולחים עכשיו<div class="ts">11:12 ✓✓</div></div></div>
+        <div class="tg tg-o"><span>✅ עסקה נסגרה</span></div>
+      </div>
+    </div>`;
+  }
+
+  // OPS / FLOW / general
+  return css + `<div class="wa-demo">
+    <div class="wa-hdr"><div class="wa-av">🚀</div><div><div class="wa-nm">תהליך אוטומטי</div><div class="wa-sb">לקוח חדש</div></div></div>
+    <div class="wa-bd">
+      <div class="tg tg-o"><span>🎉 לקוח חדש נסגר</span></div>
+      <div class="mo"><div class="bo">ברוך הבא! שלחנו לך חוזה למייל 🙌<div class="ts">11:00 ✓✓</div></div></div>
+      <div class="tg tg-b"><span>📋 נפתחו משימות לצוות</span></div>
+      <div class="mi"><div class="bi">החוזה אושר ✅<br>מתחילים ביום ראשון!<div class="ts">11:45</div></div></div>
+      <div class="tg tg-g"><span>📁 הכל מתועד במקום אחד</span></div>
+    </div>
+  </div>`;
+}
+
+const demoFlowHTML = buildWADemo(worst, detectScenario(raw.answers));
 
 document.getElementById('mainInsightCard').innerHTML = `
   <div style="background:linear-gradient(145deg,#FEF5E7 0%,#F9EDDE 100%);border:1px solid rgba(255,255,255,.92);border-radius:20px;padding:22px;box-shadow:0 2px 16px rgba(180,110,60,.08);display:flex;flex-direction:column;gap:14px;">
@@ -1196,8 +1296,8 @@ document.getElementById('mainInsightCard').innerHTML = `
     </div>
 
     <div style="background:rgba(255,255,255,.5);border-radius:14px;padding:14px;">
-      <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:8px;">🎯 אחרי שמסדרים את התהליך:</div>
-      <div class="demo-container">${demoFlowHTML}</div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:10px;">🎯 אחרי שמסדרים את התהליך:</div>
+      ${demoFlowHTML}
     </div>
   </div>
 `;
