@@ -454,8 +454,8 @@ body {
       <div class="impact-icon">💸</div>
       <div class="impact-body">
         <div class="impact-label">פוטנציאל חיסכון חודשי</div>
-        <div class="impact-range" id="impactHours">~ 3–6 שעות/שבוע</div>
-        <div class="impact-range" id="impactMoney" style="font-size:18px;color:var(--orange-deep);margin-top:2px;">~ 1,800–4,200 ₪</div>
+        <div class="impact-range" id="impactHours">~ 3-6 שעות/שבוע</div>
+        <div class="impact-range" id="impactMoney" style="font-size:18px;color:var(--orange-deep);margin-top:2px;">~ 1,800-4,200 ₪</div>
         <div class="impact-sub">הערכה לפי התשובות שלך</div>
       </div>
     </div>
@@ -1134,8 +1134,8 @@ const moneyHigh = hoursHigh * 4 * hourRate;
 
 function fmtMoney(n) { return n >= 1000 ? `${Math.round(n/100)*100}`.replace(/\B(?=(\d{3})+(?!\d))/g,',') : n; }
 
-document.getElementById('impactHours').textContent = `~ ${hoursLow}–${hoursHigh} שעות/שבוע`;
-document.getElementById('impactMoney').textContent = `~ ${fmtMoney(moneyLow)}–${fmtMoney(moneyHigh)} ₪`;
+document.getElementById('impactHours').textContent = `~ ${hoursLow}-${hoursHigh} שעות/שבוע`;
+document.getElementById('impactMoney').textContent = `~ ${fmtMoney(moneyLow)}-${fmtMoney(moneyHigh)} ₪`;
 
 // hero name
 document.getElementById('heroName').innerHTML = firstName
