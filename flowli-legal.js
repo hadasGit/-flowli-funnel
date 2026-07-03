@@ -213,8 +213,8 @@
 
       <h3>פנייה בנושא נגישות</h3>
       <p>נתקלת.ם בקושי בגלישה? נשמח לדעת ולתקן.<br>
-      <strong>רכזת נגישות:</strong> הדס בארנס<br>
-      <strong>מייל:</strong> <a href="mailto:hadasbarnes76@gmail.com">hadasbarnes76@gmail.com</a><br>
+      <strong>רכזת נגישות:</strong> הדס גרינברג<br>
+      <strong>מייל:</strong> <a href="mailto:hadas@flowli.co.il">hadas@flowli.co.il</a><br>
       <strong>זמן מענה:</strong> עד 5 ימי עסקים</p>
 
       <p style="margin-top:16px;font-size:13px;color:#999;">עדכון אחרון: מאי 2026 · הצהרה תקפה לפי תקן ישראלי 5568</p>
@@ -291,7 +291,7 @@
         <li>לבטל הסכמה לדיוור</li>
         <li>לבקש העברת מידע</li>
       </ul>
-      <p>לפנייה: <a href="mailto:hadasbarnes76@gmail.com">hadasbarnes76@gmail.com</a> · מענה עד 5 ימי עסקים</p>
+      <p>לפנייה: <a href="mailto:hadas@flowli.co.il">hadas@flowli.co.il</a> · מענה עד 5 ימי עסקים</p>
 
       <h3>8. אבטחת מידע</h3>
       <p>אנו נוקטים באמצעים טכנולוגיים ואורגניזציוניים סבירים לאבטחת המידע. עם זאת, אין אבטחה מוחלטת ולא ניתן להבטיח חסינות מלאה.</p>
@@ -302,7 +302,7 @@
       <h3>10. שינויים במדיניות</h3>
       <p>החברה רשאית לעדכן מדיניות זו מעת לעת. הגרסה המעודכנת תפורסם באתר ותחייב מרגע פרסומה.</p>
 
-      <p style="margin-top:16px;font-size:13px;color:#999;">הדס בארנס · Flowli · hadasbarnes76@gmail.com</p>
+      <p style="margin-top:16px;font-size:13px;color:#999;">הדס גרינברג · Flowli · hadas@flowli.co.il</p>
 
       <div class="modal-footer">
         <button class="btn-orange" onclick="flowliCloseModal('flowli-privacy-modal')">הבנתי, סגור</button>
