@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════
    flowli-legal.js
    כפתור נגישות + הצהרת נגישות + פופאפ עוגיות
-   כולל CSS inline — קובץ אחד לכל הדפים
+   כולל CSS inline - קובץ אחד לכל הדפים
 ═══════════════════════════════════════════════ */
 
 (function() {
@@ -10,6 +10,25 @@
   /* ── CSS ── */
   const style = document.createElement('style');
   style.textContent = `
+    /* ── כפתור נגישות ── */
+    #flowli-a11y-btn {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 9000;
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: #1A1A1A;
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,.22);
+      transition: transform .2s, box-shadow .2s;
+    }
+    #flowli-a11y-btn:hover { transform: scale(1.08); box-shadow: 0 6px 22px rgba(0,0,0,.3); }
+    #flowli-a11y-btn svg { width: 24px; height: 24px; fill: #fff; }
+    #flowli-a11y-btn:focus-visible { outline: 3px solid #F26B1F; outline-offset: 3px; }
+
     /* ── מודל בסיס ── */
     .flowli-modal-overlay {
       position: fixed; inset: 0; z-index: 9100;
@@ -170,8 +189,8 @@
       <h2 id="a11y-title">הצהרת נגישות</h2>
 
       <h3>מבוא</h3>
-      <p>הזירה האינטרנטית היא פלטפורמה לביטוי וייצוג עצמי — זירה חברתית שבה אנחנו רוכשים, מוכרים, עובדים ונחשפים יותר מבעבר. ככזו, ישנה מחויבות לאפשר לכלל הציבור חוויית גלישה מהנה וקלה.</p>
-      <p style="margin-top:10px">אנו ב-Flowli משקיעים משאבים רבים להנגשת האתר, מתוך אמונה בכבוד האדם וחירותו — כולנו שווי זכויות ושווים במהותנו.</p>
+      <p>הזירה האינטרנטית היא פלטפורמה לביטוי וייצוג עצמי - זירה חברתית שבה אנחנו רוכשים, מוכרים, עובדים ונחשפים יותר מבעבר. ככזו, ישנה מחויבות לאפשר לכלל הציבור חוויית גלישה מהנה וקלה.</p>
+      <p style="margin-top:10px">אנו ב-Flowli משקיעים משאבים רבים להנגשת האתר, מתוך אמונה בכבוד האדם וחירותו - כולנו שווי זכויות ושווים במהותנו.</p>
 
       <h3>רמת נגישות</h3>
       <p>האתר מונגש בהתאם לתקן הישראלי 5568 ולרמת AA של WCAG 2.1 (הנחיות W3C לנגישות תכנים באינטרנט).</p>
@@ -181,12 +200,12 @@
 
       <h3>קיצורי מקלדת שימושיים</h3>
       <ul>
-        <li><strong>Ctrl +</strong> — הגדלת טקסט</li>
-        <li><strong>Ctrl –</strong> — הקטנת טקסט</li>
-        <li><strong>Ctrl 0</strong> — חזרה לגודל מקורי</li>
-        <li><strong>F11</strong> — מסך מלא</li>
-        <li><strong>Tab</strong> — מעבר בין אלמנטים אינטראקטיביים</li>
-        <li><strong>Esc</strong> — סגירת תפריטים ופופאפים</li>
+        <li><strong>Ctrl +</strong> - הגדלת טקסט</li>
+        <li><strong>Ctrl -</strong> - הקטנת טקסט</li>
+        <li><strong>Ctrl 0</strong> - חזרה לגודל מקורי</li>
+        <li><strong>F11</strong> - מסך מלא</li>
+        <li><strong>Tab</strong> - מעבר בין אלמנטים אינטראקטיביים</li>
+        <li><strong>Esc</strong> - סגירת תפריטים ופופאפים</li>
       </ul>
 
       <h3>מגבלות ידועות</h3>
@@ -194,8 +213,8 @@
 
       <h3>פנייה בנושא נגישות</h3>
       <p>נתקלת.ם בקושי בגלישה? נשמח לדעת ולתקן.<br>
-      <strong>רכזת נגישות:</strong> הדס גרינברג<br>
-      <strong>מייל:</strong> <a href="mailto:hadas@flowli.co.il">hadas@flowli.co.il</a><br>
+      <strong>רכזת נגישות:</strong> הדס בארנס<br>
+      <strong>מייל:</strong> <a href="mailto:hadasbarnes76@gmail.com">hadasbarnes76@gmail.com</a><br>
       <strong>זמן מענה:</strong> עד 5 ימי עסקים</p>
 
       <p style="margin-top:16px;font-size:13px;color:#999;">עדכון אחרון: מאי 2026 · הצהרה תקפה לפי תקן ישראלי 5568</p>
@@ -222,7 +241,7 @@
         <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
       <div class="modal-tag">פרטיות</div>
-      <h2 id="priv-title">מדיניות פרטיות – Flowli</h2>
+      <h2 id="priv-title">מדיניות פרטיות - Flowli</h2>
       <p style="font-size:13px;color:#999;margin-bottom:4px">עודכן לאחרונה: מאי 2026</p>
 
       <h3>1. כללי</h3>
@@ -232,14 +251,14 @@
       <p><strong>מידע שנמסר על-ידך:</strong></p>
       <ul>
         <li>שם מלא, כתובת דוא"ל ומספר טלפון</li>
-        <li>תשובות שאלון האבחון — נשמרות בשרתי Flowli לצורך מתן שירות מותאם אישית</li>
+        <li>תשובות שאלון האבחון - נשמרות מקומית בדפדפן שלך בלבד (localStorage)</li>
         <li>תכנים שנכתבים בשדות הטקסט החופשי</li>
       </ul>
       <p style="margin-top:8px"><strong>מידע טכני ואוטומטי:</strong></p>
       <ul>
         <li>כתובת IP, סוג דפדפן, מערכת הפעלה</li>
         <li>נתוני אנליטיקה ושימוש אנונימיים</li>
-        <li>עוגיות (Cookies) — ראה סעיף 5</li>
+        <li>עוגיות (Cookies) - ראה סעיף 5</li>
       </ul>
 
       <h3>3. שימוש במידע</h3>
@@ -255,9 +274,9 @@
 
       <h3>5. Cookies ועוגיות</h3>
       <ul>
-        <li><strong>חיוניות</strong> — להפעלת האתר</li>
-        <li><strong>פונקציונליות</strong> — לשיפור חוויית שימוש</li>
-        <li><strong>אנליטיות</strong> — ניתוח תנועה אנונימי</li>
+        <li><strong>חיוניות</strong> - להפעלת האתר</li>
+        <li><strong>פונקציונליות</strong> - לשיפור חוויית שימוש</li>
+        <li><strong>אנליטיות</strong> - ניתוח תנועה אנונימי</li>
       </ul>
       <p>ניתן לחסום עוגיות דרך הגדרות הדפדפן.</p>
 
@@ -272,7 +291,7 @@
         <li>לבטל הסכמה לדיוור</li>
         <li>לבקש העברת מידע</li>
       </ul>
-      <p>לפנייה: <a href="mailto:hadas@flowli.co.il">hadas@flowli.co.il</a> · מענה עד 5 ימי עסקים</p>
+      <p>לפנייה: <a href="mailto:hadasbarnes76@gmail.com">hadasbarnes76@gmail.com</a> · מענה עד 5 ימי עסקים</p>
 
       <h3>8. אבטחת מידע</h3>
       <p>אנו נוקטים באמצעים טכנולוגיים ואורגניזציוניים סבירים לאבטחת המידע. עם זאת, אין אבטחה מוחלטת ולא ניתן להבטיח חסינות מלאה.</p>
@@ -283,7 +302,7 @@
       <h3>10. שינויים במדיניות</h3>
       <p>החברה רשאית לעדכן מדיניות זו מעת לעת. הגרסה המעודכנת תפורסם באתר ותחייב מרגע פרסומה.</p>
 
-      <p style="margin-top:16px;font-size:13px;color:#999;">הדס גרינברג · Flowli · hadas@flowli.co.il</p>
+      <p style="margin-top:16px;font-size:13px;color:#999;">הדס בארנס · Flowli · hadasbarnes76@gmail.com</p>
 
       <div class="modal-footer">
         <button class="btn-orange" onclick="flowliCloseModal('flowli-privacy-modal')">הבנתי, סגור</button>
@@ -291,6 +310,74 @@
     </div>
   `;
   document.body.appendChild(privOverlay);
+
+  /* ════════════════════════════════════
+     מודל תנאי שימוש
+  ════════════════════════════════════ */
+  const tosOverlay = document.createElement('div');
+  tosOverlay.className = 'flowli-modal-overlay';
+  tosOverlay.id = 'flowli-tos-modal';
+  tosOverlay.setAttribute('role', 'dialog');
+  tosOverlay.setAttribute('aria-modal', 'true');
+  tosOverlay.setAttribute('aria-labelledby', 'tos-title');
+  tosOverlay.innerHTML = `
+    <div class="flowli-modal">
+      <button class="modal-close" onclick="flowliCloseModal('flowli-tos-modal')" aria-label="סגור">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="modal-tag">תנאים</div>
+      <h2 id="tos-title">תנאי שימוש</h2>
+      <p style="font-size:13px;color:#999;margin-bottom:4px">עודכן לאחרונה: יוני 2026</p>
+      <p>השימוש באתר Flowli ובכל התכנים המופיעים בו כפוף לתנאי שימוש אלו.</p>
+      <ol style="padding-right:20px;line-height:1.8;margin:12px 0">
+        <li>האתר נועד לספק מידע כללי על שירותי Flowli וכלים לאבחון תהליכים עסקיים.</li>
+        <li>תוצאות האבחון, ההמלצות והתכנים באתר נועדו למטרות מידע בלבד ואינם מהווים ייעוץ עסקי, משפטי, פיננסי או מקצועי מכל סוג.</li>
+        <li>השימוש באתר ובאבחון הינו באחריות המשתמש בלבד.</li>
+        <li>Flowli אינה מתחייבת לתוצאות עסקיות, לחיסכון כספי או לשיפור ביצועים כתוצאה משימוש באתר, באבחון או בשירותים המוצגים בו.</li>
+        <li>כל התכנים באתר, לרבות טקסטים, עיצובים, תמונות, מסמכים ותהליכים, מוגנים בזכויות יוצרים ואין להעתיקם או לעשות בהם שימוש ללא אישור מראש.</li>
+        <li>Flowli רשאית לעדכן את תנאי השימוש מעת לעת. המשך השימוש באתר מהווה הסכמה לגרסה המעודכנת.</li>
+      </ol>
+      <p style="margin-top:16px;font-size:13px;color:#999;">לשאלות ניתן לפנות: הדס גרינברג · hadas@flowli.co.il</p>
+      <div class="modal-footer">
+        <button class="btn-orange" onclick="flowliCloseModal('flowli-tos-modal')">הבנתי, סגור</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(tosOverlay);
+
+  /* ════════════════════════════════════
+     פוטר משפטי דק - בכל הדפים
+  ════════════════════════════════════ */
+  const footStyle = document.createElement('style');
+  footStyle.textContent = `
+    #flowli-legal-footer {
+      position: relative; z-index: 9;
+      text-align: center; padding: 14px 16px 18px;
+      font-family: 'Assistant', system-ui, sans-serif;
+      font-size: 12.5px; color: #8A8378;
+    }
+    #flowli-legal-footer a {
+      color: #8A8378; text-decoration: none; cursor: pointer;
+      transition: color .2s;
+    }
+    #flowli-legal-footer a:hover { color: #D45A12; }
+    #flowli-legal-footer .sep { margin: 0 7px; color: #DBC9A9; }
+  `;
+  document.head.appendChild(footStyle);
+
+  const legalFooter = document.createElement('footer');
+  legalFooter.id = 'flowli-legal-footer';
+  legalFooter.setAttribute('role', 'contentinfo');
+  legalFooter.innerHTML = `
+    <span>© 2026 flowli</span>
+    <span class="sep">·</span>
+    <a onclick="flowliOpenModal('flowli-privacy-modal')" tabindex="0" onkeydown="if(event.key==='Enter')flowliOpenModal('flowli-privacy-modal')">מדיניות פרטיות</a>
+    <span class="sep">·</span>
+    <a onclick="flowliOpenModal('flowli-tos-modal')" tabindex="0" onkeydown="if(event.key==='Enter')flowliOpenModal('flowli-tos-modal')">תנאי שימוש</a>
+    <span class="sep">·</span>
+    <a onclick="flowliOpenModal('flowli-a11y-modal')" tabindex="0" onkeydown="if(event.key==='Enter')flowliOpenModal('flowli-a11y-modal')">הצהרת נגישות</a>
+  `;
+  document.body.appendChild(legalFooter);
 
   /* כפתור נגישות - מוחלף ע"י negishot widget */
 
