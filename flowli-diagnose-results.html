@@ -609,7 +609,7 @@ const rawScores = {
   FLOW:    raw.flow_score    ?? 0,
 };
 
-const MAX = { LEADS: 12, OPS: 12, CONTROL: 6, FLOW: 6 };
+const MAX = { LEADS: 12, OPS: 12, CONTROL: 12, FLOW: 12 };
 function problemPct(raw, key) { return Math.min(100, Math.round((raw / (MAX[key] || 9)) * 100)); }
 
 const problems = {
@@ -1060,7 +1060,7 @@ function buildPersonalBody(worst, answers) {
 // ─── DOMAIN TOUCH (20% - נגיעות קטנות בכותרת והפתרון) ──────────────────────
 function buildDomainTouch(worst, answers) {
   const bd = (answers?.business_desc || '').toLowerCase();
-  const ep = (answers?.energy_areas  || []);
+  const ep = (answers?.energy_drain || answers?.energy_areas || []);
   const energyLabels = ['מענה לפניות','מעקב אחרי לקוחות','הצעות מחיר','תיאומים ותזכורות','ניהול מידע','אדמיניסטרציה'];
   const topEnergy = ep.slice(0,2).map(i => energyLabels[i]).filter(Boolean).join(' ו');
 

@@ -423,7 +423,7 @@ const blocks = [
         label: 'איפה מרגיש לך שהכי הרבה אנרגיה הולכת היום? (אפשר לבחור כמה)',
         type: 'multi',
         required: false,
-        metrics: {},
+        metrics: { FLOW: { perItem: 1, cap: 6 } },
         options: [
           { icon: 'chat',         title: 'מענה לפניות' },
           { icon: 'repeat',       title: 'מעקב אחרי לקוחות' },
@@ -461,7 +461,7 @@ const blocks = [
         label: 'מאיפה מגיעות רוב הפניות שלך? (אפשר לבחור כמה)',
         type: 'multi',
         required: false,
-        metrics: {},
+        metrics: { CONTROL: { perItem: 1, cap: 6 } },
         options: [
           { icon: 'chat',      title: 'וואטסאפ' },
           { icon: 'language',  title: 'אתר / טופס' },
@@ -685,6 +685,8 @@ function prevBlock() {
 }
 
 // ─── SCORING ─────────────────────────────────────────────────────────────────
+// metrics on a 'single' question: { METRIC: [val0,val1,...] } - indexed by chosen option
+// metrics on a 'multi' question:  { METRIC: { perItem, cap } } - perItem points per selected option, capped
 function calcScores() {
   const s = { LEADS: 0, OPS: 0, CONTROL: 0, FLOW: 0 };
   blocks.forEach(block => {
@@ -693,7 +695,15 @@ function calcScores() {
       if (q.type === 'single' && answers[q.id] !== undefined) {
         const idx = answers[q.id];
         Object.entries(q.metrics).forEach(([metric, vals]) => {
-          if (vals[idx] !== undefined) s[metric] += vals[idx];
+          if (Array.isArray(vals) && vals[idx] !== undefined) s[metric] += vals[idx];
+        });
+      }
+      if (q.type === 'multi' && Array.isArray(answers[q.id])) {
+        const count = answers[q.id].length;
+        Object.entries(q.metrics).forEach(([metric, cfg]) => {
+          if (cfg && typeof cfg === 'object' && cfg.perItem !== undefined) {
+            s[metric] += Math.min(count, cfg.cap ?? count) * cfg.perItem;
+          }
         });
       }
     });
@@ -707,13 +717,31 @@ function maxScores() {
     if (!q.metrics) return;
     Object.entries(q.metrics).forEach(([metric, vals]) => {
       if (Array.isArray(vals) && vals.length) m[metric] += Math.max(...vals);
+      else if (vals && typeof vals === 'object' && vals.perItem !== undefined) {
+        m[metric] += (vals.cap ?? 0) * vals.perItem;
+      }
     });
   }));
   return m;
 }
+
+// שוברת שוויון בין תחומים בצורה הוגנת: קודם לפי הציון הגולמי הגבוה יותר (יותר סימנים אמיתיים),
+// ואם עדיין תיקו - בחירה מבוססת-hash על התשובות עצמן, כדי שלא תמיד "ינצח" אותו תחום קבוע.
 function worstArea(s) {
   const m = maxScores();
-  return Object.keys(s).sort((a,b) => (s[b]/(m[b]||1)) - (s[a]/(m[a]||1)))[0];
+  const keys = Object.keys(s);
+  const maxRatio = Math.max(...keys.map(k => s[k] / (m[k] || 1)));
+  let tied = keys.filter(k => Math.abs((s[k] / (m[k] || 1)) - maxRatio) < 1e-9);
+  if (tied.length === 1) return tied[0];
+
+  const maxRaw = Math.max(...tied.map(k => s[k]));
+  tied = tied.filter(k => s[k] === maxRaw);
+  if (tied.length === 1) return tied[0];
+
+  const seedStr = JSON.stringify(answers);
+  let h = 0;
+  for (let i = 0; i < seedStr.length; i++) h = (h * 31 + seedStr.charCodeAt(i)) | 0;
+  return tied[Math.abs(h) % tied.length];
 }
 
 // ─── TOOL MAP ─────────────────────────────────────────────────────────────────
