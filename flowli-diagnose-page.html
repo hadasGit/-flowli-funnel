@@ -202,6 +202,7 @@
       .home-indicator { display:none !important; }
     }
   </style>
+<script src="flowli-track.js"></script>
 </head>
 <body>
 
@@ -458,6 +459,7 @@
         console.warn('Supabase save failed:', e);
       }
 
+      if (window.flowliTrack) flowliTrack('lead_submitted');
       localStorage.removeItem('flowli_reached_lead_form');
       /* Continue to results */
       window.location.href = 'flowli-diagnose-results.html';

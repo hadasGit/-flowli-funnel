@@ -529,6 +529,7 @@ body {
   .main-msg { font-size: 30px; }
 }
 </style>
+<script src="flowli-track.js"></script>
 </head>
 <body>
 
@@ -693,6 +694,7 @@ body {
 function startDiagnosis() {
   const btn = document.querySelector('.btn-primary');
   if (!btn || btn.classList.contains('btn-loading')) return;
+  if (window.flowliTrack) flowliTrack('assessment_started');
 
   /* 1. Button → loading state + text change */
   btn.classList.add('btn-loading');

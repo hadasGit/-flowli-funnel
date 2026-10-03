@@ -188,6 +188,7 @@
       .opt-radio { width: 17px; height: 17px; min-width: 17px; }
     }
   </style>
+<script src="flowli-track.js"></script>
 </head>
 <body>
 
@@ -785,6 +786,7 @@ async function submitQuiz() {
   /* התשובות נשמרות ב-localStorage בלבד כאן.
      מסך 4 (flowli-diagnose-page.html) ישמור הכל ל-Supabase יחד עם פרטי הליד. */
 
+  if (window.flowliTrack) flowliTrack('assessment_completed');
   window.location.href = 'flowli-diagnose-loading.html';
 }
 
