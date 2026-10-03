@@ -448,7 +448,7 @@ body {
         <svg viewBox="0 0 24 24" fill="none" stroke="#2D7A3A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         האבחון הושלם
       </div>
-      <div class="hero-name" id="heroName">הנה תמונת המצב שלך 🎉</div>
+      <div class="hero-name" id="heroName">הנה תמונת המצב שלך</div>
       <div class="hero-sub" id="heroSub">הנה התחום שבו יש לך הכי הרבה פוטנציאל לחסוך זמן ולייצר יותר סדר.</div>
     </div>
     <div class="impact-bubble">
@@ -623,9 +623,10 @@ const problems = {
 const avgProblem = Math.round(Object.values(problems).reduce((a,b)=>a+b,0) / 4);
 const healthScore = Math.max(0, 100 - avgProblem);
 
-const sorted = Object.entries(problems).sort((a,b) => b[1]-a[1]);
+const worst  = raw.worst_area || Object.entries(problems).sort((a,b) => b[1]-a[1])[0][0];
+/* בתיקו - התחום שהטקסט מדבר עליו (worst) מוצג ראשון, כדי שהגרף והטקסט יסכימו */
+const sorted = Object.entries(problems).sort((a,b) => (b[1]-a[1]) || ((b[0]===worst) - (a[0]===worst)));
 const top2   = sorted.slice(0,2);
-const worst  = raw.worst_area || sorted[0][0];
 
 /* ─── מצב העסק לפי ציון ───────────────────────────────────────────
    A = בעיה אמיתית  (healthScore < 45)  → 🔥 הדבר הראשון שהייתי מטפלת בו
@@ -1034,7 +1035,7 @@ function buildPersonalBody(worst, answers) {
     if (severity === 'HIGH') {
       let p = `לפי התשובות שלך, היום שלך שבור לגמרי בין כיוונים - `;
       if (hasEnergy) p += `בעיקר ${topEnergy}`;
-      p += `. אין תהליך שמחזיק את העבודה ביחד, וכל דבר חדש שנכנס מפריע לרצף. `;
+      p += `. נראה שאין עדיין תהליך קבוע שמחזיק את העבודה, ולכן כל דבר חדש שנכנס קוטע את הרצף. `;
       if ((raw.answers?.mood ?? 0) >= 3) p += `התחושה של כיבוי שריפות יומיומי היא בדיוק מה שקורה כשאין מסגרת שמחזיקה את היום.`;
       parts.push(p.trim());
     } else if (heavyLoad && hasEnergy)
@@ -1134,8 +1135,8 @@ document.getElementById('impactMeasure').textContent = MEASURE[worst] || MEASURE
 
 // hero name
 document.getElementById('heroName').innerHTML = firstName
-  ? `${firstName}, הנה תמונת המצב שלך 🎉`
-  : `הנה תמונת המצב שלך 🎉`;
+  ? `${firstName}, הנה תמונת המצב שלך`
+  : `הנה תמונת המצב שלך`;
 document.getElementById('heroSub').textContent = `הנה התחום שבו יש לך הכי הרבה פוטנציאל לחסוך זמן ולייצר יותר סדר.`;
 
 // gauge animation
@@ -1161,8 +1162,9 @@ const metricsEl = document.getElementById('metricsEl');
 // rank-based: הכי גבוה = 🔥, הכי נמוך = ✓, השאר = ⚠
 const lastIdx = sorted.length - 1;
 metricsEl.innerHTML = sorted.map(([key, pct], idx) => {
-  const cls = idx === 0 ? 'bad' : idx === lastIdx ? 'good' : 'mid';
-  const lvl = idx === 0      ? {label:'גבוה',   icon:'🔥'}
+  const isTop = pct === sorted[0][1];
+  const cls = isTop ? 'bad' : idx === lastIdx ? 'good' : 'mid';
+  const lvl = isTop          ? {label:'גבוה',   icon:'🔥'}
             : idx === lastIdx ? {label:'נמוך',   icon:'✓'}
             : {label:'בינוני', icon:'⚠'};
   return `<div class="metric">
