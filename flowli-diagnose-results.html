@@ -1352,15 +1352,15 @@ async function openContact() {
     if (u) {
       const d = JSON.parse(u);
       if (d.email) {
-        await fetch(`${SUPABASE_URL}/rest/v1/leads?email=eq.${encodeURIComponent(d.email)}`, {
-          method: 'PATCH',
+        await fetch(`${SUPABASE_URL}/rest/v1/rpc/funnel_patch_lead`, {
+          method: 'POST',
           headers: {
             'apikey': SUPABASE_KEY,
             'Authorization': 'Bearer ' + SUPABASE_KEY,
             'Content-Type': 'application/json',
             'Prefer': 'return=minimal'
           },
-          body: JSON.stringify({ meeting_requested: true })
+          body: JSON.stringify({ p_email: d.email, p: { meeting_requested: true } })
         });
       }
     }
@@ -1379,15 +1379,15 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     if (!u) return;
     const d = JSON.parse(u);
     if (!d.email) return;
-    fetch(`${SUPABASE_URL}/rest/v1/leads?email=eq.${encodeURIComponent(d.email)}`, {
-      method: 'PATCH',
+    fetch(`${SUPABASE_URL}/rest/v1/rpc/funnel_patch_lead`, {
+      method: 'POST',
       headers: {
         'apikey': SUPABASE_KEY,
         'Authorization': 'Bearer ' + SUPABASE_KEY,
         'Content-Type': 'application/json',
         'Prefer': 'return=minimal'
       },
-      body: JSON.stringify({ updated_at: new Date().toISOString() })
+      body: JSON.stringify({ p_email: d.email, p: { updated_at: new Date().toISOString() } })
     }).catch(() => {});
   } catch(e){}
 })();
@@ -1481,15 +1481,15 @@ async function saveEditedDetails() {
 
   /* Save to Supabase - use original email to find the record */
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/leads?email=eq.${encodeURIComponent(originalEmail)}`, {
-      method: 'PATCH',
+    await fetch(`${SUPABASE_URL}/rest/v1/rpc/funnel_patch_lead`, {
+      method: 'POST',
       headers: {
         'apikey': SUPABASE_KEY,
         'Authorization': 'Bearer ' + SUPABASE_KEY,
         'Content-Type': 'application/json',
         'Prefer': 'return=minimal'
       },
-      body: JSON.stringify({ name, email, phone })  /* original_email לא מתעדכן בכוונה */
+      body: JSON.stringify({ p_email: originalEmail, p: { name, email, phone } })  /* original_email לא מתעדכן בכוונה */
     });
   } catch(err) {
     console.warn('edit save failed', err);
@@ -1528,15 +1528,15 @@ async function requestCallback() {
     if (!u) return;
     const d = JSON.parse(u);
     if (!d.email) return;
-    await fetch(`${SUPABASE_URL}/rest/v1/leads?email=eq.${encodeURIComponent(d.email)}`, {
-      method: 'PATCH',
+    await fetch(`${SUPABASE_URL}/rest/v1/rpc/funnel_patch_lead`, {
+      method: 'POST',
       headers: {
         'apikey': SUPABASE_KEY,
         'Authorization': 'Bearer ' + SUPABASE_KEY,
         'Content-Type': 'application/json',
         'Prefer': 'return=minimal'
       },
-      body: JSON.stringify({ callback_requested: true })
+      body: JSON.stringify({ p_email: d.email, p: { callback_requested: true } })
     });
   } catch(err) {
     console.warn('Callback save failed:', err);

@@ -519,9 +519,9 @@
       var lead = JSON.parse(localStorage.getItem('flowli_lead') || '{}');
       if (!lead.email) return;
       if (localStorage.getItem('flowli_reached_lead_form')) return;
-      var payload = JSON.stringify({ abandoned_at_step: 3 });
+      var payload = JSON.stringify({ p_email: lead.email, p: { abandoned_at_step: 3 } });
       navigator.sendBeacon(
-        SURL + '/rest/v1/leads?email=eq.' + encodeURIComponent(lead.email) + '&apikey=' + SKEY,
+        SURL + '/rest/v1/rpc/funnel_patch_lead?apikey=' + SKEY,
         new Blob([payload], { type: 'application/json' })
       );
     } catch(e) {}
@@ -537,10 +537,10 @@
   try {
     var lead = JSON.parse(localStorage.getItem('flowli_lead') || '{}');
     if (!lead.email) return;
-    fetch(SURL + '/rest/v1/leads?email=eq.' + encodeURIComponent(lead.email), {
-      method: 'PATCH',
+    fetch(SURL + '/rest/v1/rpc/funnel_patch_lead', {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json', 'apikey': SKEY, 'Authorization': 'Bearer ' + SKEY, 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ abandoned_at_step: 3 })
+      body: JSON.stringify({ p_email: lead.email, p: { abandoned_at_step: 3 } })
     }).catch(function(){});
   } catch(e) {}
 })();
