@@ -127,8 +127,23 @@ body {
   border: 1px solid rgba(255,255,255,.92);
   border-radius: 20px; padding: 22px;
   box-shadow: 0 2px 16px rgba(180,110,60,.08), 0 1px 2px rgba(255,255,255,.9) inset;
+  display: flex; flex-direction: column;
 }
+.metrics-note { margin-top: auto; padding-top: 14px; border-top: 1px solid rgba(180,110,60,.15); font-size: 12.5px; line-height: 1.6; color: var(--muted); }
+.metrics + .metrics-note { margin-top: 18px; }
+@media (min-width: 621px) { .metrics + .metrics-note { margin-top: 0; } .metrics { flex: 1; display: flex; flex-direction: column; justify-content: space-around; margin-bottom: 14px; } }
+.area-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-left: 7px; vertical-align: middle; }
 .gauge-center { display: flex; flex-direction: column; align-items: center; margin-bottom: 14px; }
+/* במקום ציון: איפה מורגש פחות עומס + איפה הכי הרבה פוטנציאל - שניהם נגזרים מאותם ציונים שבגרף */
+.focus-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.focus-tile { border-radius: 14px; padding: 14px 12px; text-align: center; border: 1px solid rgba(255,255,255,.9); }
+.focus-tile.good { background: linear-gradient(145deg, #EAF5EC, #DCEEDF); }
+.focus-tile.grow { background: linear-gradient(145deg, #FFF4E6, #FFDDB8); }
+.focus-tile .ft-icon { font-size: 26px; line-height: 1; margin-bottom: 6px; }
+.focus-tile .ft-label { font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
+.focus-tile .ft-area { font-family: 'Rubik', sans-serif; font-size: 16px; font-weight: 700; color: var(--ink); line-height: 1.25; }
+.focus-tile.good .ft-area { color: #2D7A3A; }
+.focus-tile.grow .ft-area { color: var(--orange-deep); }
 .gauge-wrap   { position: relative; width: 148px; height: 148px; }
 .gauge-svg    { width: 148px; height: 148px; transform: rotate(-90deg); }
 .gauge-bg     { fill: none; stroke: #EDD8BE; stroke-width: 11; }
@@ -459,7 +474,7 @@ body {
       <div class="impact-body">
         <div class="impact-label">מה כדאי למדוד עכשיו</div>
         <div class="impact-range" id="impactMeasure" style="font-size:15.5px;line-height:1.55;font-weight:600"></div>
-        <div class="impact-sub">נתון אמיתי מהעסק שלכם שווה יותר מכל הערכה</div>
+        <div class="impact-sub">נתון אמיתי מהעסק שלך שווה יותר מכל הערכה</div>
       </div>
     </div>
   </div>
@@ -468,7 +483,7 @@ body {
   <div class="two-col">
 
     <div class="gauge-card">
-      <div class="gauge-center">
+      <div class="gauge-center" style="display:none">
         <div class="gauge-wrap">
           <svg class="gauge-svg" viewBox="0 0 130 130">
             <defs>
@@ -486,12 +501,14 @@ body {
           </div>
         </div>
       </div>
-      <div class="gauge-insight">
+      <div class="focus-tiles" id="focusTiles"></div>
+      <div class="gauge-insight" style="display:none">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#D45A12" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         <span id="gaugeHint">מחשב...</span>
       </div>
       <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:9px;">רמת עומס לפי תחום</div>
       <div class="metrics" id="metricsEl"></div>
+      <div class="metrics-note">הפסים משווים בין ארבעת התחומים לפי התשובות שלך. "גבוה" הוא המקום שבו העומס מורגש הכי הרבה כרגע - לא ציון על העסק.</div>
     </div>
 
     <div id="mainInsightCard" style="display:flex;flex-direction:column;gap:0;"></div>
@@ -636,17 +653,24 @@ const top2   = sorted.slice(0,2);
    C = עסק מסודר    (score ≥ 70)         → 💡 המקום הבא שהייתי משפרת
 ──────────────────────────────────────────────────────────────────── */
 const bizState = healthScore < 45 ? 'A' : healthScore < 70 ? 'B' : 'C';
+/* כותרת קבועה לכל תחום - אומרת במפורש איפה מתחילים */
+const AREA_FOCUS = {
+  LEADS:   'טיפול בפניות ומעקב אחרי לקוחות',
+  OPS:     'עבודה ידנית שחוזרת על עצמה',
+  CONTROL: 'מידע על לקוחות ועל מה שקורה בעסק',
+  FLOW:    'הרצף של העבודה ביום-יום'
+};
 const priorityLabel = {
-  A: { icon: '🔥', text: 'הדבר הראשון שהייתי מטפלת בו:' },
-  B: { icon: '⚡', text: 'הייתי מתחילה כאן:' },
-  C: { icon: '💡', text: 'המקום הבא שהייתי משפרת:' }
+  A: { icon: '', text: 'המקום הראשון שכדאי לעשות בו סדר:' },
+  B: { icon: '', text: 'המקום הראשון שכדאי לעשות בו סדר:' },
+  C: { icon: '', text: 'המקום הבא שאפשר לשפר:' }
 }[bizState];
 
 const metaMeta = {
-  LEADS:   { label: 'פניות',    emoji: '💜' },
-  OPS:      { label: 'זמן ותפעול',      emoji: '🟠' },
-  CONTROL: { label: 'מידע ושליטה',     emoji: '🔵' },
-  FLOW:    { label: 'תהליכים שוטפים',  emoji: '🟢' },
+  LEADS:   { label: 'פניות',    emoji: '💜', color: '#8E6BD8' },
+  OPS:      { label: 'זמן ותפעול',      emoji: '🟠', color: '#F26B1F' },
+  CONTROL: { label: 'מידע ושליטה',     emoji: '🔵', color: '#2F6FD6' },
+  FLOW:    { label: 'תהליכים שוטפים',  emoji: '🟢', color: '#2D9A4A' },
 };
 
 /* ─── SEVERITY (חומרת המצב) ────────────────────────────────────────
@@ -717,9 +741,9 @@ const base = {
     titleVariants:     [`פניות יוצאות מהמשפך ללא מעקב מסודר`, `פניות שלא זוכות למענה מהיר נופלות בין הכיסאות`, `יש פניות - אבל המעקב אחריהן לא מסודר`],
     bodyVariants:      [`מהתשובות שלך עולה שפניות מגיעות - אבל לא כולן זוכות למענה בזמן. זה לא בעיה של רצון טוב, זה בעיה של תהליך.`, `מה שראיתי בתשובות שלך: חלק מהפניות נופלות בין ההודעות. לא בגלל שאת לא רוצה לחזור - אלא בגלל שאין מקום אחד שמחזיק הכל.`, `הפניות שלך מגיעות ממספר ערוצים במקביל. בלי תהליך קבוע - חלק מהן פשוט נעלמות.`],
     insightFallbacks:  [`כשאין מנגנון אוטומטי שתופס כל פנייה ומחזיר מענה ראשוני מיידי, פניות נוטות "להיתקע" באוויר ולעבור למתחרים.`, `מי שלא מקבל תגובה תוך דקות - בדרך כלל פונה למישהו אחר. זה ענין של זמן, לא של עניין.`],
-    tool1NameVariants: [`ריכוז פניות ומענה ראשוני אוטומטי`, `מערכת קבלת לקוחות חכמה`, `מרכז פניות עם מענה אוטומטי`],
+    tool1NameVariants: [`ריכוז פניות ומענה ראשוני אוטומטי`, `תהליך מסודר לטיפול בפניות ומעקב`, `מרכז פניות עם מענה אוטומטי`],
     tool1Body:         `כל הפניות מתרכזות למקום אחד, עם מענה ראשוני מיידי ומעקב שלא משאיר אף פנייה באוויר.`,
-    impact:            [`⬆ פחות פספוסים`, `⬆ מענה מהיר יותר`, `⬆ סגירות גבוהות יותר`],
+    impact:            [`⬆ פחות פספוסים`, `⬆ מענה מהיר יותר`, `⬆ מעקב עקבי אחרי כל פנייה`],
     defaultSteps:      [`פנייה נכנסת`, `מענה ראשוני מיידי`, `תזכורת פולו-אפ`, `סגירת לקוח`],
     plan: [
       { title: `מענה מהיר לפניות חדשות`,       desc: `כל פנייה מקבלת מענה ראשוני בזמן - בלי שדברים ישארו באוויר.` },
@@ -807,7 +831,7 @@ const compositions = {
     insight:   `כשפנייה מתערבבת בין עשרות שיחות, קל מאוד שמישהו לא יקבל מענה בזמן - והעסקה פשוט עוברת למתחרה.`,
     tool1Name: `ריכוז פניות וואטסאפ ומענה ראשוני אוטומטי`,
     tool1Body: `כל הפניות מוואטסאפ נכנסות למקום אחד מסודר, עם מענה ראשוני מיידי ותזכורות מעקב.`,
-    impact:    [`⬆ פחות פספוסים`, `⬆ מענה מהיר יותר`, `⬆ סגירות גבוהות יותר`],
+    impact:    [`⬆ פחות פספוסים`, `⬆ מענה מהיר יותר`, `⬆ מעקב עקבי אחרי כל פנייה`],
     flow:      [`לקוחה כותבת בוואטסאפ`, `נשלח מענה ראשוני אוטומטי`, `הפנייה מתועדת במקום אחד`, `תזכורת פולו-אפ אם לא ענו`],
     plan: [
       { title: `מרכז פניות וואטסאפ`,       desc: `כל ההודעות מתרכזות למקום אחד מסודר, עם תיוג סטטוס וזיהוי לקוח חוזר.` },
@@ -959,7 +983,7 @@ function buildPersonalBody(worst, answers) {
       parts.push(p.trim());
     } else if (severity === 'MEDIUM') {
       if (slowResponse && leaksLeads && hasVolume)
-        parts.push(`לפי התשובות שלך, זמן התגובה לפניות ארוך יחסית וחלק מהפניות לא מקבלות מעקב קבוע. כשמצטרפות לזה ${leadsPerMonthLabel} פניות בחודש, קל להבין למה נוצר עומס.`);
+        parts.push(`לפי התשובות שלך, זמן התגובה לפניות ארוך יחסית וחלק מהפניות לא מקבלות מעקב קבוע. ציינת שנכנסות ${leadsPerMonthLabel} פניות בחודש. כשהמענה מתעכב והמעקב אינו קבוע, קשה לדעת איזו פנייה עדיין דורשת טיפול.`);
       else if (slowResponse)
         parts.push(`לפי התשובות שלך, זמן התגובה לפניות ארוך יחסית. ברוב המקרים, מי שלא מקבל תגובה מהירה - פונה הלאה.`);
       else
@@ -1128,10 +1152,10 @@ const tool2 = raw.tool2 || '-';
 // Deliberately no hours estimate and no shekel figure: neither is measured
 // here, so neither can be stated. The reader is pointed at the real number.
 const MEASURE = {
-  LEADS:   `כמה פניות נכנסות בשבוע עבודה רגיל, כמה מהן קיבלו מענה באותו יום, וכמה נשארו בלי מעקב.`,
-  OPS:     `כמה זמן מוקדש למענה, תיאום ומעקב במשך שבוע עבודה רגיל - ובאילו משימות הוא חוזר.`,
-  CONTROL: `כמה זמן לוקח לאתר מידע על לקוח או הזמנה, ובכמה מקומות שונים צריך לחפש אותו.`,
-  FLOW:    `באילו שלבים התהליך נעצר או ממתין, ומי צריך לזכור להזיז אותו הלאה.`
+  LEADS:   `בשבוע הקרוב, כדאי לבדוק כמה פניות נכנסו, כמה קיבלו מענה באותו יום וכמה נשארו בלי המשך טיפול.`,
+  OPS:     `בשבוע הקרוב, כדאי לבדוק כמה זמן הולך על מענה, תיאום ומעקב, ואילו משימות חוזרות שוב ושוב.`,
+  CONTROL: `בשבוע הקרוב, כדאי לבדוק כמה זמן לוקח למצוא מידע על לקוח או הזמנה, ובכמה מקומות צריך לחפש.`,
+  FLOW:    `בשבוע הקרוב, כדאי לבדוק באילו שלבים עבודה נתקעת או ממתינה, ומי צריך לזכור להזיז אותה הלאה.`
 };
 document.getElementById('impactMeasure').textContent = MEASURE[worst] || MEASURE.OPS;
 
@@ -1159,6 +1183,12 @@ setTimeout(() => {
   document.getElementById('gaugeHint').textContent = hint;
 }, 200);
 
+// focus tiles
+const strongest = sorted[sorted.length - 1][0];
+document.getElementById('focusTiles').innerHTML = `
+  <div class="focus-tile good"><div class="ft-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#2D7A3A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6"/></svg></div><div class="ft-label">איפה מורגש פחות עומס</div><div class="ft-area">${metaMeta[strongest].label}</div></div>
+  <div class="focus-tile grow"><div class="ft-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#D45A12" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16.5v-9M8 11l4-4 4 4"/></svg></div><div class="ft-label">איפה הכי הרבה פוטנציאל</div><div class="ft-area">${metaMeta[worst].label}</div></div>`;
+
 // metrics bars
 const metricsEl = document.getElementById('metricsEl');
 // rank-based: הכי גבוה = 🔥, הכי נמוך = ✓, השאר = ⚠
@@ -1170,9 +1200,9 @@ metricsEl.innerHTML = sorted.map(([key, pct], idx) => {
             : idx === lastIdx ? {label:'נמוך',   icon:'✓'}
             : {label:'בינוני', icon:'⚠'};
   return `<div class="metric">
-    <div class="metric-label">${metaMeta[key].emoji} ${metaMeta[key].label}</div>
+    <div class="metric-label"><span class="area-dot" style="background:${metaMeta[key].color}"></span>${metaMeta[key].label}</div>
     <div class="metric-bar"><div class="metric-fill ${cls}" data-pct="${pct}"></div></div>
-    <div class="metric-val">${lvl.icon} ${lvl.label}</div>
+    <div class="metric-val">${lvl.label}</div>
   </div>`;
 }).join('');
 setTimeout(() => {
@@ -1266,7 +1296,7 @@ function buildWADemo(worstArea, scenario) {
         <div class="mo"><div class="bo">היי! קיבלנו את פנייתך 👋<br>נחזור אליך תוך שעה!<div class="ts">10:12 ✓✓</div></div></div>
         <div class="tg tg-g"><span>📋 פנייה נרשמה במערכת</span></div>
         <div class="mo"><div class="bo">⏰ תזכורת: עדיין לא חזרנו - שולחים עכשיו<div class="ts">11:12 ✓✓</div></div></div>
-        <div class="tg tg-o"><span>✅ עסקה נסגרה</span></div>
+        <div class="tg tg-o"><span>✅ נקבעה שיחת היכרות</span></div>
       </div>
     </div>`;
   }
@@ -1290,7 +1320,7 @@ document.getElementById('mainInsightCard').innerHTML = `
   <div style="background:linear-gradient(145deg,#FEF5E7 0%,#F9EDDE 100%);border:1px solid rgba(255,255,255,.92);border-radius:20px;padding:22px;box-shadow:0 2px 16px rgba(180,110,60,.08);display:flex;flex-direction:column;gap:14px;">
     <div>
       <div style="font-size:11px;font-weight:700;color:var(--orange-deep);letter-spacing:.06em;margin-bottom:4px;">${priorityLabel.icon} ${priorityLabel.text}</div>
-      <div style="font-family:'Rubik',sans-serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;letter-spacing:-0.01em;">${reco.priorityTitle}</div>
+      <div style="font-family:'Rubik',sans-serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;letter-spacing:-0.01em;">${AREA_FOCUS[worst] || reco.priorityTitle}</div>
       <div style="font-size:14px;color:#444;line-height:1.65;">${reco.priorityBody}</div>
     </div>
 
@@ -1310,7 +1340,7 @@ document.getElementById('recoToolBox').innerHTML = `
       <div style="font-family:'Rubik',sans-serif;font-size:17px;font-weight:700;color:var(--ink);margin-bottom:6px;">${reco.tool1Name || tool1}</div>
       <div style="font-size:13px;color:#555;line-height:1.65;margin-bottom:12px;">${reco.tool1Body}</div>
       <div style="display:flex;flex-direction:column;gap:5px;padding-top:10px;border-top:1px solid rgba(0,0,0,.06);">
-        ${(reco.impact || [reco.tool1Impact || '']).map(line => `<div style="font-size:13px;font-weight:700;color:var(--green);">${line}</div>`).join('')}
+        ${(reco.impact || [reco.tool1Impact || '']).map(line => `<div style="font-size:13px;font-weight:700;color:var(--green);">${String(line).replace(/^⬆️?\s*/, '↑ ')}</div>`).join('')}
       </div>
     </div>
   </div>
