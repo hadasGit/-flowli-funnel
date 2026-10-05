@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Flowli - הסרה מרשימת הדיוור</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600&family=Rubik:wght@700&family=Inter:wght@800&display=swap" rel="stylesheet">
+<style>
+  :root { --cream: #F6F1E6; --orange: #F26B1F; --ink: #1A1A1A; --text: #2A2A2A; --muted: #8A8378; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px;
+         background: var(--cream); font-family: 'Assistant', sans-serif; color: var(--text); }
+  .card { background: #fff; border-radius: 20px; padding: 36px 28px; max-width: 420px; width: 100%; text-align: center;
+          box-shadow: 0 2px 16px rgba(180,110,60,.08); }
+  .logo { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.035em; direction: ltr; margin-bottom: 20px; }
+  .logo .a { color: #2A2A2A; } .logo .b { color: var(--orange); }
+  h1 { font-family: 'Rubik', sans-serif; font-size: 22px; color: var(--ink); margin: 0 0 10px; }
+  p { font-size: 15px; line-height: 1.7; margin: 0; color: var(--muted); }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo"><span class="a">flow</span><span class="b">li</span></div>
+    <h1 id="title">רגע אחד...</h1>
+    <p id="msg"></p>
+  </div>
+<script>
+/* קישור ההסרה במייל: ?id=<מזהה הליד>. הסימון נעשה דרך funnel_unsubscribe ב-Supabase */
+(function () {
+  var URL = 'https://whuuevjoqitwslnykvgd.supabase.co/rest/v1/rpc/funnel_unsubscribe';
+  var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndodXVldmpvcWl0d3NsbnlrdmdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTk3NDQsImV4cCI6MjA5NDY5NTc0NH0.r_lxvPFY275H7ODxYGHs0-NvqfQd8_e3fKHYy4sgq34';
+  var title = document.getElementById('title'), msg = document.getElementById('msg');
+  function show(t, m) { title.textContent = t; msg.textContent = m; }
+  var id = new URLSearchParams(location.search).get('id') || '';
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return show('הקישור לא תקין', 'אפשר לכתוב לי ל-hadas@flowli.co.il ואסיר אותך ידנית.');
+  fetch(URL, {
+    method: 'POST',
+    headers: { 'apikey': KEY, 'Authorization': 'Bearer ' + KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ p_id: id })
+  }).then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+    .then(function (found) {
+      if (found) show('הוסרת מרשימת הדיוור', 'לא יישלחו יותר מיילים מ-Flowli לכתובת הזו. תודה על מילוי האבחון.');
+      else show('הקישור לא תקין', 'אפשר לכתוב לי ל-hadas@flowli.co.il ואסיר אותך ידנית.');
+    })
+    .catch(function () { show('משהו השתבש', 'נסו שוב בעוד רגע, או כתבו לי ל-hadas@flowli.co.il.'); });
+})();
+</script>
+</body>
+</html>
