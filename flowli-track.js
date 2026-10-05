@@ -28,13 +28,14 @@
     } catch (e) {}
   };
 
+  /* Cloudflare Pages מגיש כתובות בלי .html - לכן משווים לפי שם הדף בלי הסיומת */
   var views = {
-    'flowli-diagnose-intro.html': 'intro_view',
-    'flowli-diagnose-step1.html': 'questions_view',
-    'flowli-diagnose-loading.html': 'loading_view',
-    'flowli-diagnose-page.html': 'lead_form_view',
-    'flowli-diagnose-results.html': 'results_view'
+    'flowli-diagnose-intro': 'intro_view',
+    'flowli-diagnose-step1': 'questions_view',
+    'flowli-diagnose-loading': 'loading_view',
+    'flowli-diagnose-page': 'lead_form_view',
+    'flowli-diagnose-results': 'results_view'
   };
-  var view = views[location.pathname.split('/').pop()];
+  var view = views[location.pathname.split('/').pop().replace(/\.html$/, '')];
   if (view) window.flowliTrack(view);
 })();
