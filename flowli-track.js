@@ -17,7 +17,11 @@
   var sid = store('flowli_sid');
   if (!sid) sid = store('flowli_sid', Date.now().toString(36) + Math.random().toString(36).slice(2, 10)) || 'nostore';
 
+  /* בדיקות מקומיות לא נספרות, כדי לא לזהם את נתוני הקמפיין */
+  var isLocal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === 'file:';
+
   window.flowliTrack = function (event) {
+    if (isLocal) return;
     try {
       fetch(URL, {
         method: 'POST',

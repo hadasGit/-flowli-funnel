@@ -470,7 +470,7 @@ body {
       <div class="hero-sub" id="heroSub">הנה התחום שבו יש לך הכי הרבה פוטנציאל לחסוך זמן ולייצר יותר סדר.</div>
     </div>
     <div class="impact-bubble">
-      <div class="impact-icon">🔍</div>
+      <div class="impact-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#D45A12" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div>
       <div class="impact-body">
         <div class="impact-label">מה כדאי למדוד עכשיו</div>
         <div class="impact-range" id="impactMeasure" style="font-size:15.5px;line-height:1.55;font-weight:600"></div>
@@ -517,7 +517,7 @@ body {
 
   <div id="recoToolBox"></div>
 
-  <div class="section-title">🧭 מה הכי בוער כרגע?</div>
+  <div class="section-title">מה הכי בוער כרגע?</div>
 
   <div id="planStep1" style="margin-bottom:10px;"></div>
 
@@ -531,11 +531,11 @@ body {
         <div class="cta-title">רוצה שאעבור איתך על זה?</div>
         <div class="cta-body">הרבה פעמים לא צריך לשנות את כל העסק.<br>מספיק להתחיל במקום הנכון.</div>
         <button class="btn-cta" onclick="openContact()">
-          <span>📅 נקבע שיחה קצרה</span>
+          <span>נקבע שיחה קצרה</span>
         </button>
 
         <div class="callback-block">
-          <div class="callback-q">📞 רוצה שנחשוב יחד מה הכי נכון לעסק שלך?</div>
+          <div class="callback-q">רוצה שנחשוב יחד מה הכי נכון לעסק שלך?</div>
           <div class="callback-bottom-row">
             <span class="callback-info">
               <span class="callback-email" id="callbackEmail"></span>
@@ -648,9 +648,9 @@ const sorted = Object.entries(problems).sort((a,b) => (b[1]-a[1]) || ((b[0]===wo
 const top2   = sorted.slice(0,2);
 
 /* ─── מצב העסק לפי ציון ───────────────────────────────────────────
-   A = בעיה אמיתית  (healthScore < 45)  → 🔥 הדבר הראשון שהייתי מטפלת בו
-   B = מקום לשיפור  (45 ≤ score < 70)   → ⚡ הייתי מתחילה כאן
-   C = עסק מסודר    (score ≥ 70)         → 💡 המקום הבא שהייתי משפרת
+   A = בעיה אמיתית  (healthScore < 45)  → הדבר הראשון שהייתי מטפלת בו
+   B = מקום לשיפור  (45 ≤ score < 70)   → הייתי מתחילה כאן
+   C = עסק מסודר    (score ≥ 70)         → המקום הבא שהייתי משפרת
 ──────────────────────────────────────────────────────────────────── */
 const bizState = healthScore < 45 ? 'A' : healthScore < 70 ? 'B' : 'C';
 /* כותרת קבועה לכל תחום - אומרת במפורש איפה מתחילים */
@@ -667,41 +667,11 @@ const priorityLabel = {
 }[bizState];
 
 const metaMeta = {
-  LEADS:   { label: 'פניות',    emoji: '💜', color: '#8E6BD8' },
-  OPS:      { label: 'זמן ותפעול',      emoji: '🟠', color: '#F26B1F' },
-  CONTROL: { label: 'מידע ושליטה',     emoji: '🔵', color: '#2F6FD6' },
-  FLOW:    { label: 'תהליכים שוטפים',  emoji: '🟢', color: '#2D9A4A' },
+  LEADS:   { label: 'פניות',    color: '#8E6BD8' },
+  OPS:      { label: 'זמן ותפעול',      color: '#F26B1F' },
+  CONTROL: { label: 'מידע ושליטה',     color: '#2F6FD6' },
+  FLOW:    { label: 'תהליכים שוטפים',  color: '#2D9A4A' },
 };
-
-/* ─── SEVERITY (חומרת המצב) ────────────────────────────────────────
-   HIGH   = ציון worst_area גבוה + תשובות קיצוניות
-   MEDIUM = ציון בינוני
-   LOW    = ציון נמוך יחסית
-──────────────────────────────────────────────────────────────────── */
-function calcSeverity(worstArea, answers, worstScore) {
-  const a = answers || {};
-  let extremeCount = 0;
-
-  // תשובות קיצוניות - הכי גרוע בכל שאלה (index 3 = גרוע)
-  if (a.mood           >= 3) extremeCount++;
-  if (a.response_time  >= 3) extremeCount++;
-  if (a.leads_handling >= 2) extremeCount++;
-  if (a.close_rate     >= 2) extremeCount++;
-  if (a.client_history >= 3) extremeCount++;
-  if (a.repetitive_time >= 3) extremeCount++;
-
-  // כמה תחומי אנרגיה סימנו (הרבה = יותר חמור)
-  const energyCount = (a.energy_drain || a.energy_areas || []).length;
-  if (energyCount >= 4) extremeCount++;
-
-  const pct = problemPct(worstScore, worstArea);
-
-  if (pct >= 70 || extremeCount >= 4) return 'HIGH';
-  if (pct >= 40 || extremeCount >= 2) return 'MEDIUM';
-  return 'LOW';
-}
-
-const severity = calcSeverity(worst, raw.answers, rawScores[worst]);
 
 // ─── RECOMMENDATIONS MAP (צמצום משמעותי - ניטרלי מגדרית וישר לתכלס) ───
 // ─── DETECTION HELPERS ─────────────────────────────────────────────
@@ -739,7 +709,7 @@ const base = {
   LEADS: {
     gaugeSubVariants:  [`הרבה זמן הולך על פניות שלא מקבלות מענה מהיר`, `יש פניות - אבל לא לכולן מספיקים להגיב בזמן`, `פניות נכנסות - אבל המסלול שלהן לא תמיד מסודר`],
     titleVariants:     [`פניות יוצאות מהמשפך ללא מעקב מסודר`, `פניות שלא זוכות למענה מהיר נופלות בין הכיסאות`, `יש פניות - אבל המעקב אחריהן לא מסודר`],
-    bodyVariants:      [`מהתשובות שלך עולה שפניות מגיעות - אבל לא כולן זוכות למענה בזמן. זה לא בעיה של רצון טוב, זה בעיה של תהליך.`, `מה שראיתי בתשובות שלך: חלק מהפניות נופלות בין ההודעות. לא בגלל שאת לא רוצה לחזור - אלא בגלל שאין מקום אחד שמחזיק הכל.`, `הפניות שלך מגיעות ממספר ערוצים במקביל. בלי תהליך קבוע - חלק מהן פשוט נעלמות.`],
+    bodyVariants:      [`מהתשובות שלך עולה שפניות מגיעות - אבל לא כולן זוכות למענה בזמן. זה לא בעיה של רצון טוב, זה בעיה של תהליך.`, `מה שראיתי בתשובות שלך: חלק מהפניות נופלות בין ההודעות. לא בגלל חוסר רצון לחזור - אלא בגלל שאין מקום אחד שמחזיק הכל.`, `הפניות שלך מגיעות ממספר ערוצים במקביל. בלי תהליך קבוע - חלק מהן פשוט נעלמות.`],
     insightFallbacks:  [`כשאין מנגנון אוטומטי שתופס כל פנייה ומחזיר מענה ראשוני מיידי, פניות נוטות "להיתקע" באוויר ולעבור למתחרים.`, `מי שלא מקבל תגובה תוך דקות - בדרך כלל פונה למישהו אחר. זה ענין של זמן, לא של עניין.`],
     tool1NameVariants: [`ריכוז פניות ומענה ראשוני אוטומטי`, `תהליך מסודר לטיפול בפניות ומעקב`, `מרכז פניות עם מענה אוטומטי`],
     tool1Body:         `כל הפניות מתרכזות למקום אחד, עם מענה ראשוני מיידי ומעקב שלא משאיר אף פנייה באוויר.`,
@@ -849,13 +819,13 @@ const compositions = {
     flow:      [`לקוח מבקש הצעת מחיר`, `המסמך נוצר אוטומטית`, `נשלח עם מעקב אישור`, `התחלת פרויקט מסודרת`],
     plan: [
       { title: `תבניות הצעות מחיר`, desc: `מסמכי הצעות מחיר וחוזים מתמלאים אוטומטית עם פרטי הלקוח והפרויקט.` },
-      { title: `מעקב אחר אישורים`,  desc: `תזכורות ללקוחות שלא חזרו עם אישור או חתימה - בלי שתצטרכי לזכור.` }
+      { title: `מעקב אחר אישורים`,  desc: `תזכורות ללקוחות שלא חזרו עם אישור או חתימה - בלי לזכור לבדוק.` }
     ]
   },
   FLOW_general: {
     gaugeSub:  `יש כאן הזדמנות לסדר את היום ולמנוע תחושת בלאגן`,
     title:     `היום שבור בין משימות, הודעות ודברים דחופים`,
-    body:      `נראה שאת מתפזרת בין דברים - וזה לא בגלל חוסר ארגון, אלא בגלל חוסר תהליך קבוע שמחזיק את היום-יום.`,
+    body:      `נראה שהיום מתפזר בין הרבה דברים - וזה לא בגלל חוסר ארגון, אלא בגלל חוסר תהליך קבוע שמחזיק את היום-יום.`,
     insight:   `בלי תהליך מובנה, אין רגע ל"לקחת אוויר" - כל היום הוא תגובה לדבר הבא.`,
     tool1Name: `תהליך עבודה מובנה לאורך כל המסע`,
     tool1Body: `מהרגע שלקוח נסגר ועד לסיום הביצוע - כל שלב קורה בסדר קבוע, בלי הפתעות.`,
@@ -901,188 +871,151 @@ const compositions = {
 function buildPersonalBody(worst, answers) {
   const a = answers || {};
 
+  const mood             = a.mood            ?? -1;
   const responseTimeIdx  = a.response_time   ?? -1;
   const leadsHandlingIdx = a.leads_handling  ?? -1;
   const monthlyLeadsIdx  = a.monthly_leads   ?? -1;
+  const closeRateIdx     = a.close_rate      ?? -1;
   const repTimeIdx       = a.repetitive_time ?? -1;
   const clientHistoryIdx = a.client_history  ?? -1;
+  const channels         = a.pain_channels || [];
   const energyAreas      = a.energy_drain || a.energy_areas || [];
   const painPoint        = (a.pain_point || '').trim();
   const bizDesc          = (a.business_desc || '').trim();
 
-  const leadsPerMonthLabel = ['עד 10', '10-30', '30-80', 'מעל 80'][monthlyLeadsIdx] || null;
+  const TASK_LABELS        = ['מענה לפניות', 'מעקב אחרי לקוחות', 'הצעות מחיר', 'תיאומים ותזכורות', 'ניהול מידע', 'אדמיניסטרציה'];
   const repTimeLabel       = ['פחות מ-3 שעות', '3-8 שעות', '8-15 שעות', 'יותר מ-15 שעות'][repTimeIdx] || null;
-  const energyLabels       = ['מענה לפניות', 'מעקב אחרי לקוחות', 'הצעות מחיר', 'תיאומים ותזכורות', 'ניהול מידע', 'אדמיניסטרציה'];
-  const energyText         = energyAreas.map(i => energyLabels[i]).filter(Boolean);
-  const magicTaskIdx       = a.magic_task ?? -1;
-  const magicTaskLabel     = ['מענה לפניות', 'מעקב אחרי לקוחות', 'הצעות מחיר', 'תיאומים ותזכורות', 'ניהול מידע', 'אדמיניסטרציה'][magicTaskIdx] || null;
+  const energyText         = energyAreas.map(i => TASK_LABELS[i]).filter(Boolean);
+  const topEnergy          = joinHe(energyText.slice(0, 2));
+  const magicTaskLabel     = TASK_LABELS[a.magic_task ?? -1] || null;
 
-  // pain_point - לנסח אנושי, לא להדביק ציטוט
-  const hasPain = painPoint.length > 3;
-  function humanizePain(pp) {
-    // מנסה לנסח מחדש בצורה טבעית
-    const p = pp.trim().replace(/[."']+$/, '');
-    // אם קצר מספיק - לנסח סביבו
-    if (p.length < 80) return `כתבת ש${p.charAt(0) === p.charAt(0).toUpperCase() ? p.charAt(0).toLowerCase() + p.slice(1) : p}`;
-    // אם ארוך - לתמצת
-    return `כתבת שיש עומס בניהול השוטף של העסק`;
+  /* מחבר רשימה בעברית: "א", "א וב", "א, ב וג" */
+  function joinHe(items) {
+    if (items.length <= 1) return items[0] || '';
+    return items.slice(0, -1).join(', ') + ' ו' + items[items.length - 1];
   }
-  function painConnector(w) {
-    if (w === 'LEADS')   return `זה מתחבר גם לשאר התשובות שלך, שמצביעות על פניות שלא תמיד מקבלות מענה או מעקב בזמן.`;
-    if (w === 'OPS')     return `זה מתחבר גם לשאר התשובות שלך, שמצביעות על הרבה עבודה שחוזרת על עצמה לאורך השבוע.`;
-    if (w === 'CONTROL') return `זה מתחבר גם לשאר התשובות שלך, שמצביעות על מידע שמפוזר ולא תמיד זמין כשצריך אותו.`;
-    if (w === 'FLOW')    return `זה מתחבר גם לשאר התשובות שלך, שמצביעות על יום שמתפרק בין הרבה כיוונים בלי תהליך שמחזיק הכל.`;
-    return `זה מתחבר גם לשאר התשובות שלך.`;
-  }
-  const painSentence = hasPain
-    ? `${humanizePain(painPoint)} - ${painConnector(worst)}`
-    : '';
-
-  // business_desc - לחלץ קונטקסט בלי AI מורכב
-  function bizContext(worstArea) {
-    if (!bizDesc) return '';
-    const bd = bizDesc.toLowerCase();
-    const isParents   = /הורים|ילד|ילדים|תקשורת|קלינ/i.test(bd);
-    const isTherapy   = /פסיכולוג|טיפול|קליני|מטפל|דיאט|תזונ|נטורופת/i.test(bd);
-    const isBeauty    = /קוסמט|סלון|תור|מניקור|פדיקור|ספא|איפור/i.test(bd);
-    const isCreative  = /עיצוב|מעצב|סטודיו|גרפי|אדריכל/i.test(bd);
-    const isB2B       = /עורך דין|רו"ח|רואה חשבון|יועץ|משרד/i.test(bd);
-
-    if (worstArea === 'LEADS') {
-      if (isParents)  return `בעסק שמבוסס על קשר עם הורים ותיאום פגישות, כל פנייה שלא מקבלת מענה בזמן עלולה להתפספס.`;
-      if (isTherapy)  return `בעסק שמבוסס על פגישות ואמון, כל שעה שהולכת על תיאומים היא שעה שלא מושקעת בטיפול עצמו.`;
-      if (isBeauty)   return `בעסק שעובד לפי תורים, פנייה שלא מקבלת מענה מהיר - בדרך כלל הולכת למקום אחר.`;
-      if (isCreative) return `בעסק יצירתי, פניות שנכנסות בלי תהליך מסודר מצטברות לעומס שמפריע לעבודה האמיתית.`;
-      if (isB2B)      return `בעסק שמטפל בכמה לקוחות במקביל, מעקב מסודר אחרי פניות הוא קריטי.`;
-    }
-    if (worstArea === 'OPS') {
-      if (isParents)  return `כשכמה שעות בכל שבוע הולכות על ניירת, תיאומים ומעקבים עם הורים, נשאר פחות זמן לעבודה המקצועית שבגללה פתחת את הקליניקה מלכתחילה.`;
-      if (isTherapy)  return `כשכמה שעות בכל שבוע הולכות על ניירת ומסמכים, נשאר פחות זמן לעבודה הטיפולית עצמה.`;
-      if (isBeauty)   return `כשתיאומים וניהול תורים גוזלים זמן, נשאר פחות מקום לעבודה עצמה ולשירות הלקוחות.`;
-      if (isCreative) return `כשעבודה אדמיניסטרטיבית חוזרת שוב ושוב, היא מקטעת את הריכוז ומקשה להיכנס לזרימה יצירתית.`;
-    }
-    if (worstArea === 'CONTROL') {
-      if (isB2B)      return `בעסק שמטפל בכמה לקוחות במקביל, שליטה במידע הופכת מהר מאוד לקריטית.`;
-      if (isTherapy || isParents) return `כשמידע על מטופלים/לקוחות מפוזר, קשה לתת מענה מסודר ולשמור על רצף.`;
-    }
-    return '';
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
-  let parts = [];
+  /* כל משפט נכנס רק אם התשובות תומכות בו - בלי לייחס לליד משהו שלא סימן */
+  const parts = [];
 
   if (worst === 'LEADS') {
-    const slowResponse = responseTimeIdx >= 2;
-    const leaksLeads   = leadsHandlingIdx >= 2;
-    const hasVolume    = monthlyLeadsIdx  >= 1;
-    const badClose     = (raw.answers?.close_rate ?? 0) >= 2;
+    const facts = [];
+    if (responseTimeIdx === 3)      facts.push('עובר יום או יותר עד שפנייה מקבלת תשובה');
+    else if (responseTimeIdx === 2) facts.push('פנייה מקבלת תשובה רק במהלך היום');
+    if (leadsHandlingIdx === 3)      facts.push('אין תהליך קבוע לטיפול בפניות');
+    else if (leadsHandlingIdx === 2) facts.push('חלק מהפניות מתפספסות');
+    else if (leadsHandlingIdx === 1) facts.push('הפניות נרשמות, אבל המעקב תלוי במי שזוכר');
+    if (closeRateIdx === 3)      facts.push('פחות מפנייה אחת מתוך 10 הופכת ללקוח');
+    else if (closeRateIdx === 2) facts.push('רק 2-3 מתוך 10 פניות הופכות ללקוח');
+    if (monthlyLeadsIdx === 0 && facts.length < 3) facts.push('מגיעות עד 10 פניות בחודש, כך שכל פנייה שווה הרבה');
 
-    if (severity === 'HIGH') {
-      let p = `לפי התשובות שלך, זמן התגובה לפניות הוא יום או יותר, אין תהליך קבוע שתופס אותן, ושיעור הסגירה נמוך. `;
-      if (hasVolume) p += `עם ${leadsPerMonthLabel} פניות בחודש - זה אומר שכל שבוע יש פניות שנכנסות ופשוט לא מקבלות טיפול. `;
-      if (raw.answers?.mood >= 3) p += `התחושה של כיבוי שריפות יומיומי מתחברת בדיוק לזה - כשאין תהליך, כל פנייה מרגישה דחופה.`;
-      parts.push(p.trim());
-    } else if (severity === 'MEDIUM') {
-      if (slowResponse && leaksLeads && hasVolume)
-        parts.push(`לפי התשובות שלך, זמן התגובה לפניות ארוך יחסית וחלק מהפניות לא מקבלות מעקב קבוע. ציינת שנכנסות ${leadsPerMonthLabel} פניות בחודש. כשהמענה מתעכב והמעקב אינו קבוע, קשה לדעת איזו פנייה עדיין דורשת טיפול.`);
-      else if (slowResponse)
-        parts.push(`לפי התשובות שלך, זמן התגובה לפניות ארוך יחסית. ברוב המקרים, מי שלא מקבל תגובה מהירה - פונה הלאה.`);
-      else
-        parts.push(`לפי התשובות שלך, חלק מהפניות לא מקבלות מעקב קבוע. בלי מקום שמחזיק את כל הפניות - קל לאבד רצף.`);
-    } else {
-      parts.push(`מהתשובות שלך עולה שתהליך קבלת הפניות עדיין לא מסודר לגמרי - יש מקום לשיפור קטן שיכול לעשות הבדל.`);
-    }
+    parts.push(facts.length
+      ? `לפי התשובות שלך, ${joinHe(facts.slice(0, 3))}.`
+      : `לפי התשובות שלך, הפניות מקבלות טיפול סביר, ובכל זאת זה התחום שבו העומס מורגש הכי הרבה יחסית לשאר.`);
 
-    if (hasPain) parts.push(painSentence);
-    const biz = bizContext('LEADS');
-    if (biz) parts.push(biz);
-    if (severity !== 'LOW') parts.push(`בלי תהליך שתופס כל פנייה מהרגע שנכנסה ועד שנקבעה פגישה, חלק מהפניות פשוט נופלות בין הכיסאות.`);
+    if (responseTimeIdx >= 2)       parts.push(`ברוב המקרים, מי שלא מקבל תשובה מהר ממשיך לבדוק אצל אחרים.`);
+    else if (leadsHandlingIdx >= 2) parts.push(`בלי מקום אחד שמחזיק את כל הפניות, קשה לדעת איזו מהן עדיין מחכה לטיפול.`);
+    else if (closeRateIdx >= 2)     parts.push(`שווה לבדוק באיזה שלב פניות נעצרות לפני שהן הופכות ללקוח.`);
+
+    if (mood >= 3 && (responseTimeIdx >= 2 || leadsHandlingIdx >= 2))
+      parts.push(`התחושה של כיבוי שריפות מתחברת לזה: כשאין תהליך, כל פנייה מרגישה דחופה.`);
   }
 
   if (worst === 'OPS') {
-    const heavyLoad = repTimeIdx >= 2;
-    const hasEnergy = energyText.length > 0;
-    const topEnergy = energyText.slice(0,2).join(' ו');
-    const hasMagic  = magicTaskLabel !== null;
+    let p = repTimeIdx >= 1
+      ? `לפי התשובות שלך, ${repTimeLabel} בשבוע הולכות על משימות שחוזרות על עצמן`
+      : `לפי התשובות שלך, המשימות החוזרות לא לוקחות הרבה שעות`;
+    if (energyText.length) p += repTimeIdx >= 1 ? `, והאנרגיה הולכת בעיקר על ${topEnergy}` : `, אבל הן גוזלות אנרגיה, בעיקר ${topEnergy}`;
+    parts.push(p + '.');
 
-    if (severity === 'HIGH') {
-      let p = `לפי התשובות שלך, יותר מ-15 שעות בשבוע הולכות על משימות שחוזרות על עצמן`;
-      if (hasEnergy) p += ` - בעיקר ${topEnergy}`;
-      p += `. `;
-      if ((raw.answers?.mood ?? 0) >= 3) p += `התחושה של כיבוי שריפות יומיומי מתחברת ישירות לזה. `;
-      if (hasMagic) p += `מבין כל המשימות, בחרת ב${magicTaskLabel} כמשהו שהיית שמחה להעלים - וזה בדיוק המקום שכדאי להתחיל ממנו.`;
-      parts.push(p.trim());
-    } else if (severity === 'MEDIUM') {
-      if (heavyLoad && hasMagic)
-        parts.push(`לפי התשובות שלך, ${repTimeLabel} בשבוע הולכות על משימות שחוזרות. מבין כל המשימות, בחרת ב${magicTaskLabel} כמשהו שהיית שמחה להשקיע בו פחות זמן - זה בדרך כלל המקום שכדאי להתחיל ממנו.`);
-      else if (heavyLoad && hasEnergy)
-        parts.push(`לפי התשובות שלך, ${repTimeLabel} בשבוע הולכים על משימות שחוזרות - בעיקר ${topEnergy}. העומס לא מגיע ממשימה אחת גדולה, הוא מצטבר מהרבה פעולות קטנות.`);
-      else
-        parts.push(`לפי התשובות שלך, חלק משמעותי מהשבוע הולך על עבודה שחוזרת על עצמה. שם יש הזדמנות אמיתית לחסוך זמן.`);
-    } else {
-      if (hasMagic)
-        parts.push(`מבין כל המשימות, בחרת ב${magicTaskLabel} כמשהו שהיית שמחה להשקיע בו פחות זמן. זה בדרך כלל סימן לקטן שאפשר לשפר בלי מאמץ גדול.`);
-      else
-        parts.push(`מהתשובות שלך עולה שיש כמה משימות חוזרות שאפשר לסדר - לא שינוי גדול, אבל יחסוך זמן לאורך זמן.`);
-    }
+    if (magicTaskLabel)
+      parts.push(`מבין כל המשימות, בחרת ב${magicTaskLabel} כמשהו שהיית רוצה להעלים, וזה בדרך כלל מקום טוב להתחיל ממנו.`);
+    else if (repTimeIdx >= 2)
+      parts.push(`העומס לא מגיע ממשימה אחת גדולה, אלא מהרבה פעולות קטנות שמצטברות.`);
 
-    if (hasPain) parts.push(painSentence);
-    const biz = bizContext('OPS');
-    if (biz) parts.push(biz);
+    if (mood >= 3 && repTimeIdx >= 2) parts.push(`התחושה של כיבוי שריפות מתחברת ישירות לזה.`);
   }
 
   if (worst === 'CONTROL') {
-    const hardToFind = clientHistoryIdx >= 2;
-    const noOrderAtAll = (raw.answers?.client_history ?? 0) >= 3;
-    const infoEnergy = energyText.includes('ניהול מידע');
+    const facts = [];
+    if (clientHistoryIdx === 3)      facts.push('אין היום מקום מסודר שמחזיק את המידע על הלקוחות');
+    else if (clientHistoryIdx === 2) facts.push('כדי לראות היסטוריה של לקוח צריך לחפש בכמה מקומות');
+    else if (clientHistoryIdx === 1) facts.push('לוקח כמה דקות למצוא את ההיסטוריה של לקוח');
+    if (channels.length >= 3)        facts.push(`הפניות מגיעות מ-${channels.length} ערוצים שונים${channels.includes(0) ? ', כולל וואטסאפ' : ''}`);
+    else if (channels.length === 2)  facts.push('הפניות מגיעות משני ערוצים שונים');
+    if (energyText.includes('ניהול מידע')) facts.push('ניהול המידע גוזל הרבה אנרגיה');
 
-    if (severity === 'HIGH') {
-      let p = `לפי התשובות שלך, אין היום מקום אחד שמרכז את המידע על הלקוחות והפעילות בעסק. כשצריך לבדוק מה סוכם, איפה עומד לקוח או מה המשימה הבאה - מתחיל חיפוש. `;
-      if ((raw.answers?.mood ?? 0) >= 3) p += `בשילוב עם התחושה היומיומית של כיבוי שריפות, זה יוצר עומס שמתמשך ומקשה לקבל החלטות בזמן.`;
-      parts.push(p.trim());
-    } else if (hardToFind && infoEnergy)
-      parts.push(`לפי התשובות שלך, אין היום מקום אחד שמרכז את המידע על הלקוחות. כשמסמכים ושיחות מפוזרים בין כמה מקומות, כל בדיקה קטנה הופכת לחיפוש - והחיפושים האלה מצטברים לאורך היום.`);
-    else if (hardToFind)
-      parts.push(`לפי התשובות שלך, כדי לבדוק היסטוריה של לקוח צריך לחפש בכמה מקומות שונים. בלי מרכז אחד - קשה לקבל תמונת מצב ברורה.`);
-    else if (infoEnergy)
-      parts.push(`לפי התשובות שלך, ניהול מידע גוזל ממך הרבה אנרגיה - זה בדרך כלל סימן שהמידע קיים אבל לא יושב במקום אחד שקל לעבוד איתו.`);
-    else
-      parts.push(`מהתשובות שלך עולה שהמידע בעסק מפוזר. בלי מרכז אחד - כל שאלה קטנה הופכת לחיפוש.`);
+    parts.push(facts.length
+      ? `לפי התשובות שלך, ${joinHe(facts)}.`
+      : `לפי התשובות שלך, המידע נגיש יחסית, ובכל זאת זה התחום שבו העומס מורגש הכי הרבה יחסית לשאר.`);
 
-    if (hasPain) parts.push(painSentence);
-    const biz = bizContext('CONTROL');
-    if (biz) parts.push(biz);
+    if (clientHistoryIdx >= 2 || channels.length >= 3)
+      parts.push(`כשהמידע מפוזר, כל בדיקה קטנה הופכת לחיפוש, והחיפושים האלה מצטברים לאורך היום.`);
+    if (mood >= 3 && clientHistoryIdx >= 2)
+      parts.push(`בשילוב עם תחושה של כיבוי שריפות, קשה לקבל החלטות בזמן.`);
   }
 
   if (worst === 'FLOW') {
-    const heavyLoad = repTimeIdx >= 1;
-    const hasEnergy = energyText.length > 0;
-    const topEnergy = energyText.slice(0,2).join(' ו');
+    const facts = [];
+    if (mood === 3)      facts.push('כל יום מרגיש כמו כיבוי שריפות');
+    else if (mood === 2) facts.push('בסוף היום נשארות הרבה משימות פתוחות');
+    if (energyText.length >= 3)      facts.push(`האנרגיה מתפזרת בין ${energyText.length} תחומים, בעיקר ${topEnergy}`);
+    else if (energyText.length)      facts.push(`האנרגיה הולכת בעיקר על ${topEnergy}`);
 
-    if (severity === 'HIGH') {
-      let p = `לפי התשובות שלך, היום שלך שבור לגמרי בין כיוונים - `;
-      if (hasEnergy) p += `בעיקר ${topEnergy}`;
-      p += `. נראה שאין עדיין תהליך קבוע שמחזיק את העבודה, ולכן כל דבר חדש שנכנס קוטע את הרצף. `;
-      if ((raw.answers?.mood ?? 0) >= 3) p += `התחושה של כיבוי שריפות יומיומי היא בדיוק מה שקורה כשאין מסגרת שמחזיקה את היום.`;
-      parts.push(p.trim());
-    } else if (heavyLoad && hasEnergy)
-      parts.push(`לפי התשובות שלך, היום מתחלק בין הרבה כיוונים - בעיקר ${topEnergy} - ואין עדיין תהליך שמחזיק הכל ביחד. הבעיה היא לא חוסר ארגון, אלא שכל דבר מגיע בנפרד ודורש תגובה בנפרד.`);
-    else if (heavyLoad)
-      parts.push(`לפי התשובות שלך, הזמן לא הולך על דבר אחד גדול - הוא מתפורר בין הרבה משימות קטנות לאורך היום. בלי תהליך קבוע, היום מרגיש שבור גם בלי "אסון" שאפשר להצביע עליו.`);
-    else
-      parts.push(`מהתשובות שלך עולה שיש מקום לתהליך קבוע שיחזיק את היום ביחד.`);
+    parts.push(facts.length
+      ? `לפי התשובות שלך, ${joinHe(facts)}.`
+      : `לפי התשובות שלך, היום מתנהל בסדר יחסית, ובכל זאת זה התחום שבו העומס מורגש הכי הרבה יחסית לשאר.`);
 
-    if (hasPain) parts.push(painSentence);
+    parts.push(mood >= 2 || energyText.length >= 3
+      ? `נראה שאין עדיין תהליך קבוע שמחזיק את העבודה, ולכן כל דבר חדש שנכנס קוטע את הרצף.`
+      : `תהליך קבוע לדברים שחוזרים על עצמם יכול להחזיק את היום ביחד.`);
   }
 
-  const body = parts.join(' ');
+  /* מה שהליד כתב בעצמו - מצוטט כמו שהוא, כדי לא לשנות לו גוף או מין */
+  if (painPoint.length > 3) {
+    const p = painPoint.replace(/[."'״]+$/, '');
+    parts.push(p.length <= 120
+      ? `כתבת שמה שהכי מתסכל אותך הוא "${esc(p)}", וזה מתחבר לתמונה שעולה משאר התשובות.`
+      : `גם מה שכתבת על מה שהכי מתסכל אותך מתחבר לתמונה שעולה משאר התשובות.`);
+  }
 
-  /* מצב C - עסק מסודר: טקסט עדין יותר */
+  /* business_desc - הקשר קצר לפי סוג העסק */
+  if (bizDesc) {
+    const isParents  = /הורים|ילד|ילדים|תקשורת|קלינ/i.test(bizDesc);
+    const isTherapy  = /פסיכולוג|טיפול|קליני|מטפל|דיאט|תזונ|נטורופת/i.test(bizDesc);
+    const isBeauty   = /קוסמט|סלון|תור|מניקור|פדיקור|ספא|איפור/i.test(bizDesc);
+    const isCreative = /עיצוב|מעצב|סטודיו|גרפי|אדריכל/i.test(bizDesc);
+    const isB2B      = /עורך דין|רו"ח|רואה חשבון|יועץ|משרד/i.test(bizDesc);
+    let biz = '';
+    if (worst === 'LEADS') {
+      if (isParents)       biz = `בעסק שמבוסס על קשר עם הורים ותיאום פגישות, כל פנייה שלא מקבלת מענה בזמן עלולה להתפספס.`;
+      else if (isTherapy)  biz = `בעסק שמבוסס על פגישות ואמון, מענה מהיר לפנייה הראשונה הוא חלק מהשירות עצמו.`;
+      else if (isBeauty)   biz = `בעסק שעובד לפי תורים, פנייה שלא מקבלת מענה מהיר בדרך כלל הולכת למקום אחר.`;
+      else if (isCreative) biz = `בעסק יצירתי, פניות שנכנסות בלי תהליך מסודר מצטברות לעומס שמפריע לעבודה עצמה.`;
+      else if (isB2B)      biz = `בעסק שמטפל בכמה לקוחות במקביל, מעקב מסודר אחרי פניות הוא קריטי.`;
+    }
+    if (worst === 'OPS') {
+      if (isParents)       biz = `כשכמה שעות בכל שבוע הולכות על ניירת, תיאומים ומעקבים עם הורים, נשאר פחות זמן לעבודה המקצועית עצמה.`;
+      else if (isTherapy)  biz = `כשכמה שעות בכל שבוע הולכות על ניירת ומסמכים, נשאר פחות זמן לעבודה הטיפולית עצמה.`;
+      else if (isBeauty)   biz = `כשתיאומים וניהול תורים גוזלים זמן, נשאר פחות מקום לעבודה עצמה ולשירות הלקוחות.`;
+      else if (isCreative) biz = `כשעבודה אדמיניסטרטיבית חוזרת שוב ושוב, היא מקטעת את הריכוז ומקשה להיכנס לזרימה יצירתית.`;
+    }
+    if (worst === 'CONTROL') {
+      if (isB2B)                       biz = `בעסק שמטפל בכמה לקוחות במקביל, שליטה במידע הופכת מהר מאוד לקריטית.`;
+      else if (isTherapy || isParents) biz = `כשמידע על מטופלים ולקוחות מפוזר, קשה לתת מענה מסודר ולשמור על רצף.`;
+    }
+    if (biz) parts.push(biz);
+  }
+
+  /* מצב C - עסק מסודר: טקסט עדין יותר, ועדיין לפי התחום שעלה */
   if (bizState === 'C') {
-    const magicLabel = magicTaskLabel ? `כמו ${magicTaskLabel}` : 'כמו הצעות מחיר ועדכונים';
-    return `לפי התשובות שלך, נראה שהתהליכים הבסיסיים בעסק כבר עובדים בצורה מסודרת. אם הייתי מחפשת איפה אפשר לחסוך עוד קצת זמן, הייתי מסתכלת על משימות שחוזרות על עצמן ${magicLabel} - שם בדרך כלל יש הכי הרבה מה לשפר בלי לשנות הרבה.`;
+    return `לפי התשובות שלך, הבסיס בעסק כבר עובד בצורה מסודרת. מבין ארבעת התחומים, "${metaMeta[worst].label}" הוא המקום שבו העומס מורגש קצת יותר, ושם הייתי מחפשת שיפור קטן בלי לשנות הרבה.`;
   }
 
-  return body;
+  return parts.join(' ');
 }
 
 // ─── DOMAIN TOUCH (20% - נגיעות קטנות בכותרת והפתרון) ──────────────────────
@@ -1151,13 +1084,23 @@ const tool2 = raw.tool2 || '-';
 // ─── WHAT TO MEASURE ────────────────────────────────────────────────────────
 // Deliberately no hours estimate and no shekel figure: neither is measured
 // here, so neither can be stated. The reader is pointed at the real number.
-const MEASURE = {
-  LEADS:   `בשבוע הקרוב, כדאי לבדוק כמה פניות נכנסו, כמה קיבלו מענה באותו יום וכמה נשארו בלי המשך טיפול.`,
-  OPS:     `בשבוע הקרוב, כדאי לבדוק כמה זמן הולך על מענה, תיאום ומעקב, ואילו משימות חוזרות שוב ושוב.`,
-  CONTROL: `בשבוע הקרוב, כדאי לבדוק כמה זמן לוקח למצוא מידע על לקוח או הזמנה, ובכמה מקומות צריך לחפש.`,
-  FLOW:    `בשבוע הקרוב, כדאי לבדוק באילו שלבים עבודה נתקעת או ממתינה, ומי צריך לזכור להזיז אותה הלאה.`
-};
-document.getElementById('impactMeasure').textContent = MEASURE[worst] || MEASURE.OPS;
+// One concrete thing to write down, picked by the answers, so it doesn't
+// repeat the paragraph below it.
+function buildMeasure(worst, answers) {
+  const a = answers || {};
+  if (worst === 'LEADS') {
+    if ((a.response_time ?? 0) >= 2)  return `ליד כל פנייה שנכנסת השבוע: מתי היא הגיעה ומתי קיבלה תשובה.`;
+    if ((a.leads_handling ?? 0) >= 2) return `בסוף השבוע: כמה פניות עדיין מחכות להמשך טיפול.`;
+    return `השבוע: כמה פניות נכנסו, וכמה מהן הגיעו לשיחה או לפגישה.`;
+  }
+  if (worst === 'OPS') {
+    const verb = ['ענית לפניות', 'חזרת ללקוח למעקב', 'הכנת הצעת מחיר', 'תיאמת או שלחת תזכורת', 'חיפשת או תייקת מידע', 'עשית עבודה אדמיניסטרטיבית'][answers?.magic_task ?? -1];
+    return verb ? `במשך שבוע: כל פעם ש${verb}, וכמה דקות זה לקח.` : `במשך שבוע: אילו משימות חזרו יותר מפעמיים, וכמה זמן לקחה כל אחת.`;
+  }
+  if (worst === 'CONTROL') return `בפעם הבאה שלקוח פונה: כמה זמן לקח למצוא מה סוכם איתו, ובכמה מקומות חיפשת.`;
+  return `בסוף כל יום השבוע: אילו משימות נשארו פתוחות, ובאיזה שלב הן נתקעו.`;
+}
+document.getElementById('impactMeasure').textContent = buildMeasure(worst, raw.answers);
 
 // hero name
 document.getElementById('heroName').innerHTML = firstName
@@ -1191,14 +1134,14 @@ document.getElementById('focusTiles').innerHTML = `
 
 // metrics bars
 const metricsEl = document.getElementById('metricsEl');
-// rank-based: הכי גבוה = 🔥, הכי נמוך = ✓, השאר = ⚠
+// rank-based: הכי גבוה = גבוה, הכי נמוך = נמוך, השאר = בינוני
 const lastIdx = sorted.length - 1;
 metricsEl.innerHTML = sorted.map(([key, pct], idx) => {
   const isTop = pct === sorted[0][1];
   const cls = isTop ? 'bad' : idx === lastIdx ? 'good' : 'mid';
-  const lvl = isTop          ? {label:'גבוה',   icon:'🔥'}
-            : idx === lastIdx ? {label:'נמוך',   icon:'✓'}
-            : {label:'בינוני', icon:'⚠'};
+  const lvl = isTop          ? {label:'גבוה'}
+            : idx === lastIdx ? {label:'נמוך'}
+            : {label:'בינוני'};
   return `<div class="metric">
     <div class="metric-label"><span class="area-dot" style="background:${metaMeta[key].color}"></span>${metaMeta[key].label}</div>
     <div class="metric-bar"><div class="metric-fill ${cls}" data-pct="${pct}"></div></div>
@@ -1232,44 +1175,48 @@ function buildWADemo(worstArea, scenario) {
     </style>
   `;
 
+  /* הדמו מתאים קודם לתחום שעלה. סוג העסק משנה אותו רק בפניות ובתפעול,
+     כדי שמי שהבעיה שלו היא מידע מפוזר לא יראה דמו של קביעת תור */
+  const scenarioFits = worstArea === 'LEADS' || worstArea === 'OPS';
+
   // therapy: קלינאית, פסיכולוג, מאמן, שיעורים
-  if (scenario === 'therapy' || (worst === 'LEADS' && scenario === 'therapy')) {
+  if (scenarioFits && scenario === 'therapy') {
     return css + `<div class="wa-demo">
-      <div class="wa-hdr"><div class="wa-av">📅</div><div><div class="wa-nm">מערכת תיאומים</div><div class="wa-sb">אוטומטי</div></div></div>
+      <div class="wa-hdr"><div class="wa-av"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l2-4.9A8.4 8.4 0 1 1 21 11.5z"/></svg></div><div><div class="wa-nm">מערכת תיאומים</div><div class="wa-sb">אוטומטי</div></div></div>
       <div class="wa-bd">
         <div class="mi"><div class="bi">שלום, אשמח לקבוע פגישה<div class="ts">09:10</div></div></div>
-        <div class="mo"><div class="bo">הנה המועדים הפנויים 📅<br>ב׳ 10:00 | ד׳ 14:00 | ה׳ 09:00<div class="ts">09:10 ✓✓</div></div></div>
+        <div class="mo"><div class="bo">הנה המועדים הפנויים<br>ב׳ 10:00 | ד׳ 14:00 | ה׳ 09:00<div class="ts">09:10 ✓✓</div></div></div>
         <div class="mi"><div class="bi">ד׳ ב-14:00 בבקשה<div class="ts">09:11</div></div></div>
-        <div class="tg tg-g"><span>✅ פגישה נקבעה ביומן אוטומטית</span></div>
-        <div class="mo"><div class="bo">מאושר! תזכורת תישלח יום לפני 🎉<div class="ts">09:11 ✓✓</div></div></div>
+        <div class="tg tg-g"><span>פגישה נקבעה ביומן אוטומטית</span></div>
+        <div class="mo"><div class="bo">מאושר! תזכורת תישלח יום לפני<div class="ts">09:11 ✓✓</div></div></div>
       </div>
     </div>`;
   }
 
   // beauty: סלון, תורים
-  if (scenario === 'beauty') {
+  if (scenarioFits && scenario === 'beauty') {
     return css + `<div class="wa-demo">
-      <div class="wa-hdr"><div class="wa-av">💆</div><div><div class="wa-nm">הזמנת תור</div><div class="wa-sb">אוטומטי</div></div></div>
+      <div class="wa-hdr"><div class="wa-av"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l2-4.9A8.4 8.4 0 1 1 21 11.5z"/></svg></div><div><div class="wa-nm">הזמנת תור</div><div class="wa-sb">אוטומטי</div></div></div>
       <div class="wa-bd">
         <div class="mi"><div class="bi">אפשר תור לצבע ביום ראשון?<div class="ts">18:30</div></div></div>
-        <div class="mo"><div class="bo">יש מקום ב-10:00 או 13:00 😊<div class="ts">18:30 ✓✓</div></div></div>
+        <div class="mo"><div class="bo">יש מקום ב-10:00 או 13:00<div class="ts">18:30 ✓✓</div></div></div>
         <div class="mi"><div class="bi">10:00 מושלם!<div class="ts">18:31</div></div></div>
-        <div class="tg tg-g"><span>✅ תור נקבע + תזכורת אוטומטית</span></div>
-        <div class="tg tg-b"><span>📁 כרטיס לקוחה עודכן</span></div>
+        <div class="tg tg-g"><span>תור נקבע + תזכורת אוטומטית</span></div>
+        <div class="tg tg-b"><span>כרטיס לקוחה עודכן</span></div>
       </div>
     </div>`;
   }
 
   // creative: עיצוב, הצעות מחיר
-  if (scenario === 'creative') {
+  if (scenarioFits && scenario === 'creative') {
     return css + `<div class="wa-demo">
-      <div class="wa-hdr"><div class="wa-av">📄</div><div><div class="wa-nm">הצעות מחיר</div><div class="wa-sb">אוטומטי</div></div></div>
+      <div class="wa-hdr"><div class="wa-av"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l2-4.9A8.4 8.4 0 1 1 21 11.5z"/></svg></div><div><div class="wa-nm">הצעות מחיר</div><div class="wa-sb">אוטומטי</div></div></div>
       <div class="wa-bd">
         <div class="mi"><div class="bi">אפשר הצעת מחיר לעיצוב לוגו?<div class="ts">14:00</div></div></div>
-        <div class="tg tg-b"><span>⚡ הצעת מחיר נוצרה אוטומטית</span></div>
-        <div class="mo"><div class="bo">הנה הצעת המחיר 📎<br>תקפה 7 ימים<div class="ts">14:00 ✓✓</div></div></div>
-        <div class="tg tg-g"><span>📋 מעקב אישור נפתח</span></div>
-        <div class="mo"><div class="bo">⏰ לא אישרו עדיין - שולחים תזכורת<div class="ts">16:00 ✓✓</div></div></div>
+        <div class="tg tg-b"><span>הצעת מחיר נוצרה אוטומטית</span></div>
+        <div class="mo"><div class="bo">הנה הצעת המחיר<br>תקפה 7 ימים<div class="ts">14:00 ✓✓</div></div></div>
+        <div class="tg tg-g"><span>מעקב אישור נפתח</span></div>
+        <div class="mo"><div class="bo">לא אישרו עדיין - שולחים תזכורת<div class="ts">16:00 ✓✓</div></div></div>
       </div>
     </div>`;
   }
@@ -1277,12 +1224,12 @@ function buildWADemo(worstArea, scenario) {
   // CONTROL: היסטוריית לקוח
   if (worstArea === 'CONTROL') {
     return css + `<div class="wa-demo">
-      <div class="wa-hdr"><div class="wa-av">🔍</div><div><div class="wa-nm">כרטיס לקוח</div><div class="wa-sb">הכל במקום אחד</div></div></div>
+      <div class="wa-hdr"><div class="wa-av"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l2-4.9A8.4 8.4 0 1 1 21 11.5z"/></svg></div><div><div class="wa-nm">כרטיס לקוח</div><div class="wa-sb">הכל במקום אחד</div></div></div>
       <div class="wa-bd">
         <div class="mi"><div class="bi">שלום, דיברנו לפני כמה חודשים...<div class="ts">09:45</div></div></div>
-        <div class="tg tg-b"><span>🔍 נמצא כרטיס לקוח תוך שניה</span></div>
-        <div class="mo"><div class="bo">היי! זוכרים 😊 דיברנו על הפרויקט - נמשיך?<div class="ts">09:45 ✓✓</div></div></div>
-        <div class="tg tg-g"><span>📁 כל ההיסטוריה זמינה מיד</span></div>
+        <div class="tg tg-b"><span>נמצא כרטיס לקוח תוך שניה</span></div>
+        <div class="mo"><div class="bo">היי! זוכרים, דיברנו על הפרויקט - נמשיך?<div class="ts">09:45 ✓✓</div></div></div>
+        <div class="tg tg-g"><span>כל ההיסטוריה זמינה מיד</span></div>
       </div>
     </div>`;
   }
@@ -1290,26 +1237,26 @@ function buildWADemo(worstArea, scenario) {
   // LEADS: פנייה שלא נופלת
   if (worstArea === 'LEADS') {
     return css + `<div class="wa-demo">
-      <div class="wa-hdr"><div class="wa-av">🤖</div><div><div class="wa-nm">מענה אוטומטי</div><div class="wa-sb">תוך שניות</div></div></div>
+      <div class="wa-hdr"><div class="wa-av"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l2-4.9A8.4 8.4 0 1 1 21 11.5z"/></svg></div><div><div class="wa-nm">מענה אוטומטי</div><div class="wa-sb">תוך שניות</div></div></div>
       <div class="wa-bd">
         <div class="mi"><div class="bi">היי, אשמח לשמוע על השירות<div class="ts">10:12</div></div></div>
-        <div class="mo"><div class="bo">היי! קיבלנו את פנייתך 👋<br>נחזור אליך תוך שעה!<div class="ts">10:12 ✓✓</div></div></div>
-        <div class="tg tg-g"><span>📋 פנייה נרשמה במערכת</span></div>
-        <div class="mo"><div class="bo">⏰ תזכורת: עדיין לא חזרנו - שולחים עכשיו<div class="ts">11:12 ✓✓</div></div></div>
-        <div class="tg tg-o"><span>✅ נקבעה שיחת היכרות</span></div>
+        <div class="mo"><div class="bo">היי! קיבלנו את פנייתך<br>נחזור אליך תוך שעה!<div class="ts">10:12 ✓✓</div></div></div>
+        <div class="tg tg-g"><span>פנייה נרשמה במערכת</span></div>
+        <div class="mo"><div class="bo">תזכורת: עדיין לא חזרנו - שולחים עכשיו<div class="ts">11:12 ✓✓</div></div></div>
+        <div class="tg tg-o"><span>נקבעה שיחת היכרות</span></div>
       </div>
     </div>`;
   }
 
   // OPS / FLOW / general
   return css + `<div class="wa-demo">
-    <div class="wa-hdr"><div class="wa-av">🚀</div><div><div class="wa-nm">תהליך אוטומטי</div><div class="wa-sb">לקוח חדש</div></div></div>
+    <div class="wa-hdr"><div class="wa-av"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l2-4.9A8.4 8.4 0 1 1 21 11.5z"/></svg></div><div><div class="wa-nm">תהליך אוטומטי</div><div class="wa-sb">לקוח חדש</div></div></div>
     <div class="wa-bd">
-      <div class="tg tg-o"><span>🎉 לקוח חדש נסגר</span></div>
-      <div class="mo"><div class="bo">ברוך הבא! שלחנו לך חוזה למייל 🙌<div class="ts">11:00 ✓✓</div></div></div>
-      <div class="tg tg-b"><span>📋 נפתחו משימות לצוות</span></div>
-      <div class="mi"><div class="bi">החוזה אושר ✅<br>מתחילים ביום ראשון!<div class="ts">11:45</div></div></div>
-      <div class="tg tg-g"><span>📁 הכל מתועד במקום אחד</span></div>
+      <div class="tg tg-o"><span>לקוח חדש נסגר</span></div>
+      <div class="mo"><div class="bo">שמחים שהצטרפת! שלחנו חוזה למייל<div class="ts">11:00 ✓✓</div></div></div>
+      <div class="tg tg-b"><span>נפתחו משימות לצוות</span></div>
+      <div class="mi"><div class="bi">החוזה אושר<br>מתחילים ביום ראשון!<div class="ts">11:45</div></div></div>
+      <div class="tg tg-g"><span>הכל מתועד במקום אחד</span></div>
     </div>
   </div>`;
 }
@@ -1325,7 +1272,7 @@ document.getElementById('mainInsightCard').innerHTML = `
     </div>
 
     <div style="background:rgba(255,255,255,.5);border-radius:14px;padding:14px;">
-      <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:10px;">🎯 אחרי שמסדרים את התהליך:</div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:10px;">אחרי שמסדרים את התהליך:</div>
       ${demoFlowHTML}
     </div>
   </div>
@@ -1334,7 +1281,7 @@ document.getElementById('mainInsightCard').innerHTML = `
 // ── הכלי המומלץ - מלבן עצמאי מעל "מה הכי בוער כרגע" ──────────────────
 document.getElementById('recoToolBox').innerHTML = `
   <div style="background:linear-gradient(135deg,#FFF4E6,#FDE3C4);border:1.5px solid rgba(242,107,31,.35);border-radius:18px;padding:20px 22px;margin-top:6px;display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;box-shadow:0 8px 24px rgba(242,107,31,.13);">
-    <div style="width:46px;height:46px;border-radius:12px;background:var(--ink);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;">⚡</div>
+    <div style="width:46px;height:46px;border-radius:12px;background:var(--ink);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></div>
     <div style="flex:1;min-width:220px;">
       <div style="font-size:11px;font-weight:700;color:var(--orange-deep);letter-spacing:.04em;margin-bottom:3px;">התהליך הראשון שהייתי מסדרת</div>
       <div style="font-family:'Rubik',sans-serif;font-size:17px;font-weight:700;color:var(--ink);margin-bottom:6px;">${reco.tool1Name || tool1}</div>
@@ -1361,8 +1308,8 @@ function buildCompactStepCard(title, desc, num, badgeText) {
     </div>`;
 }
 
-document.getElementById('planStep1').innerHTML = buildCompactStepCard(reco.planCards[0].title, reco.planCards[0].desc, '1', '🔥 הכי דחוף');
-document.getElementById('planStep2').innerHTML = buildCompactStepCard(reco.planCards[1].title, reco.planCards[1].desc, '2', '⏳ שלב הבא');
+document.getElementById('planStep1').innerHTML = buildCompactStepCard(reco.planCards[0].title, reco.planCards[0].desc, '1', 'הכי דחוף');
+document.getElementById('planStep2').innerHTML = buildCompactStepCard(reco.planCards[1].title, reco.planCards[1].desc, '2', 'שלב הבא');
 
 // שלבים 3-4 מטושטשים
 document.getElementById('planSteps34').innerHTML = `
@@ -1551,7 +1498,7 @@ async function requestCallback() {
 
   /* Visual feedback first - feels instant */
   btn.classList.add('requested');
-  btn.innerHTML = '👍 אחזור אליך בהקדם';
+  btn.innerHTML = '✓ אחזור אליך בהקדם';
 
   /* Save callback request to Supabase */
   try {
@@ -1577,4 +1524,4 @@ async function requestCallback() {
 <script src="https://negishot.co.il/cdn/widget.php?code=NGS_09B448A273D3"></script>
 <script src="flowli-legal.js"></script>
 </body>
-</html>
+</html>
