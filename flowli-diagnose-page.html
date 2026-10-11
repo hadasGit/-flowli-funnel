@@ -294,7 +294,7 @@
       <div class="consent-row consent-row-optional">
         <input type="checkbox" id="consentMarketing">
         <label class="consent-label" for="consentMarketing">
-          אשמח לקבל גם תכנים מקצועיים ועדכונים מ-Flowli במייל (לא חובה)
+          אני מאשר.ת קבלת תכנים מקצועיים ועדכונים מ-Flowli במייל
         </label>
       </div>
 
@@ -383,27 +383,20 @@
           if (d.name)  document.getElementById('fullname').value = d.name;
           if (d.email) document.getElementById('email').value = d.email;
           if (d.phone) document.getElementById('phone').value = d.phone;
-          /* If editing - assume consent was already given */
-          if (d.name && d.email && d.phone) {
-            const c = document.getElementById('consent');
-            c.checked = true;
-            document.getElementById('btnStart').disabled = false;
-          }
         }
       } catch(e){}
 
       /* URL params override localStorage (המייל הוא המקור הסמכותי) */
       if (urlName)  document.getElementById('fullname').value = urlName;
       if (urlEmail) document.getElementById('email').value = urlEmail;
-      /* אם שם ומייל מולאו מה-URL - סמן consent אוטומטית */
-      if (urlName && urlEmail) {
-        document.getElementById('consent').checked = true;
-        document.getElementById('btnStart').disabled = false;
-      }
 
-      document.getElementById('consent').addEventListener('change', function() {
-        document.getElementById('btnStart').disabled = !this.checked;
-      });
+      /* הכפתור נפתח רק כששתי התיבות מסומנות */
+      function syncStart() {
+        document.getElementById('btnStart').disabled =
+          !(document.getElementById('consent').checked && document.getElementById('consentMarketing').checked);
+      }
+      document.getElementById('consent').addEventListener('change', syncStart);
+      document.getElementById('consentMarketing').addEventListener('change', syncStart);
     });
 
     async function startFunnel() {
@@ -415,7 +408,7 @@
       if (!name)    { document.getElementById('fullname').focus(); return; }
       if (!email)   { document.getElementById('email').focus(); return; }
       if (!phone)   { document.getElementById('phone').focus(); return; }
-      if (!consent) return;
+      if (!consent || !document.getElementById('consentMarketing').checked) return;
 
       /* Persist user info to localStorage (results page reads it) */
       const user = { name, email, phone };
