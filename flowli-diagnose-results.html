@@ -1338,7 +1338,7 @@ async function openContact() {
             'Content-Type': 'application/json',
             'Prefer': 'return=minimal'
           },
-          body: JSON.stringify({ p_email: d.email, p: { meeting_requested: true } })
+          body: JSON.stringify({ p_email: d.email, p: { meeting_requested: true, edit_token: localStorage.getItem('flowli_edit_token') || null } })
         });
       }
     }
@@ -1365,7 +1365,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
         'Content-Type': 'application/json',
         'Prefer': 'return=minimal'
       },
-      body: JSON.stringify({ p_email: d.email, p: { updated_at: new Date().toISOString() } })
+      body: JSON.stringify({ p_email: d.email, p: { updated_at: new Date().toISOString(), edit_token: localStorage.getItem('flowli_edit_token') || null } })
     }).catch(() => {});
   } catch(e){}
 })();
@@ -1467,8 +1467,25 @@ async function saveEditedDetails() {
         'Content-Type': 'application/json',
         'Prefer': 'return=minimal'
       },
-      body: JSON.stringify({ p_email: originalEmail, p: { name, email, phone } })  /* original_email לא מתעדכן בכוונה */
+      body: JSON.stringify({ p_email: originalEmail, p: { name, email, phone, edit_token: localStorage.getItem('flowli_edit_token') || null } })  /* original_email לא מתעדכן בכוונה */
     });
+    /* בלי מפתח עריכה השרת לא מחליף מייל של ליד קיים. כדי שבקשות ההמשך לא ילכו לאיבוד,
+       הפרטים המתוקנים נשמרים כליד בעצמו. */
+    if (!localStorage.getItem('flowli_edit_token') && email && email !== originalEmail) {
+      let diag = {};
+      try { diag = JSON.parse(localStorage.getItem('flowli_diagnose') || '{}'); } catch(e) {}
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/funnel_save_lead`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ p: Object.assign({}, diag, { name, email, phone, original_email: originalEmail }) })
+      });
+      const tok = res.ok ? await res.json() : null;
+      if (typeof tok === 'string' && tok) localStorage.setItem('flowli_edit_token', tok);
+    }
   } catch(err) {
     console.warn('edit save failed', err);
   }
@@ -1514,7 +1531,7 @@ async function requestCallback() {
         'Content-Type': 'application/json',
         'Prefer': 'return=minimal'
       },
-      body: JSON.stringify({ p_email: d.email, p: { callback_requested: true } })
+      body: JSON.stringify({ p_email: d.email, p: { callback_requested: true, edit_token: localStorage.getItem('flowli_edit_token') || null } })
     });
   } catch(err) {
     console.warn('Callback save failed:', err);

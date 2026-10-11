@@ -22,6 +22,7 @@
 
   window.flowliTrack = function (event) {
     if (isLocal) return;
+    try { if (localStorage.getItem('flowli_cookies') === 'declined') return; } catch (e) {}
     try {
       fetch(URL, {
         method: 'POST',

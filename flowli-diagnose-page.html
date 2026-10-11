@@ -150,6 +150,7 @@
       transform:rotate(45deg);
     }
     .consent-label { font-size:13px; color:#555; line-height:1.5; font-weight:400; }
+    .consent-row + .consent-row-optional { margin-top:-10px; }
 
     .btn-primary {
       width:100%; background:var(--orange); color:#fff;
@@ -287,8 +288,13 @@
       <div class="consent-row" id="consent_anchor">
         <input type="checkbox" id="consent">
         <label class="consent-label" for="consent">
-          אני מאשר.ת קבלת תכנים מקצועיים ועדכונים מ-Flowli במייל
-          ומסכימ.ה ל<a href="#" onclick="flowliOpenModal('flowli-privacy-modal');return false;" style="color:var(--orange);text-decoration:underline;">מדיניות הפרטיות</a>
+          קראתי את <a href="#" onclick="flowliOpenModal('flowli-privacy-modal');return false;" style="color:var(--orange);text-decoration:underline;">מדיניות הפרטיות</a> ואני מסכימ.ה לה
+        </label>
+      </div>
+      <div class="consent-row consent-row-optional">
+        <input type="checkbox" id="consentMarketing">
+        <label class="consent-label" for="consentMarketing">
+          אשמח לקבל גם תכנים מקצועיים ועדכונים מ-Flowli במייל (לא חובה)
         </label>
       </div>
 
@@ -421,7 +427,7 @@
       try { diagnose = JSON.parse(localStorage.getItem('flowli_diagnose') || '{}'); } catch(e) {}
       const payload = Object.assign({}, diagnose, {
         name, email, phone,
-        consent: true,
+        consent: document.getElementById('consentMarketing').checked,
         source: sessionStorage.getItem('flowli_source') || 'flowli-funnel',
         original_email: email,
       });
@@ -430,7 +436,7 @@
       /* Save to Supabase - חדש vs. חוזר */
       try {
         /* ליד חדש נוצר, ליד חוזר מתעדכן (visit_count+1) - בצד השרת */
-        await fetch(`${SUPABASE_URL}/rest/v1/rpc/funnel_save_lead`, {
+        const saveRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/funnel_save_lead`, {
           method: 'POST',
           headers: {
             'apikey': SUPABASE_KEY,
@@ -439,6 +445,7 @@
           },
           body: JSON.stringify({ p: {
             ...payload,
+            edit_token: localStorage.getItem('flowli_edit_token') || null,
             answers:    payload.answers    || null,
             score:      payload.score      || null,
             worst_area: payload.worst_area || null,
@@ -455,6 +462,12 @@
             abandoned_at_step: null,
           } })
         });
+        /* המפתח שמאפשר לדפדפן הזה לעדכן את הפרטים בהמשך */
+        try {
+          const tok = saveRes.ok ? await saveRes.json() : null;
+          if (typeof tok === 'string' && tok) localStorage.setItem('flowli_edit_token', tok);
+          else if (saveRes.ok) localStorage.removeItem('flowli_edit_token');
+        } catch(e) {}
       } catch(e) {
         console.warn('Supabase save failed:', e);
       }
